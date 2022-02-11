@@ -61,7 +61,6 @@ const ProfilePage = () => {
       } catch (e) {
         console.error(e)
       }
-    
   }
 
   //load page user and posts when router query returns an id
