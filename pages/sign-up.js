@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useState } from "react";
-import SignupForm from "../src/components/SignUpForm";
+import SignupForm from "../src/components/Form/SignUpForm";
 import { useAuth } from "../src/context/AuthContext";
 
 const signUpPage = (props) => {

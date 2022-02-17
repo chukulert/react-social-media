@@ -2,88 +2,125 @@ import { useAuth } from "../../src/context/AuthContext";
 import { useRouter } from "next/router";
 import {
   collection,
-  addDoc,
   getDocs,
   doc,
   getDoc,
   query,
   where,
+  setDoc,
 } from "firebase/firestore";
 import { db } from "../../src/utils/init-firebase";
 import { useState, useEffect } from "react";
-import NewPostForm from "../../src/components/NewPostForm";
+import Post from "../../src/components/Post/Post";
+import Link from "next/link";
 
 const ProfilePage = () => {
   const [postUser, setPostUser] = useState(null);
   const [posts, setPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isCurrentUserPage, setIsCurrentUserPage] = useState(false);
+  const [isFriend, setIsFriend] = useState(false);
+
   const router = useRouter();
-  const {currentUser} = useAuth();
+  const { currentUserProfile } = useAuth();
 
-  //fetch posts of the current user page
-  const getUserPosts = async (id) => {
-    try {
-      const userPosts = [];
-      const q = query(collection(db, "posts"), where("user_id", "==", id));
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        userPosts.push(doc.data());
-      });
-      setPosts(userPosts);
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  const { id } = router.query;
 
-  //fetch user data of the current user page
-  const getUserData = async (id) => {
-    try {
-      //   if (id) {
-      const docRef = doc(db, "users", `${id}`);
-      const userProfile = await getDoc(docRef);
-      if (userProfile.exists()) {
-        setPostUser(userProfile.data());
-        // }
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const submitHandler = async ({title, description}) => {
-      try {
-        const docRef = await addDoc(collection(db, "posts"), {
-            user_id: currentUser.uid,
-            title: title,
-            description: description,
-            created_at: Date.now(),
-          });
-      } catch (e) {
-        console.error(e)
-      }
-  }
-
-  //load page user and posts when router query returns an id
+  //fetching posts
   useEffect(() => {
-    const { id } = router.query;
-    if (id) {
-      getUserData(id);
-      getUserPosts(id);
-    }
-    return () => {
-      setPostUser(null);
-      setPosts([]);
+    const fetchPosts = async () => {
+      setIsLoading(true);
+      //   const { id } = router.query;
+      if (id) {
+        try {
+          //get user profile of page visited
+          const docRef = doc(db, "users", `${id}`);
+          const userProfile = await getDoc(docRef);
+          if (userProfile.exists()) {
+            setPostUser(userProfile.data());
+          }
+
+          //get posts of user page
+          const userPosts = [];
+          const q = query(collection(db, "posts"), where("user_id", "==", id));
+          const querySnapshot = await getDocs(q);
+          querySnapshot.forEach((doc) => {
+            //   const data = doc.data()
+            const data = {
+              ...doc.data(),
+              id: doc.id,
+            };
+            // doc.data() is never undefined for query doc snapshots
+            userPosts.push(data);
+          });
+          setPosts(userPosts);
+
+          setIsLoading(false);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      return () => {
+        setPostUser(null);
+        setPosts([]);
+        setIsCurrentUserPage(false);
+      };
     };
-  }, [router.query]);
+    fetchPosts();
+  }, [id]);
+
+  //checking if current user is on his own profile page or is a friend of the user
+  useEffect(() => {
+    if (currentUserProfile && id) {
+      if (id === currentUserProfile.userID) {
+        setIsCurrentUserPage(true);
+      }
+      if (currentUserProfile.friends.includes(id)) {
+        setIsFriend(true);
+      }
+    }
+
+    return () => {
+      setIsCurrentUserPage(false);
+      setIsFriend(false);
+    };
+  }, [currentUserProfile, id]);
+
+  const addFriendHandler = async () => {
+    try {
+      if (currentUserProfile) {
+        await setDoc(
+          // `${currentUserProfile.userID}`,
+          doc(db, "users", `${currentUserProfile.userID}`),
+          { friends: [...currentUserProfile.friends, id] },
+          { merge: true }
+        );
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <>
-      {postUser && <div>{JSON.stringify(postUser)}</div>}
-      {posts && <div>{JSON.stringify(posts)}</div>}
-    
-    <NewPostForm submitHandler={submitHandler}/>
-
-    
+      {isCurrentUserPage && (
+        <Link href="/profile/edit">
+          <a>Edit Profile</a>
+        </Link>
+      )}
+      {/* {postUser && <div>{JSON.stringify(postUser)}</div>}    */}
+      {/* {posts && <div>{JSON.stringify(posts)}</div>} */}
+      {isLoading && <h1>Loading...</h1>}
+      {!isLoading && !isFriend && !isCurrentUserPage && (
+        <button onClick={addFriendHandler}>Add Friend</button>
+      )}
+      {!isLoading && (
+        <Post
+          user={postUser}
+          posts={posts}
+          currentUserPage={isCurrentUserPage}
+        />
+      )}
     </>
   );
 };

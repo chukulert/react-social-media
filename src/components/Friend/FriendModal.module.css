@@ -1,0 +1,89 @@
+.modalBackdrop{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 20;
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+.modal{
+    position: fixed;
+    top: 8vh;
+    left: 5%;
+    width: 90%;
+    background-color: white;
+    padding: 1rem;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    z-index: 30;
+    animation: slide-down 300ms ease-out forwards;
+}
+
+.modal h2 {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.modalContent {
+  overflow-y: auto;
+  max-height: 60vh; 
+}
+
+.modalBtn {
+  display: flex;
+  justify-content: space-between;
+}
+
+.modalBtn button {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: white;
+  background-color: #2A4D14;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.modalBtn button:hover {
+  background-color: #AFF9C9;
+  color: black;
+}
+
+.closeModalBtn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem;
+  border: none;
+  background-color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.emptyCartBtn {
+  background-color: none;
+  color: black;
+}
+
+@media (min-width: 768px) {
+    .modal {
+      width: 50rem;
+      left: calc(50% - 25rem);
+    }
+}
+  
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-3rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

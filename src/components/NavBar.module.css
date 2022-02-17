@@ -1,0 +1,20 @@
+.navbar {
+    background-color: grey;
+    border-bottom: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    
+}
+
+.navlinks {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+}
+
+.navlink {
+    padding: 1rem;
+    cursor: pointer;
+}

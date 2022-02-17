@@ -1,0 +1,43 @@
+.cardContainer {
+    background-color: var(--background-color-light);
+    border: .5px solid var(--border-color);
+    width: 80%;
+    max-width: 700px;
+    margin: 1rem auto;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.titleBar {
+    display: flex;
+    justify-content: space-between;
+}
+
+.titleBarContent{
+    display: flex;
+    flex-direction: column;
+}
+
+.description {
+
+}
+
+.image {
+    width: 100%;
+}
+
+.cardFooter {
+
+}
+
+.commentContainer {
+
+}
+
+.displayNameLink {
+    font-weight: bold; 
+}
+
+.displayNameLink:hover {
+    text-decoration: underline; 
+}

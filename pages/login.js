@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import Link from "next/link";
-import SignupForm from "../src/components/SignUpForm";
+import SignupForm from "../src/components/Form/SignUpForm";
+
 import { useAuth } from "../src/context/AuthContext";
 
 const logInPage = (props) => {

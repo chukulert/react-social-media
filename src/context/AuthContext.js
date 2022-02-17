@@ -87,7 +87,7 @@ export default function AuthContextProvider({ children }) {
         {
           userID: newUser.user.uid,
           email: email,
-          displayName: newUser.user.displayName,
+          displayName: newUser.user.displayName || '',
           profilePhoto: newUser.user.photoURL,
           joinDate: newUser.user.metadata.creationTime,
           likedPosts: [],
@@ -95,6 +95,8 @@ export default function AuthContextProvider({ children }) {
           friends: [],
           messagesCounter: 0,
           notifications: [],
+          bannerPhoto: '',
+          userSummary: '',
         }
       );
       setError(null);
