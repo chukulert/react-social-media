@@ -1,0 +1,12 @@
+.text{
+    display: inline;
+    width: 100%;
+  }
+    
+  .readMore{
+    cursor: pointer;
+  }
+
+  .readMore:hover {
+      text-decoration: underline;
+  }

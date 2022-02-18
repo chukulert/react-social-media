@@ -18,20 +18,17 @@
     flex-direction: column;
 }
 
-.description {
+.timeAgo {
+    font-size: .8rem;
+    color: gray;
+}
 
+.description {
+    padding: 1rem 0;
 }
 
 .image {
     width: 100%;
-}
-
-.cardFooter {
-
-}
-
-.commentContainer {
-
 }
 
 .displayNameLink {

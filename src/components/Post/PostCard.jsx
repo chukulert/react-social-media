@@ -2,10 +2,15 @@ import Image from "next/image";
 import styles from "./PostCard.module.css";
 import Link from "next/link";
 
+import { timeAgo } from "../../utils/calculate-time";
+import TextContent from "./TextContent";
+import CommentBox from "./CommentBox";
+
 const PostCard = (props) => {
     
 
-  const date = new Date(props.created_at).toString();
+  const date = timeAgo(props.created_at)
+
   return (
     <div className={styles.cardContainer}>
       <div className={styles.titleBar}>
@@ -20,14 +25,14 @@ const PostCard = (props) => {
           )}
           <div className={styles.titleBarContent}>
             <Link href={`/profile/${props.userID}`}><a className={styles.displayNameLink}>{props.displayName}</a></Link>
-            <p>Date created: {date}</p>
+            <p className={styles.timeAgo}>{date}</p>
           </div>
         </div>
       </div>
 
       <div className={styles.description}>
-        <p>Title: {props.title}</p>
-        <p>Description: {props.description}</p>
+        <strong>{props.title}</strong>
+        <TextContent>{props.description}</TextContent>
       </div>
 
       <div>
@@ -43,6 +48,7 @@ const PostCard = (props) => {
           />
         )}
       </div>
+      <CommentBox />
     </div>
   );
 };
