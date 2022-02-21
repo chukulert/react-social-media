@@ -43,12 +43,12 @@ const PostCard = (props) => {
             width='100%'
             height='100%'
             layout='responsive'
-            objectFit="contain"
+            objectFit="cover"
             className={styles.image}
           />
         )}
       </div>
-      <CommentBox />
+      <CommentBox id={props.id} likesCount={props.likesCount} />
     </div>
   );
 };

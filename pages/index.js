@@ -116,6 +116,7 @@ export default function Home() {
         title: title,
         description: description,
         created_at: Date.now(),
+        likesCount: 0,
       });
 
       //if file exists, add to storage and update post

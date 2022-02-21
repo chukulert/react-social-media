@@ -1,7 +1,7 @@
 import PostCard from "./PostCard";
 import Container from "../Layout/Container";
 import styles from './Post.module.css'
-
+       
 
 const Post = ({user, posts}) => {
     const postItems = (
@@ -17,6 +17,7 @@ const Post = ({user, posts}) => {
                     title={post.title}
                     description={post.description}
                     created_at={post.created_at}
+                    likesCount={post.likesCount}
                 />
             ))
             }
