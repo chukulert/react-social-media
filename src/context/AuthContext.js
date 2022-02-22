@@ -6,6 +6,7 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   onAuthStateChanged,
+  onIdTokenChanged,
   signInWithPopup,
   GoogleAuthProvider,
   signOut,
@@ -19,6 +20,7 @@ import {
   setDoc,
   getDoc,
 } from "firebase/firestore";
+import nookies from "nookies";
 
 //this is for other files to 'auto-detect' the functions available in context
 const AuthContext = createContext({
@@ -39,14 +41,41 @@ export default function AuthContextProvider({ children }) {
   const [currentUserProfile, setCurrentUserProfile] = useState(null);
   const router = useRouter();
 
+  //default useeffect
+  // useEffect(() => {
+  //   //when component mounts
+  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
+  //     setCurrentUser(user ? user : null);
+  //     user ? setUserProfile(user) : setCurrentUserProfile(null)
+  //     // const idToken  = user._tokenresponse.idToken;
+  //     const token = user.getIdToken
+  //     console.log(token)
+  //     console.log(user.getIdToken)
+  //     console.log(user._tokenresponse)
+  //   });
+  //   //cleanup for when component unmounts
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, []);
+
+  //with nookies
   useEffect(() => {
-    //when component mounts
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user ? user : null);
-      console.log(user)
-      user ? setUserProfile(user) : setCurrentUserProfile(null)
-    });
-    //cleanup for when component unmounts
+    const unsubscribe = async () => {
+      onIdTokenChanged(auth, async (user) => {
+        if (!user) {
+          setCurrentUser(null);
+          setCurrentUserProfile(null);
+          nookies.set(undefined, "token", "", {});
+          return;
+        }
+        const token = await user.getIdToken();
+        setCurrentUser(user);
+        setUserProfile(user)
+        nookies.set(undefined, "token", token, {});
+      });
+    };
+    unsubscribe();
     return () => {
       unsubscribe();
     };
@@ -68,7 +97,7 @@ export default function AuthContextProvider({ children }) {
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
       setError(null);
-      router.push("/profile");
+      router.push("/");
     } catch (error) {
       console.error("Something went wrong", error);
       setError(error.message);
@@ -87,7 +116,7 @@ export default function AuthContextProvider({ children }) {
         {
           userID: newUser.user.uid,
           email: email,
-          displayName: newUser.user.displayName || '',
+          displayName: newUser.user.displayName || "",
           profilePhoto: newUser.user.photoURL,
           joinDate: newUser.user.metadata.creationTime,
           likedPosts: [],
@@ -95,12 +124,11 @@ export default function AuthContextProvider({ children }) {
           friends: [],
           messagesCounter: 0,
           notifications: [],
-          bannerPhoto: '',
-          userSummary: '',
+          userSummary: "",
         }
       );
       setError(null);
-      router.push("/profile");
+      router.push("/");
     } catch (error) {
       console.error("Something went wrong", error);
       setError(error.message);
