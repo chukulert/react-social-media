@@ -81,6 +81,17 @@ export default function AuthContextProvider({ children }) {
     };
   }, []);
 
+  useEffect(() => {
+    const handle = setInterval(async () => {
+      const user = auth.currentUser;
+      console.log(user)
+      if (user) await user.getIdToken(true);
+    }, 10 * 60 * 1000);
+
+    // clean up setInterval
+    return () => clearInterval(handle);
+  }, []);
+
   async function setUserProfile(user) {
     try {
       const docRef = doc(db, "users", `${user.uid}`);

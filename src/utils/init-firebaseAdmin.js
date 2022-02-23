@@ -1,3 +1,5 @@
+import { getFirestore } from "firebase/firestore";
+
 const admin = require("firebase-admin");
 
 const serviceAccount = require("../../secret.json");
@@ -6,7 +8,10 @@ export const verifyToken = (token) => {
   if (!admin.apps.length) {
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
-      databaseURL: "https://nextjs-auth-fa0e8-default-rtdb.asia-southeast1.firebasedatabase.app",
+      databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
+      // apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+      // authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+      // projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
     });
   }
 
@@ -17,6 +22,18 @@ export const verifyToken = (token) => {
       throw error;
     });
 };
+
+// const adminApp =  admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
+//   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+//   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+//   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+// });
+
+// export const db = getFirestore(adminApp)
+
+// export const adminDB = getFirestore()
 
 
 

@@ -3,7 +3,7 @@ import { getAuth } from 'firebase/auth'
 import { getFirestore } from "firebase/firestore";
 import { getStorage, ref } from "firebase/storage";
 
-const FIREBASE_CONFIG = {
+export const FIREBASE_CONFIG = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
   databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
@@ -13,11 +13,18 @@ const FIREBASE_CONFIG = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-const app = initializeApp(FIREBASE_CONFIG)
-
+export const app = initializeApp(FIREBASE_CONFIG)
+// export const initializeFireBaseClient = ()=> {
+//   initializeApp(FIREBASE_CONFIG)
+// }
 export const auth = getAuth(app);
-export const db = getFirestore();
+export const db = getFirestore(app);
 export const storage = getStorage(app)
-export const imagesRef = ref(storage, 'images')
+
+export default function initializeFireBaseClient () {
+  initializeApp(FIREBASE_CONFIG);
+  return getAuth(app)
+}
+
 // export const firestoreFieldValue = firebase.firestore.FieldValue;
 // export const timestamp = firebase.firestore.FieldValue.serverTimestamp();
