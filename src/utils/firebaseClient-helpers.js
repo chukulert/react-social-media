@@ -21,10 +21,12 @@ import {
 } from "firebase/firestore";
 import nookies from "nookies";
 import authenticatedPage from "../../pages/authenticated";
-import { db } from "./init-firebase";
 import { auth } from "./init-firebase";
+// import { db } from "./init-firebase";
+import { db } from "./init-firebaseAdmin";
 
 export async function setUserProfile(uid) {
+    console.log(db)
   try {
     // if (auth.currentUser) {
     const docRef = doc(db, "users", `${uid}`);
@@ -70,22 +72,22 @@ export async function fetchAllUsers() {
   }
 }
 
-export async function fetchHomePageData(uid) {
-  try {
-    const userProfile = await setUserProfile(uid);
-    const friendsData = await fetchFriendsData(userProfile);
-    const allUsersData = await fetchAllUsers();
-    return {
-      props: {
-        userProfile: userProfile,
-        friendsData: friendsData,
-        allUsersData: allUsersData,
-      },
-    };
-  } catch (error) {
-    console.error(error);
-  }
-}
+// export async function fetchHomePageData(uid) {
+//   try {
+//     const userProfile = await setUserProfile(uid);
+//     const friendsData = await fetchFriendsData(userProfile);
+//     const allUsersData = await fetchAllUsers();
+//     return {
+//       props: {
+//         userProfile: userProfile,
+//         friendsData: friendsData,
+//         allUsersData: allUsersData,
+//       },
+//     };
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
 
 export async function fetchUserPosts(uid) {
   try {

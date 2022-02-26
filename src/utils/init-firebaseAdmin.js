@@ -1,8 +1,17 @@
-import { getFirestore } from "firebase/firestore";
+import { initializeApp } from 'firebase-admin/app';
+
+const { getFirestore } = require('firebase-admin/firestore');
 
 const admin = require("firebase-admin");
 
 const serviceAccount = require("../../secret.json");
+
+let app;
+
+if (!admin.apps.length) {app = initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
+})}
 
 export const verifyToken = (token) => {
   if (!admin.apps.length) {
@@ -23,6 +32,7 @@ export const verifyToken = (token) => {
     });
 };
 
+export const db = getFirestore(app)
 // const adminApp =  admin.initializeApp({
 //   credential: admin.credential.cert(serviceAccount),
 //   databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,

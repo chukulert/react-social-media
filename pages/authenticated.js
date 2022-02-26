@@ -1,6 +1,6 @@
 import { verifyToken } from '../src/utils/init-firebaseAdmin';
 import nookies from 'nookies'
-import { fetchAllUsers, fetchFriendsData, setUserProfile } from '../src/utils/firebase-helpers';
+import { fetchAllUsers, fetchFriendsData, fetchUserProfile } from '../src/utils/firebase-adminhelpers';
 
 // const authenticatedPage = ({session}) => {
 
@@ -25,12 +25,12 @@ export async function getServerSideProps(context) {
       //this returns the user
       const user = await verifyToken(cookies.token);
       //this returns the user profile in firestore
-      const userProfile = await setUserProfile(user)
+      const userProfile = await fetchUserProfile(user)
       //get all friends data
       const friendsData = await fetchFriendsData(userProfile)
       const allUsersData = await fetchAllUsers()
       return {
-        props: { currentUserProfile: userProfile, friendsData: friendsData, allUsersData: allUsersData },
+        props: { userProfile: userProfile, friendsData: friendsData, allUsersData: allUsersData },
       };
     } catch (err) {
         console.log(err)

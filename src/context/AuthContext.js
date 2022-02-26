@@ -136,6 +136,7 @@ export default function AuthContextProvider({ children }) {
           messagesCounter: 0,
           notifications: [],
           userSummary: "",
+          private: false
         }
       );
       setError(null);

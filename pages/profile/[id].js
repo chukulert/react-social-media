@@ -13,12 +13,12 @@ import { db } from "../../src/utils/init-firebase";
 import { useState, useEffect } from "react";
 import Post from "../../src/components/Post/Post";
 import Link from "next/link";
-import { fetchAllUsers, fetchUserPosts, setUserProfile } from "../../src/utils/firebase-helpers";
+import { fetchAllUsers, fetchUserPosts,  fetchUserProfile} from "../../src/utils/firebase-adminhelpers"
 
 export async function getStaticProps(staticProps) {
   const userID = staticProps.params.id;
 
-  const userProfile = await setUserProfile(userID)
+  const userProfile = await fetchUserProfile(userID)
   const posts = await fetchUserPosts(userID)
 
   return {
@@ -126,7 +126,7 @@ const ProfilePage = (props) => {
         await setDoc(
           // `${currentUserProfile.userID}`,
           doc(db, "users", `${currentUserProfile.userID}`),
-          { friends: [...currentUserProfile.friends, id] },
+          { friends: [...currentUserProfile.friends, postUser.userID] },
           { merge: true }
         );
       }
@@ -150,7 +150,6 @@ const ProfilePage = (props) => {
       )}
       {!isLoading && (
         <Post
-          user={postUser}
           posts={posts}
           currentUserPage={isCurrentUserPage}
         />
