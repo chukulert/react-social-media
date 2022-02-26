@@ -3,16 +3,16 @@ import Container from "../Layout/Container";
 import styles from './Post.module.css'
        
 
-const Post = ({user, posts}) => {
+const Post = ({ posts }) => {
     const postItems = (
         <div >
             {posts.map((post) => (
                 <PostCard
                     key={post.id}
                     id={post.id}
-                    userID={user.userID}
-                    displayName={user.displayName}
-                    profilePhoto={user.profilePhoto}
+                    userID={post.user_id}
+                    displayName={post.user_displayName}
+                    profilePhoto={post.user_profilePhoto}
                     image={post.image}
                     title={post.title}
                     description={post.description}

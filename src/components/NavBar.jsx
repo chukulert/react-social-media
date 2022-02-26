@@ -12,6 +12,9 @@ const NavBar = ({switchTheme}) => {
         <Link href="/">
           <a className={styles.navlink}>Home</a>
         </Link>
+        <Link href="/authenticated">
+          <a className={styles.navlink}>Authenticated</a>
+        </Link>
         {!currentUser && (
           <Link href="/login">
             <a className={styles.navlink}>Login</a>

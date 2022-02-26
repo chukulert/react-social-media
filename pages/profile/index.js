@@ -1,6 +1,6 @@
 import { useAuth } from "../../src/context/AuthContext";
 import { protectedRoutes } from "../../src/utils/protected-routes";
-import { db } from "../../src/utils/init-firebase";
+import { getAdminDB } from "../../src/utils/init-firebaseAdmin";
 
 import { collection, addDoc, getDocs } from "firebase/firestore";
 
