@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import styles from "./PostCard.module.css";
 import Link from "next/link";
@@ -5,31 +6,75 @@ import { timeAgo } from "../../utils/index";
 import TextContent from "./TextContent";
 import CommentBox from "./CommentBox";
 import { useAuth } from "../../context/AuthContext";
-import {useState, useEffect} from 'react'
 
 import { fetcher, isEmpty } from "../../utils";
 import useSWR from "swr";
 
 const PostCard = (props) => {
-  const { currentUserProfile } = useAuth();
   const [displayComments, setDisplayComments] = useState(false);
-  const [likedPost, setLikedPost] = useState(false)
+  const [likedPost, setLikedPost] = useState(false);
+  const { currentUserProfile } = useAuth();
   const [likes, setLikes] = useState(props.likesCount);
+  const [post, setPost] = useState(props);
+  const [commentsCount, setCommentsCount] = useState(props.commentsCount)
 
-  const date = timeAgo(props.created_at);
+  const postID = props.id;
+  useEffect(() => {
+    if (currentUserProfile) {
+      if (currentUserProfile.likedPosts.includes(postID)) {
+        setLikedPost(true);
+      }
+    }
+  }, [currentUserProfile, postID]);
 
+  const showCommentsHandler = () => {
+    displayComments ? setDisplayComments(false) : setDisplayComments(true);
+  };
 
-
-  const { data, error } = useSWR(`/api/getPostById?id=${props.id}`, fetcher);
-
+  const { data, error } = useSWR(`/api/getPostById?id=${postID}`, fetcher, {
+    revalidateOnFocus: false,
+  });
   useEffect(() => {
     if (data && data.length > 0) {
-      setCoffeeStore(data[0]);
-
-      setVotingCount(data[0].voting);
+      console.log(data);
+      setPost(data[0]);
+      setLikes(data[0].likesCount);
+      setCommentsCount(data[0].commentsCount);
     }
-  }, [data]); 
+  }, [data]);
 
+  if (!data) return "Loading...";
+  if (error) return "Error fetching data";
+
+  const handleLikeButton = async () => {
+    if (currentUserProfile) {
+      try {
+        await fetch(`/api/likePost`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            uid: `${currentUserProfile.userID}`,
+            postId: postID,
+            type: likedPost ? "unlike" : "like",
+          }),
+        });
+        if (likedPost) {
+          setLikes((prevCount) => prevCount - 1);
+          setLikedPost(false);
+        } else {
+          setLikes((prevCount) => prevCount + 1);
+          setLikedPost(true);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  
+  const date = timeAgo(props.created_at);
 
   return (
     <div className={styles.cardContainer}>
@@ -70,7 +115,17 @@ const PostCard = (props) => {
           />
         )}
       </div>
-      <CommentBox id={props.id} likesCount={props.likesCount} displayComments={displayComments} />
+      <div className={styles.commentContainer}>
+      <div className={styles.commentHeader}>
+        <button onClick={handleLikeButton}>
+          {likedPost ? "Unlike Post" : "Like Post"}
+        </button>
+        <button onClick={showCommentsHandler}>Show Comments</button>
+        <span>Likes: {likes}</span>
+        <span>Comments: {commentsCount}</span>
+      </div>
+      {displayComments && <CommentBox postID={props.id}/>}
+    </div>
     </div>
   );
 };

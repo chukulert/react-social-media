@@ -1,99 +1,76 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./Comment.module.css";
 import Comment from "./Comment";
 import { useAuth } from "../../context/AuthContext";
-import { db } from "../../utils/init-firebase";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  doc,
-  getDoc,
-  setDoc,
-  query,
-  where,
-} from "firebase/firestore";
 import { fetcher, isEmpty } from "../../utils";
 import useSWR from "swr";
+import NewCommentForm from "../Form/NewCommentForm";
 
 const CommentBox = (props) => {
-  const [displayComments, setDisplayComments] = useState(false);
-  const [likedPost, setLikedPost] = useState(false)
+  const [comments, setComments] = useState([]);
   const { currentUserProfile } = useAuth();
-  const [likes, setLikes] = useState(props.likesCount);
-  const [comments, setComments] = useState(props.comments)
 
-  const postID = props.id;
-
-  const showComments = () => {
-    displayComments ? setDisplayComments(false) : setDisplayComments(true);
-  };
-
-
-  const { data, error } = useSWR(`/api/getPostById?id=${postID}`, fetcher);
+  //fetch all comments with inifinte scroll
+  
+  const { data, error } = useSWR(`/api/getCommentsByPost?id=${props.postID}`, fetcher, {
+    revalidateOnFocus: false,
+  });
 
   useEffect(() => {
     if (data && data.length > 0) {
-      setCoffeeStore(data[0]);
-
-      setVotingCount(data[0].voting);
+      console.log(data);
+      setComments(data);
     }
-  }, [data]); 
+    return () => {setComments([])}
+  }, [data]);
+ 
 
 
+  const commentItems = (
+    <div>
+      {comments.length !== 0 && comments.map((comment) => (
+        <Comment
+          key={comment.id}
+          id={comment.id}
+          userID={comment.user_id}
+          displayName={comment.user_displayName}
+          profilePhoto={comment.user_profilePhoto}
+          content={comment.content}
+          created_at={comment.created_at}
+          likesCount={comment.likesCount}
+          postID={props.postID}
+        />
+      ))}
+    </div>
+  );
 
-
-
-
-
-  const submitLikePost = async () => {
-    console.log(props.likesCount)
+  //handle add comment
+  const submitCommentHandler = async ({ content }) => {
+    if (currentUserProfile) {
       try {
-        await setDoc(
-          doc(db, "users", `${currentUserProfile.userID}`),
-          {
-            likedPosts: [...currentUserProfile.likedPosts, postID],
+        await fetch(`/api/submitComment`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-          { merge: true }
-        );
-        await setDoc(
-          doc(db, "posts", `${postID}`),
-          {
-            likesCount: props.likesCount + 1,
-          },            
-          { merge: true }
-        );
-        setLikedPost(true)
-      } catch (error) {
+          body: JSON.stringify({
+            user_id: currentUserProfile.userID,
+            user_displayName: currentUserProfile.displayName,
+            user_profilePhoto: currentUserProfile.profilePhoto,
+            content,
+            postID: props.postID,
+          }),
+        });
+      } catch {
         console.error(error);
       }
+    }
   };
 
-  const commentList = (
-    <div >
-        {comments.map((comment) => (
-            <Comment
-                key={post.id}
-                id={post.id}
-                userID={post.user_id}
-      
-            />
-        ))
-        }
-    </div>
-)
-
-
-
-
   return (
-    <div className={styles.commentContainer}>
-      <div className={styles.commentHeader}>
-        <button onClick={likedPost? submitLikePost : submitUnlikePost }>Like Post</button>
-        <button onClick={showComments}>Show Comments</button>
-        <span>Likes: {props.likesCount}</span>
-      </div>
-      {displayComments && <div className={styles.commentBox}>Comments</div>}
+    <div>
+      <NewCommentForm submitHandler={submitCommentHandler} />
+      <div>Comment box {commentItems}</div>
     </div>
   );
 };

@@ -18,6 +18,7 @@ const Post = ({ posts }) => {
                     description={post.description}
                     created_at={post.created_at}
                     likesCount={post.likesCount}
+                    commentsCount={post.commentsCount}
                 />
             ))
             }
