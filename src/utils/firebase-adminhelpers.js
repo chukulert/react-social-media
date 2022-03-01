@@ -116,6 +116,26 @@ export async function updateLikePost(uid, postId, type) {
   }
 }
 
+export async function updateLikeComment(uid, commentID, type) {
+  try {
+    const commentRef = db.collection("comments").doc(`${commentID}`);
+
+    if (type === "like") {
+      return await commentRef.update({
+        likesCount: FieldValue.increment(1),
+        userLikes: FieldValue.arrayUnion(`${uid}`),
+      });
+    } else {
+      return await commentRef.update({
+        likesCount: FieldValue.increment(-1),
+        userLikes: FieldValue.arrayRemove(`${uid}`),
+      });
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 export async function postNewComment({
   user_id,
   user_displayName,
@@ -133,7 +153,8 @@ export async function postNewComment({
       content,
       created_at: Date.now(),
       likesCount: 0,
-      post_ID: postID
+      post_ID: postID,
+      userLikes: []
     };
 
     // Add a new document in collection "cities" with ID 'LA'
@@ -150,13 +171,17 @@ export async function postNewComment({
     console.error(e);
   }
 }
+
+
 export async function fetchPostComments(postID) {
   try {
     //get posts of user page
     const comments = [];
     const commentsRef = db.collection("comments");
 
-    const querySnapshot = await commentsRef.where("post_ID", "==", postID).get();
+    const querySnapshot = await commentsRef
+      .where("post_ID", "==", postID)
+      .get();
     querySnapshot.forEach((doc) => {
       const data = {
         ...doc.data(),

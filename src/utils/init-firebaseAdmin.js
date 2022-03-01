@@ -13,7 +13,7 @@ if (!admin.apps.length) {app = initializeApp({
   databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
 })}
 
-export const verifyToken = (token) => {
+export const verifyToken = async (token) => {
   if (!admin.apps.length) {
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
