@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import ResetPasswordForm from "../src/components/ResetPasswordForm";
+import ResetPasswordForm from '../src/components/Form/ResetPasswordForm'
 import { useAuth } from "../src/context/AuthContext";
 
 const forgotPasswordPage = (props) => {

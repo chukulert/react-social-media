@@ -23,14 +23,17 @@ import nookies from "nookies";
 import {
   fetchAllUsers,
   fetchUserProfile,
-  fetchFriendsData,
+  fetchFollowingData,
+  fetchFeedData
 } from "../src/utils/firebase-adminhelpers";
 
 export default function Home(props) {
   const [showPostModal, setShowPostModal] = useState(false);
   const [showFriendsModal, setShowFriendsModal] = useState(false);
+  const [feed, setFeed] = useState([]);
+  const [lastFeedPost, setLastFeedPost] = useState("");
 
-  const { userProfile, friendsData, allUsersData } = props;
+  const { userProfile, followingData, allUsersData } = props;
 
   const userItems = (
     <ul>
@@ -45,18 +48,18 @@ export default function Home(props) {
     </ul>
   );
 
-  const friendsList = (
-    <ul>
-      {friendsData.map((user) => (
-        // eslint-disable-next-line react/jsx-key
-        <li key={user.userID}>
-          <Link href={`/profile/${user.userID}`}>
-            <a>{user.email}</a>
-          </Link>
-        </li>
-      ))}
-    </ul>
-  );
+  // const friendsList = (
+  //   <ul>
+  //     {friendsData.map((user) => (
+  //       // eslint-disable-next-line react/jsx-key
+  //       <li key={user.userID}>
+  //         <Link href={`/profile/${user.userID}`}>
+  //           <a>{user.email}</a>
+  //         </Link>
+  //       </li>
+  //     ))}
+  //   </ul>
+  // );
 
   //modal handler functions
   const closePostModalHandler = () => {
@@ -100,6 +103,17 @@ export default function Home(props) {
           await setDoc(createPost, { image: fileURL }, { merge: true });
         }
       }
+      console.log(createPost)
+      await fetch(`/api/updateFollowersFeed`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          postID: createPost.id,
+          userProfile: userProfile,
+        }),
+      });
     } catch (e) {
       console.error(e);
     }
@@ -108,12 +122,13 @@ export default function Home(props) {
   return (
     <div>
       <div>This is the homepage</div>
+
       {userProfile && (
-        <div>{`The current user is ${userProfile.userID} Email is ${userProfile.email} Friends: ${userProfile.friends}`}</div>
+        <div>{`The current user is ${userProfile.userID} Email is ${userProfile.email} Following: ${userProfile.following}`}</div>
       )}
       {userProfile && <button onClick={showPostModalHandler}>New Post</button>}
       {userProfile && (
-        <button onClick={showFriendsModalHandler}>Show Friends</button>
+      <button onClick={showFriendsModalHandler}>Show Following</button>
       )}
 
       {allUsersData && userItems}
@@ -121,7 +136,7 @@ export default function Home(props) {
       {showFriendsModal && (
         <FriendModal
           closeModal={closeFriendsModalHandler}
-          friends={friendsData}
+          following={followingData}
         />
       )}
 
@@ -140,21 +155,19 @@ export async function getServerSideProps(context) {
     const cookies = nookies.get(context);
     const token = await verifyToken(cookies.token);
     const { uid, email } = token;
-    console.log(uid, email);
     //this returns the user profile in firestore
     if (uid) {
       const userProfile = await fetchUserProfile(uid);
-      if (userProfile.private === false) {
-        const friendsData = await fetchFriendsData(userProfile);
-        const allUsersData = await fetchAllUsers();
-        return {
-          props: {
-            userProfile: userProfile,
-            friendsData: friendsData,
-            allUsersData: allUsersData,
-          },
-        };
-      }
+      const followingData = await fetchFollowingData(userProfile.following);
+      const allUsersData = await fetchAllUsers();
+      const feedData = await fetchFeedData(uid)
+      return {
+        props: {
+          userProfile: userProfile,
+          followingData: followingData ? followingData : [],
+          allUsersData: allUsersData,
+        },
+      };
     }
     return {
       props: {},

@@ -13,19 +13,20 @@ export async function fetchUserProfile(uid) {
   }
 }
 
-export async function fetchFriendsData(userProfile) {
+export async function fetchFollowingData(following) {
   try {
-    // const db = getAdminDB()
-    const allFriendsData = [];
-    await Promise.all(
-      userProfile.friends.map(async (friend) => {
-        const docRef = db.collection("users").doc(friend);
+    const allFollowingData = [];
 
-        const friendUserProfile = await docRef.get();
-        allFriendsData.push(friendUserProfile.data());
+    await Promise.all(
+      following.map(async (following) => {
+        const docRef = db.collection("users").doc(String(following));
+        const data = await docRef.get();
+        if (data) {
+          allFollowingData.push(data.data());
+        }
       })
     );
-    return allFriendsData;
+    return allFollowingData;
   } catch (error) {
     console.error(error);
   }
@@ -154,7 +155,7 @@ export async function postNewComment({
       created_at: Date.now(),
       likesCount: 0,
       post_ID: postID,
-      userLikes: []
+      userLikes: [],
     };
 
     // Add a new document in collection "cities" with ID 'LA'
@@ -171,7 +172,6 @@ export async function postNewComment({
     console.error(e);
   }
 }
-
 
 export async function fetchPostComments(postID) {
   try {
@@ -190,6 +190,57 @@ export async function fetchPostComments(postID) {
       comments.push(data);
     });
     return comments;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function updateFollowersFeed(userProfile, postData, postID) {
+  try {
+    const response = await Promise.all(
+      userProfile.following.map(async (following) => {
+        console.log(following)
+        await db.collection(`users/${following}/feed`).doc(postID).set(postData);
+      })
+    );
+      return response
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function updateFollowUser(currentUserID, postUserID, type) {
+  try {
+    const currentUserRef = db.collection("users").doc(`${currentUserID}`);
+    const postUserRef = db.collection("users").doc(`${postUserID}`);
+
+    if (type === "follow") {
+      const updateCurrentUser = () => {
+        currentUserRef.update({
+          following: FieldValue.arrayUnion(`${postUserID}`),
+        });
+      };
+
+      const updatePostUser = () => {
+        postUserRef.update({
+          followers: FieldValue.arrayUnion(`${currentUserID}`),
+        });
+      };
+      return await Promise.all([updateCurrentUser(), updatePostUser()]);
+    } else {
+      const updateCurrentUser = () => {
+        currentUserRef.update({
+          following: FieldValue.arrayRemove(`${postUserID}`),
+        });
+      };
+
+      const updatePostUser = () => {
+        postUserRef.update({
+          followers: FieldValue.arrayRemove(`${currentUserID}`),
+        });
+      };
+      return await Promise.all([updateCurrentUser(), updatePostUser()]);
+    }
   } catch (error) {
     console.error(error);
   }

@@ -33,43 +33,58 @@ const EditProfile = ({ userProfile }) => {
     bannerPhoto,
   }) => {
     try {
-      console.log(profilePhoto, bannerPhoto);
-      if (profilePhoto) {
-        const storageRef = ref(storage, `/${userProfile.userID}/profile`);
-        const uploadTask = await uploadBytesResumable(storageRef, profilePhoto);
-        const fileURL = await getDownloadURL(uploadTask.ref);
-        if (fileURL) {
-          await setDoc(
-            // `${currentUserProfile.userID}`,
-            doc(db, "users", `${userProfile.userID}`),
-            { profilePhoto: fileURL },
-            { merge: true }
+      const setProfilePhoto = async () => {
+        if (profilePhoto) {
+          const storageRef = ref(storage, `/${userProfile.userID}/profile`);
+          const uploadTask = await uploadBytesResumable(
+            storageRef,
+            profilePhoto
           );
+          const fileURL = await getDownloadURL(uploadTask.ref);
+          if (fileURL) {
+            await setDoc(
+              // `${currentUserProfile.userID}`,
+              doc(db, "users", `${userProfile.userID}`),
+              { profilePhoto: fileURL },
+              { merge: true }
+            );
+          }
         }
-      }
-
-      if (bannerPhoto) {
-        const storageRef = ref(storage, `/${userProfile.userID}/banner`);
-        const uploadTask = await uploadBytesResumable(storageRef, bannerPhoto);
-        const fileURL = await getDownloadURL(uploadTask.ref);
-        if (fileURL) {
-          await setDoc(
-            doc(db, "users", `${userProfile.userID}`),
-            { bannerPhoto: fileURL },
-            { merge: true }
+      };
+      const setBannerPhoto = async () => {
+        if (bannerPhoto) {
+          const storageRef = ref(storage, `/${userProfile.userID}/banner`);
+          const uploadTask = await uploadBytesResumable(
+            storageRef,
+            bannerPhoto
           );
+          const fileURL = await getDownloadURL(uploadTask.ref);
+          if (fileURL) {
+            await setDoc(
+              doc(db, "users", `${userProfile.userID}`),
+              { bannerPhoto: fileURL },
+              { merge: true }
+            );
+          }
         }
-      }
+      };
 
-      const newUserProfile = await setDoc(
-        doc(db, "users", `${userProfile.userID}`),
-        {
-          displayName: displayName,
-          userSummary: userSummary,
-        },
-        { merge: true }
-      );
-      //   router.push(`/profile/${currentUserProfile.userID}`);
+      const setProfileDetails = async () => {
+        await setDoc(
+          doc(db, "users", `${userProfile.userID}`),
+          {
+            displayName: displayName,
+            userSummary: userSummary,
+          },
+          { merge: true }
+        );
+      };
+      await Promise.all([
+        setProfilePhoto(),
+        setBannerPhoto(),
+        setProfileDetails(),
+      ]);
+      router.push(`/profile/edit`);
     } catch (error) {
       console.error(error);
     }

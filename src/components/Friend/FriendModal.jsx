@@ -2,14 +2,15 @@ import styles from "./FriendModal.module.css";
 import FriendListItem from "./FriendListItem";
 
 const FriendModal = (props) => {
-  const friendsList = (
+  console.log(props)
+  const followingList = (
     <ul>
-      {props.friends.map((friend) => (
+      {props.following.map((following) => (
         <FriendListItem
-          key={friend.userID}
-          id={friend.userID}
-          displayName={friend.displayName}
-          profilePhoto={friend.profilePhoto}
+          key={following.userID}
+          id={following.userID}
+          displayName={following.displayName}
+          profilePhoto={following.profilePhoto}
         />
       ))}
     </ul>
@@ -20,11 +21,11 @@ const FriendModal = (props) => {
       <div className={styles.modalBackdrop} onClick={props.closeModal}></div>
       <div>
         <div className={styles.modal}>
-          <h2>All Friends</h2>
+          <h2>All Following</h2>
           <button onClick={props.closeModal} className={styles.closeModalBtn}>
             X
           </button>
-          {friendsList}
+          {followingList}
         </div>
       </div>
     </>
