@@ -1,13 +1,27 @@
-
-import { updateFollowUser } from "../../src/utils/firebase-adminhelpers";
+import {
+  updateFollowUser,
+  fetchUserPosts,
+  updatePostFollowing
+} from "../../src/utils/firebase-adminhelpers";
 
 const followUser = async (req, res) => {
-    if (req.method === "PUT") {
+  if (req.method === "PUT") {
     const { currentUserID, postUserID, type } = req.body;
-    console.log(currentUserID, postUserID, type)
     try {
       if (currentUserID) {
-        const records = await updateFollowUser(currentUserID, postUserID, type);
+        //update user id to postuser's following, and update postuser's followers
+        await updateFollowUser(currentUserID, postUserID, type);
+
+        //fetch all of postuser's posts
+        const posts = await fetchUserPosts(postUserID);
+        console.log(posts)
+
+        //update postusers posts' followers to add/remove userID
+        const records = await Promise.all(
+          posts.map(async (post) => {
+            updatePostFollowing(currentUserID, post.id, type);
+          })
+        );
         if (records.length !== 0) {
           res.json(records);
         } else {
@@ -21,6 +35,7 @@ const followUser = async (req, res) => {
       res.status(500);
       res.json({ message: "Something went wrong", err });
     }
-  }};
-  
-  export default followUser;
+  }
+};
+
+export default followUser;

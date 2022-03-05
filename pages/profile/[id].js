@@ -73,6 +73,7 @@ const ProfilePage = (props) => {
         `/api/fetchUserProfile?id=${currentUserProfile.userID}`
       );
       const fetchedUser = await response.json()
+      console.log(fetchedUser)
       if (postUser.userID === fetchedUser.userID) {
         setIsCurrentUserPage(true);
       }
@@ -85,7 +86,7 @@ const ProfilePage = (props) => {
       updateUser();
     }
     return () => {};
-  }, []);
+  }, [currentUserProfile]);
 
   const followUserHandler = async () => {
     if (currentUserProfile) {

@@ -17,6 +17,7 @@ import { useState } from "react";
 import FormModal from "../src/components/Form/FormModal";
 import Link from "next/link";
 import FriendModal from "../src/components/Friend/FriendModal";
+import Post from "../src/components/Post/Post";
 
 import { verifyToken } from "../src/utils/init-firebaseAdmin";
 import nookies from "nookies";
@@ -24,16 +25,16 @@ import {
   fetchAllUsers,
   fetchUserProfile,
   fetchFollowingData,
-  fetchFeedData
+  fetchInitialFeedData
 } from "../src/utils/firebase-adminhelpers";
 
 export default function Home(props) {
   const [showPostModal, setShowPostModal] = useState(false);
   const [showFriendsModal, setShowFriendsModal] = useState(false);
-  const [feed, setFeed] = useState([]);
-  const [lastFeedPost, setLastFeedPost] = useState("");
+  const [feed, setFeed] = useState(props.feedData.initialFeedData);
+  const [lastFeedPost, setLastFeedPost] = useState(props.feedData.lastDoc);
 
-  const { userProfile, followingData, allUsersData } = props;
+  const { userProfile, followingData, allUsersData, feedData } = props;
 
   const userItems = (
     <ul>
@@ -89,6 +90,7 @@ export default function Home(props) {
         likesCount: 0,
         user_displayName: userProfile.displayName,
         user_profilePhoto: userProfile.profilePhoto,
+        followers: [...userProfile.followers]
       });
 
       //if file exists, add to storage and update post
@@ -103,17 +105,16 @@ export default function Home(props) {
           await setDoc(createPost, { image: fileURL }, { merge: true });
         }
       }
-      console.log(createPost)
-      await fetch(`/api/updateFollowersFeed`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          postID: createPost.id,
-          userProfile: userProfile,
-        }),
-      });
+      // await fetch(`/api/updateFollowersFeed`, {
+      //   method: "PUT",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     postID: createPost.id,
+      //     userProfile: userProfile,
+      //   }),
+      // });
     } catch (e) {
       console.error(e);
     }
@@ -122,7 +123,8 @@ export default function Home(props) {
   return (
     <div>
       <div>This is the homepage</div>
-
+      {/* {feedData && <p>{props.feedData.lastDoc}</p>}
+      {feedData && <p>{props.feedData.initialFeedData}</p>} */}
       {userProfile && (
         <div>{`The current user is ${userProfile.userID} Email is ${userProfile.email} Following: ${userProfile.following}`}</div>
       )}
@@ -146,6 +148,7 @@ export default function Home(props) {
           submitFormHandler={newPostSubmitHandler}
         />
       )}
+      {feed && <Post posts={feed}/>}
     </div>
   );
 }
@@ -160,12 +163,14 @@ export async function getServerSideProps(context) {
       const userProfile = await fetchUserProfile(uid);
       const followingData = await fetchFollowingData(userProfile.following);
       const allUsersData = await fetchAllUsers();
-      const feedData = await fetchFeedData(uid)
+      const feedData = await fetchInitialFeedData(uid)
+      console.log(feedData)
       return {
         props: {
           userProfile: userProfile,
           followingData: followingData ? followingData : [],
-          allUsersData: allUsersData,
+          allUsersData: allUsersData ? allUsersData : [],
+          feedData: feedData ? feedData : []
         },
       };
     }

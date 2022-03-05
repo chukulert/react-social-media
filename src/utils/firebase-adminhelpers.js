@@ -199,11 +199,14 @@ export async function updateFollowersFeed(userProfile, postData, postID) {
   try {
     const response = await Promise.all(
       userProfile.following.map(async (following) => {
-        console.log(following)
-        await db.collection(`users/${following}/feed`).doc(postID).set(postData);
+        console.log(following);
+        await db
+          .collection(`users/${following}/feed`)
+          .doc(postID)
+          .set(postData);
       })
     );
-      return response
+    return response;
   } catch (error) {
     console.error(error);
   }
@@ -241,6 +244,124 @@ export async function updateFollowUser(currentUserID, postUserID, type) {
       };
       return await Promise.all([updateCurrentUser(), updatePostUser()]);
     }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// export async function fetchInitialFeedData(userID) {
+//   try {
+//     const query = db
+//       .collection(`users/${userID}/feed`)
+//       .orderBy("created_at", "desc")
+//       .orderBy("likesCount", "desc")
+//       .limit(5);
+//     const snapshots = await query.get();
+//     const initialFeedData = snapshots.docs.map((post) => {
+//       const data = {
+//         ...post.data(),
+//         id: post.id,
+//       };
+//       return data;
+//     });
+//     // console.log(initialFeedData)
+
+//     const lastDoc = snapshots.docs[snapshots.docs.length - 1].data();
+//     return {
+//       initialFeedData,
+//       lastDoc,
+//     };
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
+
+
+
+export async function updatePostFollowing(currentUserID, postID, type) {
+  try {
+    const postRef = db.collection("posts").doc(postID);
+    if (type === "follow") {
+      console.log(postID);
+      return await postRef.update({
+        followers: FieldValue.arrayUnion(currentUserID),
+      });
+    } else {
+      return await postRef.update({
+        followers: FieldValue.arrayRemove(currentUserID),
+      });
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// const fetchMoreComments = async () => {
+// const nextQuery = query(
+//   collection(db, "comments"),
+//   where("post_ID", "==", props.postID),
+//   orderBy("created_at", "desc"),
+//   orderBy("likesCount", "desc"),
+//   startAfter(lastDoc),
+//   limit(2)
+// );
+//   const documentSnapshots = await getDocs(nextQuery);
+//   updateCommentsState(documentSnapshots);
+// };
+
+
+export async function fetchInitialFeedData(userID) {
+  try {
+    const query = db
+      .collection(`posts`)
+      .where('followers', 'array-contains', userID)
+      .orderBy("created_at", "desc")
+      .orderBy("likesCount", "desc")
+      .limit(5);
+    const snapshots = await query.get();
+    const initialFeedData = snapshots.docs.map((post) => {
+      const data = {
+        ...post.data(),
+        id: post.id,
+      };
+      return data;
+    });
+    // console.log(initialFeedData)
+
+    const lastDoc = snapshots.docs[snapshots.docs.length - 1].data();
+    return {
+      initialFeedData,
+      lastDoc,
+    };
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function fetchMoreFeed(userID, lastPost) {
+  try {
+    const query = db
+      .collection(`posts`)
+      .where('followers', 'array-contains', userID)
+      .orderBy("created_at", "desc")
+      .orderBy("likesCount", "desc")
+      .startAfter(lastPost)
+      .limit(5);
+    const snapshots = await query.get();
+    const postsData = snapshots.docs.map((post) => {
+      const data = {
+        ...post.data(),
+        id: post.id,
+      };
+      return data;
+    });
+    // console.log(initialFeedData)
+
+    const lastDoc = snapshots.docs[snapshots.docs.length - 1].data();
+    return {
+      postsData,
+      lastDoc,
+    };
   } catch (error) {
     console.error(error);
   }
