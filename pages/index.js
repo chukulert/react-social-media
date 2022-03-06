@@ -1,19 +1,8 @@
 import Head from "next/head";
-import { useAuth } from "../src/context/AuthContext";
-import NewPostForm from "../src/components/Form/NewPostForm";
 import { db, storage } from "../src/utils/init-firebase";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  doc,
-  getDoc,
-  setDoc,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, addDoc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import FormModal from "../src/components/Form/FormModal";
 import Link from "next/link";
 import FriendModal from "../src/components/Friend/FriendModal";
@@ -25,16 +14,56 @@ import {
   fetchAllUsers,
   fetchUserProfile,
   fetchFollowingData,
-  fetchInitialFeedData
+  // fetchInitialFeedData,
 } from "../src/utils/firebase-adminhelpers";
+
+import useIntersect from "../src/hooks/useIntersect";
+import { useEffect } from "react/cjs/react.development";
 
 export default function Home(props) {
   const [showPostModal, setShowPostModal] = useState(false);
   const [showFriendsModal, setShowFriendsModal] = useState(false);
-  const [feed, setFeed] = useState(props.feedData.initialFeedData);
-  const [lastFeedPost, setLastFeedPost] = useState(props.feedData.lastDoc);
+  const [feed, setFeed] = useState([]);
+  const [lastFeedPost, setLastFeedPost] = useState("");
+  const [element, setElement] = useState(null);
+  const [loading, setIsLoading] = useState(true);
+  const [error, setError] = useState(true);
+  const [noMorePosts, setNoMorePosts] = useState(false);
 
   const { userProfile, followingData, allUsersData, feedData } = props;
+  const observer = useRef();
+
+  //get initial feeds and setup intersection observer
+  useEffect(() => {
+    if (feed.length === 0) {
+      getInitialFeed();
+    }
+    let currentElement;
+    let currentObserver;
+    observer.current = new IntersectionObserver(handleObserver, {
+      threshold: 1,
+    });
+    currentElement = element;
+    currentObserver = observer.current;
+
+    if (currentElement) {
+      currentObserver.observe(currentElement);
+    }
+    return () => {
+      if (currentElement) {
+        currentObserver.disconnect();
+      }
+    };
+  }, [feed, lastFeedPost]);
+
+  const handleObserver = useCallback(
+    (entries) => {
+      if (entries[0].isIntersecting) {
+        fetchMoreFeedHandler();
+      }
+    },
+    [feed, lastFeedPost]
+  );
 
   const userItems = (
     <ul>
@@ -90,11 +119,11 @@ export default function Home(props) {
         likesCount: 0,
         user_displayName: userProfile.displayName,
         user_profilePhoto: userProfile.profilePhoto,
-        followers: [...userProfile.followers]
+        followers: [...userProfile.followers],
       });
 
       //if file exists, add to storage and update post
-      if (file !== "") {
+      if (file) {
         const storageRef = ref(
           storage,
           `/${userProfile.userID}/${createPost.id}`
@@ -120,17 +149,59 @@ export default function Home(props) {
     }
   };
 
+
+  const getInitialFeed = async () => {
+    try {
+      const response = await fetch(`/api/getFeed?id=${userProfile.userID}`);
+      const { initialFeedData, lastDoc } = await response.json();
+      setFeed(initialFeedData);
+      setLastFeedPost(lastDoc);
+      setIsLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchMoreFeedHandler = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/getFeed`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userID: userProfile.userID,
+          lastPost: lastFeedPost,
+        }),
+      });
+      //api returns a response stream, read with .json() and returns a promise
+      const { postsData, lastDoc } = await response.json();
+      if (!postsData) {
+        setIsLoading(false);
+        setNoMorePosts(true);
+        return;
+      }
+      setFeed((previousState) => [...previousState, ...postsData]);
+      setLastFeedPost(lastDoc);
+      setIsLoading(false);
+    } catch (error) {
+      console.error(error);
+      setError(error)
+    }
+  };
+
+  console.log(lastFeedPost);
+
   return (
     <div>
       <div>This is the homepage</div>
-      {/* {feedData && <p>{props.feedData.lastDoc}</p>}
-      {feedData && <p>{props.feedData.initialFeedData}</p>} */}
       {userProfile && (
         <div>{`The current user is ${userProfile.userID} Email is ${userProfile.email} Following: ${userProfile.following}`}</div>
       )}
       {userProfile && <button onClick={showPostModalHandler}>New Post</button>}
       {userProfile && (
-      <button onClick={showFriendsModalHandler}>Show Following</button>
+        <button onClick={showFriendsModalHandler}>Show Following</button>
       )}
 
       {allUsersData && userItems}
@@ -148,7 +219,12 @@ export default function Home(props) {
           submitFormHandler={newPostSubmitHandler}
         />
       )}
-      {feed && <Post posts={feed}/>}
+
+      {feed && <Post posts={feed} />}
+      <div ref={setElement}></div>
+      {loading && <div>Loading...</div>}
+      {error && !noMorePosts && <div>{error}</div>}
+      {noMorePosts && !loading && <div>No More posts</div>}
     </div>
   );
 }
@@ -163,14 +239,13 @@ export async function getServerSideProps(context) {
       const userProfile = await fetchUserProfile(uid);
       const followingData = await fetchFollowingData(userProfile.following);
       const allUsersData = await fetchAllUsers();
-      const feedData = await fetchInitialFeedData(uid)
-      console.log(feedData)
+      // const feedData = await fetchInitialFeedData(uid);
       return {
         props: {
           userProfile: userProfile,
           followingData: followingData ? followingData : [],
           allUsersData: allUsersData ? allUsersData : [],
-          feedData: feedData ? feedData : []
+          // feedData: feedData ? feedData : [],
         },
       };
     }

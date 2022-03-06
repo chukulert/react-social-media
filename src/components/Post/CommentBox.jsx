@@ -108,7 +108,7 @@ const CommentBox = (props) => {
   const submitCommentHandler = async ({ content }) => {
     if (currentUserProfile) {
       try {
-        await fetch(`/api/submitComment`, {
+        const response = await fetch(`/api/submitComment`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -125,7 +125,7 @@ const CommentBox = (props) => {
         console.error(error);
       }
     }
-  };
+   };
 
  
   return (

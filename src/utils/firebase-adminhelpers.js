@@ -158,7 +158,6 @@ export async function postNewComment({
       userLikes: [],
     };
 
-    // Add a new document in collection "cities" with ID 'LA'
     const newComment = () => {
       db.collection("comments").add(commentData);
     };
@@ -199,7 +198,7 @@ export async function updateFollowersFeed(userProfile, postData, postID) {
   try {
     const response = await Promise.all(
       userProfile.following.map(async (following) => {
-        console.log(following);
+  
         await db
           .collection(`users/${following}/feed`)
           .doc(postID)
@@ -249,40 +248,11 @@ export async function updateFollowUser(currentUserID, postUserID, type) {
   }
 }
 
-// export async function fetchInitialFeedData(userID) {
-//   try {
-//     const query = db
-//       .collection(`users/${userID}/feed`)
-//       .orderBy("created_at", "desc")
-//       .orderBy("likesCount", "desc")
-//       .limit(5);
-//     const snapshots = await query.get();
-//     const initialFeedData = snapshots.docs.map((post) => {
-//       const data = {
-//         ...post.data(),
-//         id: post.id,
-//       };
-//       return data;
-//     });
-//     // console.log(initialFeedData)
-
-//     const lastDoc = snapshots.docs[snapshots.docs.length - 1].data();
-//     return {
-//       initialFeedData,
-//       lastDoc,
-//     };
-//   } catch (error) {
-//     console.error(error);
-//   }
-// }
-
-
-
 export async function updatePostFollowing(currentUserID, postID, type) {
   try {
     const postRef = db.collection("posts").doc(postID);
     if (type === "follow") {
-      console.log(postID);
+     
       return await postRef.update({
         followers: FieldValue.arrayUnion(currentUserID),
       });
@@ -309,15 +279,14 @@ export async function updatePostFollowing(currentUserID, postID, type) {
 //   updateCommentsState(documentSnapshots);
 // };
 
-
 export async function fetchInitialFeedData(userID) {
   try {
     const query = db
       .collection(`posts`)
-      .where('followers', 'array-contains', userID)
+      .where("followers", "array-contains", userID)
       .orderBy("created_at", "desc")
       .orderBy("likesCount", "desc")
-      .limit(5);
+      .limit(4);
     const snapshots = await query.get();
     const initialFeedData = snapshots.docs.map((post) => {
       const data = {
@@ -326,8 +295,6 @@ export async function fetchInitialFeedData(userID) {
       };
       return data;
     });
-    // console.log(initialFeedData)
-
     const lastDoc = snapshots.docs[snapshots.docs.length - 1].data();
     return {
       initialFeedData,
@@ -342,12 +309,13 @@ export async function fetchMoreFeed(userID, lastPost) {
   try {
     const query = db
       .collection(`posts`)
-      .where('followers', 'array-contains', userID)
+      .where("followers", "array-contains", userID)
       .orderBy("created_at", "desc")
       .orderBy("likesCount", "desc")
-      .startAfter(lastPost)
-      .limit(5);
+      .startAfter(lastPost.created_at)
+      .limit(4);
     const snapshots = await query.get();
+
     const postsData = snapshots.docs.map((post) => {
       const data = {
         ...post.data(),
@@ -355,7 +323,6 @@ export async function fetchMoreFeed(userID, lastPost) {
       };
       return data;
     });
-    // console.log(initialFeedData)
 
     const lastDoc = snapshots.docs[snapshots.docs.length - 1].data();
     return {

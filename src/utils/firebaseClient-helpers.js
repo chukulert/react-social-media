@@ -44,16 +44,16 @@ export async function setUserProfile(uid) {
   }
 }
 
-export async function fetchFriendsData(userProfile) {
+export async function fetchFollowingData(userProfile) {
   try {
-    const allFriendsData = [];
-    userProfile.friends.forEach((friend) => {
+    const allFollowingData = [];
+    userProfile.following.forEach((friend) => {
       const docRef = doc(db, "users", friend);
       getDoc(docRef).then((response) => {
-        allFriendsData.push(response.data());
+        allFollowingData.push(response.data());
       });
     });
-    return allFriendsData;
+    return allFollowingData;
   } catch (error) {
     console.error(error);
   }
