@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../../src/context/AuthContext";
 import Image from "next/image";
 import { storage, db } from "../../src/utils/init-firebase";
 import { setDoc, doc } from "firebase/firestore";
@@ -20,10 +19,6 @@ import {
 import * as Yup from "yup";
 
 const EditProfile = ({ userProfile }) => {
-  //   const [displayName, setDisplayName] = useState(null);
-  //   const [profilePhoto, setProfilePhoto] = useState(null);
-  //   const [userSummary, setUserSummary] = useState("");
-  //   const [bannerPhoto, setBannerPhoto] = useState(null);
   const router = useRouter();
 
   const submitHandler = async ({

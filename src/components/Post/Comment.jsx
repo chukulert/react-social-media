@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { timeAgo } from "../../utils";
 import styles from "./Comment.module.css";
 
-
 const Comment = (props) => {
   const {
     userID,

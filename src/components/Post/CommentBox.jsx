@@ -17,12 +17,11 @@ import {
 } from "firebase/firestore";
 
 const CommentBox = (props) => {
-  // const [comments, setComments] = useState([]);
   const { currentUserProfile } = useAuth();
   const [comments, setComments] = useState([]);
   const [lastDoc, setLastDoc] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [allCommentsLoaded, setAllCommentsLoaded] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [noMoreComments, setNoMoreComments] = useState(false);
 
   useEffect(() => {
     const abortCtrl = new AbortController();
@@ -35,10 +34,12 @@ const CommentBox = (props) => {
           where("post_ID", "==", props.postID),
           orderBy("created_at", "desc"),
           orderBy("likesCount", "desc"),
-          limit(2)
+          limit(5)
         );
         const documentSnapshots = await getDocs(firstQuery);
+        console.log(documentSnapshots);
         updateCommentsState(documentSnapshots);
+        setLoading(false);
       } catch (error) {
         console.error(error);
       }
@@ -50,7 +51,7 @@ const CommentBox = (props) => {
   }, []);
 
   const updateCommentsState = (documentSnapshots) => {
-    if (documentSnapshots.length !== 0) {
+    if (documentSnapshots.docs.length !== 0) {
       const commentsData = documentSnapshots.docs.map((comment) => {
         const data = {
           ...comment.data(),
@@ -60,23 +61,30 @@ const CommentBox = (props) => {
       });
       const lastDoc = documentSnapshots.docs[documentSnapshots.docs.length - 1];
       setComments((previousState) => [...previousState, ...commentsData]);
+      if (documentSnapshots.docs.length < 5) {
+        setNoMoreComments(true);
+        return;
+      }
       setLastDoc(lastDoc);
     } else {
-      setAllCommentsLoaded(true);
+      setNoMoreComments(true);
+      return;
     }
   };
 
   const fetchMoreComments = async () => {
+    setLoading(true);
     const nextQuery = query(
       collection(db, "comments"),
       where("post_ID", "==", props.postID),
       orderBy("created_at", "desc"),
       orderBy("likesCount", "desc"),
       startAfter(lastDoc),
-      limit(2)
+      limit(5)
     );
     const documentSnapshots = await getDocs(nextQuery);
     updateCommentsState(documentSnapshots);
+    setLoading(false);
   };
 
   const commentItems = (
@@ -100,42 +108,60 @@ const CommentBox = (props) => {
     </div>
   );
 
-  if (comments.length === 0) {
-    return <h1>Loading...</h1>;
-  }
-
   //handle add comment
   const submitCommentHandler = async ({ content }) => {
     if (currentUserProfile) {
       try {
-        const response = await fetch(`/api/submitComment`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            user_id: currentUserProfile.userID,
-            user_displayName: currentUserProfile.displayName,
-            user_profilePhoto: currentUserProfile.profilePhoto,
-            content,
-            postID: props.postID,
-          }),
-        });
-      } catch {
+        const submitComment = async () => {
+          await fetch(`/api/submitComment`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              user_id: currentUserProfile.userID,
+              user_displayName: currentUserProfile.displayName,
+              user_profilePhoto: currentUserProfile.profilePhoto,
+              content,
+              postID: props.postID,
+            }),
+          });
+        };
+        
+        const createNotification = async () => {
+          if(props.userID !== currentUserProfile.userID) {
+            await fetch(`/api/createNotification`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                sent_user_id: currentUserProfile.userID,
+                sent_user_displayName: currentUserProfile.displayName,
+                user_id: props.userID,
+                link: `/post/${props.postID}`,
+                type: "comment",
+                message: `${currentUserProfile.displayName} has commented on your post.`,
+              }),
+            });
+          }
+        };
+        await Promise.all([submitComment(), createNotification()]);
+      } catch (error){
         console.error(error);
       }
     }
-   };
+  };
 
- 
   return (
     <div>
       <NewCommentForm submitHandler={submitCommentHandler} />
       <div>Comment box {commentItems}</div>
-      {!allCommentsLoaded && (
+      {!noMoreComments && !loading && (
         <button onClick={fetchMoreComments}>Load more</button>
       )}
-      {allCommentsLoaded && <p>All comments are loaded</p>}
+      {noMoreComments && <p>All comments are loaded</p>}
+      {loading && !noMoreComments && <div>Loading...</div>}
     </div>
   );
 };

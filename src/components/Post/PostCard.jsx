@@ -16,7 +16,7 @@ const PostCard = (props) => {
   const { currentUserProfile } = useAuth();
   const [likes, setLikes] = useState(props.likesCount);
   const [post, setPost] = useState(props);
-  const [commentsCount, setCommentsCount] = useState(props.commentsCount)
+  const [commentsCount, setCommentsCount] = useState(props.commentsCount);
 
   const postID = props.id;
   useEffect(() => {
@@ -73,7 +73,6 @@ const PostCard = (props) => {
     }
   };
 
-  
   const date = timeAgo(props.created_at);
 
   return (
@@ -116,16 +115,18 @@ const PostCard = (props) => {
         )}
       </div>
       <div className={styles.commentContainer}>
-      <div className={styles.commentHeader}>
-        <button onClick={handleLikeButton}>
-          {likedPost ? "Unlike Post" : "Like Post"}
-        </button>
-        <button onClick={showCommentsHandler}>Show Comments</button>
-        <span>Likes: {likes}</span>
-        <span>Comments: {commentsCount}</span>
+        <div className={styles.commentHeader}>
+          <button onClick={handleLikeButton}>
+            {likedPost ? "Unlike Post" : "Like Post"}
+          </button>
+          <button onClick={showCommentsHandler}>Show Comments</button>
+          <span>Likes: {likes}</span>
+          <span>Comments: {commentsCount}</span>
+        </div>
+        {displayComments && (
+          <CommentBox postID={props.id} userID={props.userID} />
+        )}
       </div>
-      {displayComments && <CommentBox postID={props.id}/>}
-    </div>
     </div>
   );
 };

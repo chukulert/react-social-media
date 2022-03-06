@@ -17,7 +17,7 @@ import {
   // fetchInitialFeedData,
 } from "../src/utils/firebase-adminhelpers";
 
-import useIntersect from "../src/hooks/useIntersect";
+
 import { useEffect } from "react/cjs/react.development";
 
 export default function Home(props) {
@@ -190,8 +190,6 @@ export default function Home(props) {
       setError(error)
     }
   };
-
-  console.log(lastFeedPost);
 
   return (
     <div>

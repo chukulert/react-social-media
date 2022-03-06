@@ -198,7 +198,6 @@ export async function updateFollowersFeed(userProfile, postData, postID) {
   try {
     const response = await Promise.all(
       userProfile.following.map(async (following) => {
-  
         await db
           .collection(`users/${following}/feed`)
           .doc(postID)
@@ -252,7 +251,6 @@ export async function updatePostFollowing(currentUserID, postID, type) {
   try {
     const postRef = db.collection("posts").doc(postID);
     if (type === "follow") {
-     
       return await postRef.update({
         followers: FieldValue.arrayUnion(currentUserID),
       });
@@ -331,5 +329,31 @@ export async function fetchMoreFeed(userID, lastPost) {
     };
   } catch (error) {
     console.error(error);
+  }
+}
+
+export async function createNewNotification({
+  sent_user_id,
+  sent_user_displayName,
+  user_id,
+  link,
+  type,
+  message
+}) {
+  try {
+    const notificationData = {
+      sent_user_id,
+      sent_user_displayName,
+      user_id,
+      link,
+      created_at: Date.now(),
+      type,
+      read: false,
+      message
+    };
+
+    return await db.collection("notifications").add(notificationData);
+  } catch (e) {
+    console.error(e);
   }
 }
