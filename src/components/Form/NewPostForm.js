@@ -11,7 +11,7 @@ const NewPostForm = ({ submitHandler }) => {
         title: Yup.string().required("Required"),
         description: Yup.string().required("Required"),
       })}
-      onSubmit={(values, { setSubmitting, setFieldValue }) => {
+      onSubmit={(values, { setSubmitting }) => {
         setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
           setSubmitting(false);

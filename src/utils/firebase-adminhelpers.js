@@ -1,4 +1,5 @@
 import { FieldValue } from "firebase-admin/firestore";
+import { unstable_renderSubtreeIntoContainer } from "react-dom";
 import { db } from "./init-firebaseAdmin";
 
 export async function fetchUserProfile(uid) {
@@ -19,10 +20,10 @@ export async function fetchFollowingData(following) {
 
     await Promise.all(
       following.map(async (following) => {
-        const docRef = db.collection("users").doc(String(following));
-        const data = await docRef.get();
-        if (data) {
-          allFollowingData.push(data.data());
+        const docRef = db.collection("users").doc(following);
+        const doc = await docRef.get();
+        if (doc) {
+          allFollowingData.push(doc.data());
         }
       })
     );
@@ -338,7 +339,7 @@ export async function createNewNotification({
   user_id,
   link,
   type,
-  message
+  message,
 }) {
   try {
     const notificationData = {
@@ -349,11 +350,163 @@ export async function createNewNotification({
       created_at: Date.now(),
       type,
       read: false,
-      message
+      message,
     };
 
     return await db.collection("notifications").add(notificationData);
   } catch (e) {
     console.error(e);
+  }
+}
+
+//fetch data for an array of groups by user ID
+export async function fetchGroupsByUserId(id) {
+  try {
+    const snapshots = await db
+      .collection("groups")
+      .where("members", "array-contains", id)
+      .get();
+
+    const groupData = snapshots.docs.map((group) => {
+ 
+      const data = {
+        ...group.data(),
+        id: group.id,
+      };
+      return data;
+    });
+    return groupData;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+// get data for message groups that an array of users are in
+export async function fetchGroupByUserArray(userArray) {
+  try {
+    let groupRef = db.collection("groups");
+    // userArray.forEach((user) => {
+    //   console.log(user)
+    //   groupRef = groupRef.where("members", "==", user);
+    // });
+    // const snapshots = await groupRef.where("members", 'array-contains', userArray[0]).where("members", 'array-contains', userArray[1]).get();
+    const snapshots = await groupRef.where("members", 'array-contains', userArray[0]).get();
+    const groupsData = snapshots.docs.map((group) => {
+      const data = {
+        ...group.data(),
+        id: group.id,
+      };
+      return data;
+    });
+    return groupsData;
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+
+//save new message
+export async function saveNewMessage({ messageText, userID, groupID }) {
+  try {
+    const messageRef = db
+      .collection("messages")
+      .doc(`${groupID}`)
+      .collection("messages");
+
+    const messageData = {
+      messageText,
+      sent_by: userID,
+      sent_at: Date.now(),
+      read: false,
+    };
+    return await messageRef.add(messageData);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+//save new group
+export async function saveNewGroup({ userID, userArray, type, groupName }) {
+  try {
+    const groupData = {
+      created_at: Date.now(),
+      created_by: userID,
+      members: userArray,
+      type,
+      groupName,
+    };
+    return await db.collection("groups").add(groupData);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+
+
+//fetch messages using a group id
+export async function fetchMessagesByGroupID(groupID) {
+  try {
+    const query = db
+      .collection("messages")
+      .doc(groupID)
+      .collection("messages")
+      .orderBy("sent_at", "desc")
+      .limit(5);
+    const snapshots = await query.get();
+    const messages = snapshots.docs.map((message) => {
+      const data = {
+        ...message.data(),
+        id: message.id,
+      };
+      return data;
+    });
+    return messages
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+
+export async function fetchMoreMessagesByGroupID(groupID, snapshot) {
+  try {
+    console.log(groupID,snapshot)
+    const query = db
+      .collection("messages")
+      .doc(groupID)
+      .collection("messages")
+      .orderBy("sent_at", "desc")
+      .startAfter(snapshot)
+      .limit(5);
+    const snapshots = await query.get();
+    const messages = snapshots.docs.map((message) => {
+      console.log(message)
+      const data = {
+        ...message.data(),
+        id: message.id,
+      };
+      return data;
+    });
+    return messages
+    // const lastDoc = snapshots.docs[snapshots.docs.length - 1].data();
+    // return {
+    //   messages,
+    //   lastDoc,
+    // };
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+export async function getMessageSnapshotByID(groupID, messageID) {
+  try {
+    const messageRef = db
+    .collection("messages")
+    .doc(groupID)
+    .collection("messages")
+    .doc(messageID);
+    const doc = await messageRef.get()
+    return doc
+  } catch (error) {
+    console.error(error)
   }
 }

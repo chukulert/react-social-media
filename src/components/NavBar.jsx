@@ -22,6 +22,11 @@ const NavBar = ({switchTheme}) => {
             <a className={styles.navlink}>Register</a>
           </Link>
         )}
+          {currentUser && (
+          <Link href="/messages">
+            <a className={styles.navlink}>Messages</a>
+          </Link>
+        )}
         {currentUser && (
           <Link href={`/profile/${currentUser.uid}`}>
             <a className={styles.navlink}>Profile</a>

@@ -8,7 +8,7 @@ export const themes = {
 
 export const ThemeContext = createContext({
     theme: themes.dark,
-  changeTheme: () => {},
+    changeTheme: () => {},
 });
 
 export const ThemeContextWrapper = (props) => {
