@@ -368,7 +368,6 @@ export async function fetchGroupsByUserId(id) {
       .get();
 
     const groupData = snapshots.docs.map((group) => {
- 
       const data = {
         ...group.data(),
         id: group.id,
@@ -390,7 +389,9 @@ export async function fetchGroupByUserArray(userArray) {
     //   groupRef = groupRef.where("members", "==", user);
     // });
     // const snapshots = await groupRef.where("members", 'array-contains', userArray[0]).where("members", 'array-contains', userArray[1]).get();
-    const snapshots = await groupRef.where("members", 'array-contains', userArray[0]).get();
+    const snapshots = await groupRef
+      .where("members", "array-contains", userArray[0])
+      .get();
     const groupsData = snapshots.docs.map((group) => {
       const data = {
         ...group.data(),
@@ -400,10 +401,9 @@ export async function fetchGroupByUserArray(userArray) {
     });
     return groupsData;
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
 }
-
 
 //save new message
 export async function saveNewMessage({ messageText, userID, groupID }) {
@@ -441,8 +441,6 @@ export async function saveNewGroup({ userID, userArray, type, groupName }) {
   }
 }
 
-
-
 //fetch messages using a group id
 export async function fetchMessagesByGroupID(groupID) {
   try {
@@ -460,16 +458,15 @@ export async function fetchMessagesByGroupID(groupID) {
       };
       return data;
     });
-    return messages
+    return messages;
   } catch (e) {
     console.error(e);
   }
 }
 
-
 export async function fetchMoreMessagesByGroupID(groupID, snapshot) {
   try {
-    console.log(groupID,snapshot)
+    console.log(groupID, snapshot);
     const query = db
       .collection("messages")
       .doc(groupID)
@@ -479,14 +476,14 @@ export async function fetchMoreMessagesByGroupID(groupID, snapshot) {
       .limit(5);
     const snapshots = await query.get();
     const messages = snapshots.docs.map((message) => {
-      console.log(message)
+      console.log(message);
       const data = {
         ...message.data(),
         id: message.id,
       };
       return data;
     });
-    return messages
+    return messages;
     // const lastDoc = snapshots.docs[snapshots.docs.length - 1].data();
     // return {
     //   messages,
@@ -500,13 +497,42 @@ export async function fetchMoreMessagesByGroupID(groupID, snapshot) {
 export async function getMessageSnapshotByID(groupID, messageID) {
   try {
     const messageRef = db
-    .collection("messages")
-    .doc(groupID)
-    .collection("messages")
-    .doc(messageID);
-    const doc = await messageRef.get()
-    return doc
+      .collection("messages")
+      .doc(groupID)
+      .collection("messages")
+      .doc(messageID);
+    const doc = await messageRef.get();
+    return doc;
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
+}
+
+export async function postNewMessage({ sent_by, messageText, messageGroupID }) {
+  console.log(sent_by,messageText, messageGroupID )
+  try {
+    const messageRef = db
+      .collection("messages")
+      .doc(messageGroupID)
+      .collection("messages");
+
+    const timeStamp = Date.now()
+
+    const groupRef = db.collection("groups").doc(messageGroupID);
+
+    const messageData = {
+      sent_at: timeStamp,
+      sent_by,
+      messageText,
+      read: false,
+    };
+    const addMessage = async () => {
+      await messageRef.add(messageData);
+    };
+    const updateGroup = async () => {
+      await groupRef.update({ modified_at: timeStamp});
+    };
+
+    return await Promise.all([addMessage(), updateGroup()]);
+  } catch (error) {}
 }
