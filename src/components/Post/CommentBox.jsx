@@ -15,6 +15,8 @@ import {
   getDocs,
   where,
 } from "firebase/firestore";
+import Image from "next/image";
+
 
 const CommentBox = (props) => {
   const { currentUserProfile } = useAuth();
@@ -22,6 +24,8 @@ const CommentBox = (props) => {
   const [lastDoc, setLastDoc] = useState("");
   const [loading, setLoading] = useState(true);
   const [noMoreComments, setNoMoreComments] = useState(false);
+
+
 
   useEffect(() => {
     const abortCtrl = new AbortController();
@@ -154,14 +158,18 @@ const CommentBox = (props) => {
   };
 
   return (
-    <div>
-      <NewCommentForm submitHandler={submitCommentHandler} />
-      <div>Comment box {commentItems}</div>
+    <div className={styles.commentBoxContainer}>
+      <div className={styles.commentBoxHeader}>
+        <div><Image src={currentUserProfile.profilePhoto} alt={`${currentUserProfile.displayName} photo`} width={40} height={40} className={styles.avatar} /></div>
+      <div  className={styles.submitCommentForm} ><NewCommentForm submitHandler={submitCommentHandler} /></div>
+      </div>
+      <div>{commentItems}</div>
       {!noMoreComments && !loading && (
-        <button onClick={fetchMoreComments}>Load more</button>
+        <div onClick={fetchMoreComments} className={styles.loadMoreBtn}>Load more</div>
       )}
-      {noMoreComments && <p>All comments are loaded</p>}
-      {loading && !noMoreComments && <div>Loading...</div>}
+      {noMoreComments && <p className={styles.loadMoreBtn} >All comments are loaded</p>}
+      {loading && !noMoreComments && <div className={styles.loadMoreBtn} >Loading...</div>}
+
     </div>
   );
 };

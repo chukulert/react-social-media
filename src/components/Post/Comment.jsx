@@ -1,6 +1,18 @@
 import { useState, useEffect } from "react";
 import { timeAgo } from "../../utils";
 import styles from "./Comment.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import {
+  faThumbsUp,
+  faComment,
+  faShare,
+} from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
+import TextContent from "./TextContent";
+import Image from "next/image";
+
+
 
 const Comment = (props) => {
   const {
@@ -19,7 +31,8 @@ const Comment = (props) => {
   const [likedComment, setLikedComment] = useState(false);
   const [likes, setLikes] = useState(likesCount);
 
-  const time = timeAgo(created_at);
+  const date = timeAgo(created_at);
+  library.add(faThumbsUp)
 
   useEffect(() => {
     if (userLikes.includes(currentUserID)) {
@@ -52,14 +65,37 @@ const Comment = (props) => {
     }
   };
 
+  const likeBtnStyles = likedComment
+  ? `${styles.likeBtn} ${styles.likedComment}`
+  : `${styles.likeBtn}`;
+
   return (
     <div className={styles.commentContainer}>
-      <div>displayName: {displayName}</div>
-      <div>content: {content}</div>
-      <div>created_at: {time}</div>
-      <div>likesCount: {likes}</div>
-      <div>postID: {postID}</div>
-      <button onClick={likeCommentHandler}>{likedComment ? 'Unlike Comment' : 'Like Comment'}</button>
+      <div className={styles.imageContainer}>
+          <Image src={profilePhoto} alt='user profile photo' width={40} height={40} className={styles.avartar}/>
+      </div>
+
+      <div className={styles.commentRightContainer}>
+
+      <div className={styles.commentContentsContainer}>
+      <div className={styles.titleBarContent}>
+            <Link href={`/profile/${userID}`}>
+              <a className={styles.displayNameLink}>{displayName}</a>
+            </Link>
+            <p className={styles.timeAgo}>{date}</p>
+      </div>
+      <TextContent>{content}</TextContent>
+      </div>
+
+      <div className={styles.commentBtmContainer}>
+        <div className={styles.iconContainer} onClick={likeCommentHandler}>
+      <FontAwesomeIcon icon="fa-solid fa-thumbs-up" className={likeBtnStyles} id='commentLikeBtn' />
+      <label htmlFor="commentLikeBtn" className={styles.label}>Like</label>
+      </div>
+      <div>Likes: {likes}</div>
+      </div>
+
+      </div>
     </div>
   );
 };

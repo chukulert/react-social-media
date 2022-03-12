@@ -1,4 +1,5 @@
 import { FieldValue } from "firebase-admin/firestore";
+import { useDebugValue } from "react";
 import { unstable_renderSubtreeIntoContainer } from "react-dom";
 import { db } from "./init-firebaseAdmin";
 
@@ -360,11 +361,12 @@ export async function createNewNotification({
 }
 
 //fetch data for an array of groups by user ID
-export async function fetchGroupsByUserId(id) {
+export async function fetchGroupsByUser({userID, displayName, profilePhoto}) {
+
   try {
     const snapshots = await db
       .collection("groups")
-      .where("members", "array-contains", id)
+      .where("members", "array-contains", {id: userID, displayName, profilePhoto })
       .get();
 
     const groupData = snapshots.docs.map((group) => {
@@ -374,6 +376,7 @@ export async function fetchGroupsByUserId(id) {
       };
       return data;
     });
+
     return groupData;
   } catch (e) {
     console.error(e);
@@ -466,7 +469,7 @@ export async function fetchMessagesByGroupID(groupID) {
 
 export async function fetchMoreMessagesByGroupID(groupID, snapshot) {
   try {
-    console.log(groupID, snapshot);
+    
     const query = db
       .collection("messages")
       .doc(groupID)
@@ -476,7 +479,7 @@ export async function fetchMoreMessagesByGroupID(groupID, snapshot) {
       .limit(5);
     const snapshots = await query.get();
     const messages = snapshots.docs.map((message) => {
-      console.log(message);
+     
       const data = {
         ...message.data(),
         id: message.id,
@@ -505,11 +508,11 @@ export async function getMessageSnapshotByID(groupID, messageID) {
     return doc;
   } catch (error) {
     console.error(error);
-  }
+  } 
 }
 
 export async function postNewMessage({ sent_by, messageText, messageGroupID }) {
-  console.log(sent_by,messageText, messageGroupID )
+ console.log(messageGroupID)
   try {
     const messageRef = db
       .collection("messages")
@@ -534,5 +537,28 @@ export async function postNewMessage({ sent_by, messageText, messageGroupID }) {
     };
 
     return await Promise.all([addMessage(), updateGroup()]);
+  } catch (error) {}
+}
+
+
+export async function createNewMessageGroup({ membersArray, currentUserID }) {
+  // console.log(membersArray,currentUserID)
+  try {
+    const groupData = {
+      created_at: Date.now(),
+      created_by: currentUserID,
+      members: membersArray,
+      groupName: '',
+      modified_at: Date.now(),
+      type: 'private'
+    };
+    const group = await db.collection('groups').add(groupData)
+    const fetchedGroup = await db.collection('groups').doc(group.id).get()
+    const data =  {
+      ...fetchedGroup.data(),
+      id: group.id
+    }
+    return data;
+
   } catch (error) {}
 }

@@ -1,0 +1,34 @@
+.inputContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.commentInput {
+    border-radius: 8px;
+    border: none;
+    background-color: var(--background-color-light);
+    color: var(--text-color);
+    border: .5px solid var(--text-color);
+    padding: .5rem;
+    resize: none;
+
+}
+
+.submitBtnContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.submitBtn {
+    background-color: var(--background-color-light);
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: .9rem;
+    text-align: center;
+    border-color: transparent !important;
+ 
+}
+
+.submitBtn:hover {
+    text-decoration: underline;
+}

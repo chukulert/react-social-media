@@ -1,3 +1,70 @@
 .commentContainer {
     padding: 1rem 0;
+    display: flex;
+
+}
+
+.displayNameLink {
+    font-weight: bold;
+}
+
+.displayNameLink:hover {
+    text-decoration: underline;
+}
+
+.avartar {
+    border-radius: 50%;
+}
+
+.imageContainer {
+    min-width: 40px;
+}
+
+.timeAgo {
+    color: grey;
+    font-size: .8rem;
+}
+
+.commentRightContainer {
+    max-width: auto;
+    margin-left: .5rem;
+}
+
+.commentContentsContainer {
+    border-radius: 8px;
+    padding: .5rem;
+    background-color: var(--background-color-hover);
+    font-size: .9rem;
+}
+
+.titleBarContent {
+    margin-bottom: .5rem;
+}
+
+.commentBtmContainer {
+   display: flex;
+    font-size: .8rem;
+    padding: .5rem 0;
+}
+
+.iconContainer {
+    margin-right: 1rem;
+}
+.iconContainer:hover .likeBtn {
+    color: var(--primary-color)
+}
+
+.likeBtn {
+    cursor: pointer;
+    color: var(--text-color);
+    margin-right: .2rem;
+}
+
+
+.likedComment {
+    color: var(--primary-color)
+}
+
+.label {
+    cursor: pointer;
 }

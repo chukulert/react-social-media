@@ -1,6 +1,7 @@
 import React from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import styles from './NewCommentForm.module.css'
 
 const NewCommentForm = ({ submitHandler }) => {
 
@@ -23,11 +24,10 @@ const NewCommentForm = ({ submitHandler }) => {
     
     >
       <Form>
-        <label htmlFor="content">Content</label>
-        <Field name="content" type="string" as='textarea'/>
-        <ErrorMessage name="content" />
-
-        <button type="submit">Submit</button>
+        <div className={styles.inputContainer}>
+        <Field name="content" type="string" as='textarea' className={styles.commentInput} placeholder='Write your comment...'/>
+        <div><button type="submit" className={styles.submitBtn}>Submit</button></div>
+        </div>
       </Form>
     </Formik>
   );

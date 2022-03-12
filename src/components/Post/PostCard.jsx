@@ -6,6 +6,13 @@ import { timeAgo } from "../../utils/index";
 import TextContent from "./TextContent";
 import CommentBox from "./CommentBox";
 import { useAuth } from "../../context/AuthContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import {
+  faThumbsUp,
+  faComment,
+  faShare,
+} from "@fortawesome/free-solid-svg-icons";
 
 import { fetcher, isEmpty } from "../../utils";
 import useSWR from "swr";
@@ -18,6 +25,7 @@ const PostCard = (props) => {
   const [post, setPost] = useState(props);
   const [commentsCount, setCommentsCount] = useState(props.commentsCount);
 
+  library.add(faThumbsUp, faComment, faShare);
   const postID = props.id;
   useEffect(() => {
     if (currentUserProfile) {
@@ -74,6 +82,9 @@ const PostCard = (props) => {
   };
 
   const date = timeAgo(props.created_at);
+  const likeBtnStyles = likedPost
+    ? `${styles.commentHeaderIcons} ${styles.likedPost}`
+    : `${styles.commentHeaderIcons}`;
 
   return (
     <div className={styles.cardContainer}>
@@ -85,6 +96,7 @@ const PostCard = (props) => {
               alt={`${props.displayName}'s avatar`}
               width={50}
               height={50}
+              className={styles.profilePhoto}
             />
           )}
           <div className={styles.titleBarContent}>
@@ -97,8 +109,10 @@ const PostCard = (props) => {
       </div>
 
       <div className={styles.description}>
-        <strong>{props.title}</strong>
-        <TextContent>{props.description}</TextContent>
+        <div className={styles.postTitle}>{props.title}</div>
+        <TextContent className={styles.postContent}>
+          {props.description}
+        </TextContent>
       </div>
 
       <div>
@@ -115,13 +129,42 @@ const PostCard = (props) => {
         )}
       </div>
       <div className={styles.commentContainer}>
-        <div className={styles.commentHeader}>
-          <button onClick={handleLikeButton}>
-            {likedPost ? "Unlike Post" : "Like Post"}
-          </button>
-          <button onClick={showCommentsHandler}>Show Comments</button>
-          <span>Likes: {likes}</span>
-          <span>Comments: {commentsCount}</span>
+        <div className={styles.commentHeaderTop}>
+          <div>Likes: {likes}</div>
+          <div>Comments: {commentsCount}</div>
+        </div>
+
+        <div className={styles.commentHeaderBtm}>
+          <div className={styles.iconContainer} onClick={handleLikeButton}>
+            <FontAwesomeIcon
+              icon="fa-solid fa-thumbs-up"
+              className={likeBtnStyles}
+              id="likeBtn"
+            />
+            <label className={styles.label} htmlFor="likeBtn">
+              Like
+            </label>
+          </div>
+          <div className={styles.iconContainer} onClick={showCommentsHandler}>
+            <FontAwesomeIcon
+              icon="fa-solid fa-comment"
+              className={styles.commentHeaderIcons}
+              id="commentBtn"
+            />
+            <label className={styles.label} htmlFor="commentBtn">
+              Comment
+            </label>
+          </div>
+          <div className={styles.iconContainer}>
+            <FontAwesomeIcon
+              icon="fa-solid fa-share"
+              className={styles.commentHeaderIcons}
+              id="shareBtn"
+            />
+            <label className={styles.label} htmlFor="shareBtn">
+              Share
+            </label>
+          </div>
         </div>
         {displayComments && (
           <CommentBox postID={props.id} userID={props.userID} />

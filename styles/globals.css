@@ -22,6 +22,10 @@ a {
   padding: 0;
 }
 
+*:focus-visible {
+  outline: 1px dotted var(--primary-color);
+}
+
 :root {
   --primary-color: #7B73FF;
   --primary-light-color: #8680fc;
@@ -56,5 +60,8 @@ a {
 }
 
 
+.avatar {
+  border-radius: 50%;
+}
 
 

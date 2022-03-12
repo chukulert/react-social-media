@@ -1,7 +1,7 @@
 .cardContainer {
     background-color: var(--background-color-light);
-    border: .5px solid var(--border-color);
-    width: 80%;
+    border-bottom: .5px solid var(--border-color);
+    border-top: .5px solid var(--border-color);
     max-width: 700px;
     margin: 1rem auto;
     border-radius: 8px;
@@ -18,14 +18,28 @@
     flex-direction: column;
 }
 
+.profilePhoto {
+    border-radius: 50%;
+}
+
 .timeAgo {
     font-size: .8rem;
     color: gray;
-}
+}   
 
 .description {
     padding: 1rem 0;
 }
+
+.postTitle {
+    padding: .5rem 0;
+    font-weight: bold;
+}
+
+.postContent {
+    font-size: .9rem;
+}
+
 
 .image {
     width: 100%;
@@ -43,10 +57,50 @@
 
 }
 
-.commentHeader {
+.commentHeaderTop {
+    display: flex;
+    justify-content: space-between;
+    padding: .5rem;
+    border-bottom: .1px solid var(--text-color);
+    border-width: thin;
+    font-size: .8rem;
+}
 
+.commentHeaderBtm {
+    display: flex;
+    justify-content: space-between;
+    padding: .5rem;
+    font-size: .8rem;
 }
 
 .commentBox {
     
 }
+
+.iconContainer:hover .commentHeaderIcons {
+    color: var(--primary-color)
+}
+
+
+.commentHeaderIcons {
+    cursor: pointer;
+    color: var(--text-color);
+    margin-right: .2rem;
+}
+
+
+.likedPost{
+    color: var(--primary-color)
+}
+
+.label {
+    cursor: pointer;
+}
+
+
+@media (min-width: 768px) {
+    .cardContainer {
+        width: 80%;
+        border: .5px solid var(--border-color);
+    }
+  }

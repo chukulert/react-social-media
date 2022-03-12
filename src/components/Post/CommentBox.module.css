@@ -1,0 +1,24 @@
+.commentBoxContainer {
+    border-top: .5px solid var(--text-color);
+    border-width: thin;
+    padding: .5rem 0;
+}
+
+.commentBoxHeader {
+    display: flex;
+    justify-content: space-between;
+}
+
+.submitCommentForm {
+    flex-grow: 2;
+    background-color: var(--background-color-light);
+    margin-left: .5rem;
+}
+.loadMoreBtn {
+    text-align: center;
+    text-decoration: underline;
+}
+
+.avatar {
+    border-radius: 50%;
+}

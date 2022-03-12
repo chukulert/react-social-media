@@ -68,7 +68,6 @@ export default function Home(props) {
   const userItems = (
     <ul>
       {allUsersData.map((user) => (
-        // eslint-disable-next-line react/jsx-key
         <li key={user.userID}>
           <Link href={`/profile/${user.userID}`}>
             <a>{user.email}</a>
@@ -117,6 +116,7 @@ export default function Home(props) {
         description: description,
         created_at: Date.now(),
         likesCount: 0,
+        commentsCount: 0,
         user_displayName: userProfile.displayName,
         user_profilePhoto: userProfile.profilePhoto,
         followers: [...userProfile.followers],
@@ -134,16 +134,6 @@ export default function Home(props) {
           await setDoc(createPost, { image: fileURL }, { merge: true });
         }
       }
-      // await fetch(`/api/updateFollowersFeed`, {
-      //   method: "PUT",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     postID: createPost.id,
-      //     userProfile: userProfile,
-      //   }),
-      // });
     } catch (e) {
       console.error(e);
     }
@@ -195,7 +185,7 @@ export default function Home(props) {
     <div>
       <div>This is the homepage</div>
       {userProfile && (
-        <div>{`The current user is ${userProfile.userID} Email is ${userProfile.email} Following: ${userProfile.following}`}</div>
+        <div>Email is ${userProfile.email}</div>
       )}
       {userProfile && <button onClick={showPostModalHandler}>New Post</button>}
       {userProfile && (
@@ -237,13 +227,11 @@ export async function getServerSideProps(context) {
       const userProfile = await fetchUserProfile(uid);
       const followingData = await fetchFollowingData(userProfile.following);
       const allUsersData = await fetchAllUsers();
-      // const feedData = await fetchInitialFeedData(uid);
       return {
         props: {
           userProfile: userProfile,
           followingData: followingData ? followingData : [],
           allUsersData: allUsersData ? allUsersData : [],
-          // feedData: feedData ? feedData : [],
         },
       };
     }
