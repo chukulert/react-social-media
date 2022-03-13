@@ -55,7 +55,7 @@ const MessagesPage = () => {
     setSize,
     mutate: mutateMessages,
   } = useSWRInfinite(messageGroup ? getKey : null, fetcher, {
-    refreshInterval: 1000,
+    // refreshInterval: 1000,
   });
 
   const messageList = messages ? [].concat(...messages) : [];
@@ -112,17 +112,18 @@ const MessagesPage = () => {
         const groupData = await response.json();
         setMessageGroup(groupData);
         mutateMessageGroups();
-        // await fetch(`/api/submitMessage`, {
-        //   method: "POST",
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        //   body: JSON.stringify({
-        //     sent_by: currentUserProfile.userID,
-        //     messageText,
-        //     messageGroupID: groupData.id,
-        //   }),
-        // });
+        //does not send a message if this block of code is not here
+        await fetch(`/api/submitMessage`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            sent_by: currentUserProfile.userID,
+            messageText,
+            messageGroupID: groupData.id,
+          }),
+        });
    
       }
 

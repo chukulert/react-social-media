@@ -182,6 +182,9 @@ export async function fetchPostComments(postID) {
 
     const querySnapshot = await commentsRef
       .where("post_ID", "==", postID)
+      .orderBy("likesCount", "desc")
+      .orderBy("created_at", "desc")
+      .limit(5)
       .get();
     querySnapshot.forEach((doc) => {
       const data = {
@@ -194,6 +197,41 @@ export async function fetchPostComments(postID) {
   } catch (error) {
     console.error(error);
   }
+}
+
+export async function fetchMorePostComments(postID, snapshot) {
+  try {
+    //get posts of user page
+    const comments = [];
+    const commentsRef = db.collection("comments");
+
+    const querySnapshot = await commentsRef
+      .where("post_ID", "==", postID)
+      .orderBy("likesCount", "desc")
+      .orderBy("created_at", "desc")
+      .startAfter(snapshot)
+      .limit(5)
+      .get();
+    querySnapshot.forEach((doc) => {
+      const data = {
+        ...doc.data(),
+        id: doc.id,
+      };
+      comments.push(data);
+    });
+    return comments;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getCommentSnapshotByID(commentID) {
+  try {
+    const doc = db.collection('comments').doc(commentID).get()
+    return doc;
+  } catch (error) {
+    console.error(error);
+  } 
 }
 
 export async function updateFollowersFeed(userProfile, postData, postID) {

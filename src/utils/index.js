@@ -8,6 +8,12 @@ const epochs = [
 ];
 
 const getDuration = (timeAgoInSeconds) => {
+    if (timeAgoInSeconds === 0) {
+        return {
+            interval: 0,
+            epoch: 'second',
+        }
+    }
     for (let [name, seconds] of epochs) {
         const interval = Math.floor(timeAgoInSeconds / seconds);
         if (interval >= 1) {

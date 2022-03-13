@@ -1,20 +1,20 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import styles from "./PostCard.module.css";
 import Link from "next/link";
-import { timeAgo } from "../../utils/index";
-import TextContent from "./TextContent";
-import CommentBox from "./CommentBox";
 import { useAuth } from "../../context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
+import CommentBox from "./CommentBox";
+import TextContent from "./TextContent";
+import { timeAgo } from "../../utils/index";
+import styles from "./PostCard.module.css";
 import {
   faThumbsUp,
   faComment,
   faShare,
 } from "@fortawesome/free-solid-svg-icons";
 
-import { fetcher, isEmpty } from "../../utils";
+import { fetcher } from "../../utils";
 import useSWR from "swr";
 
 const PostCard = (props) => {
@@ -44,7 +44,6 @@ const PostCard = (props) => {
   });
   useEffect(() => {
     if (data && data.length > 0) {
-      console.log(data);
       setPost(data[0]);
       setLikes(data[0].likesCount);
       setCommentsCount(data[0].commentsCount);

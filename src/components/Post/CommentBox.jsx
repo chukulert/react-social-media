@@ -3,117 +3,75 @@ import styles from "./CommentBox.module.css";
 import Comment from "./Comment";
 import { useAuth } from "../../context/AuthContext";
 import { fetcher, isEmpty } from "../../utils";
-
+import useSWRInfinite from "swr/infinite";
 import NewCommentForm from "../Form/NewCommentForm";
-import { db } from "../../utils/init-firebase";
-import {
-  collection,
-  query,
-  orderBy,
-  startAfter,
-  limit,
-  getDocs,
-  where,
-} from "firebase/firestore";
 import Image from "next/image";
 
 
 const CommentBox = (props) => {
   const { currentUserProfile } = useAuth();
-  const [comments, setComments] = useState([]);
-  const [lastDoc, setLastDoc] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [noMoreComments, setNoMoreComments] = useState(false);
+  const { postID, userID } = props;
 
+  const getKey = (pageIndex, previousPageData) => {
 
+    //initlal load
+    if (pageIndex === 0) return `/api/getCommentsByPostId/${postID}`;
 
-  useEffect(() => {
-    const abortCtrl = new AbortController();
-    const opts = { signal: abortCtrl.signal };
-
-    const fetchComments = async () => {
-      try {
-        const firstQuery = query(
-          collection(db, "comments"),
-          where("post_ID", "==", props.postID),
-          orderBy("created_at", "desc"),
-          orderBy("likesCount", "desc"),
-          limit(5)
-        );
-        const documentSnapshots = await getDocs(firstQuery);
-        console.log(documentSnapshots);
-        updateCommentsState(documentSnapshots);
-        setLoading(false);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchComments();
-    return () => {
-      abortCtrl.abort();
-    };
-  }, []);
-
-  const updateCommentsState = (documentSnapshots) => {
-    if (documentSnapshots.docs.length !== 0) {
-      const commentsData = documentSnapshots.docs.map((comment) => {
-        const data = {
-          ...comment.data(),
-          id: comment.id,
-        };
-        return data;
-      });
-      const lastDoc = documentSnapshots.docs[documentSnapshots.docs.length - 1];
-      setComments((previousState) => [...previousState, ...commentsData]);
-      if (documentSnapshots.docs.length < 5) {
-        setNoMoreComments(true);
-        return;
-      }
-      setLastDoc(lastDoc);
-    } else {
-      setNoMoreComments(true);
-      return;
-    }
+    // add the cursor to the API endpoint
+    return `/api/getCommentsByPostId/${postID}/${previousPageData[4]?.id}`;
   };
 
-  const fetchMoreComments = async () => {
-    setLoading(true);
-    const nextQuery = query(
-      collection(db, "comments"),
-      where("post_ID", "==", props.postID),
-      orderBy("created_at", "desc"),
-      orderBy("likesCount", "desc"),
-      startAfter(lastDoc),
-      limit(5)
-    );
-    const documentSnapshots = await getDocs(nextQuery);
-    updateCommentsState(documentSnapshots);
-    setLoading(false);
+  const {
+    data: comments,
+    error: commentsError,
+    size,
+    setSize,
+    mutate: mutateComments,
+  } = useSWRInfinite(postID ? getKey : null, fetcher, {
+    // refreshInterval: 1000,
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+  });
+
+  const commentsList = comments ? [].concat(...comments) : [];
+  const isLoadingInitialData = !comments && !commentsError;
+  const isLoadingMore =
+    isLoadingInitialData ||
+    (size > 0 && comments && typeof comments[size - 1] === "undefined");
+  const isEmpty = comments?.[0]?.length === 0;
+  const isReachingEnd =
+    isEmpty || (comments && comments[comments.length - 1]?.length < 5);
+
+
+  const handleLoadMoreComments = () => {
+    setSize(size + 1);
   };
+
 
   const commentItems = (
     <div>
-      {comments.length !== 0 &&
-        comments.map((comment) => (
-          <Comment
-            key={comment.id}
-            id={comment.id}
-            userID={comment.user_id}
-            displayName={comment.user_displayName}
-            profilePhoto={comment.user_profilePhoto}
-            content={comment.content}
-            created_at={comment.created_at}
-            likesCount={comment.likesCount}
-            userLikes={comment.userLikes}
-            postID={props.postID}
-            currentUserID={currentUserProfile.userID}
-          />
-        ))}
+      {commentsList?.map((comment) => (
+        <Comment
+          key={comment.id}
+          id={comment.id}
+          userID={comment.user_id}
+          displayName={comment.user_displayName}
+          profilePhoto={comment.user_profilePhoto}
+          content={comment.content}
+          created_at={comment.created_at}
+          likesCount={comment.likesCount}
+          userLikes={comment.userLikes}
+          postID={postID}
+          currentUserID={currentUserProfile?.userID}
+        />
+      ))}
     </div>
   );
+  const noCommentItems = !commentItems.props.children.length 
 
   //handle add comment
   const submitCommentHandler = async ({ content }) => {
+    console.log(content)
     if (currentUserProfile) {
       try {
         const submitComment = async () => {
@@ -131,9 +89,9 @@ const CommentBox = (props) => {
             }),
           });
         };
-        
+
         const createNotification = async () => {
-          if(props.userID !== currentUserProfile.userID) {
+          if (props.userID !== currentUserProfile.userID) {
             await fetch(`/api/createNotification`, {
               method: "POST",
               headers: {
@@ -151,7 +109,8 @@ const CommentBox = (props) => {
           }
         };
         await Promise.all([submitComment(), createNotification()]);
-      } catch (error){
+        mutateComments();
+      } catch (error) {
         console.error(error);
       }
     }
@@ -160,16 +119,29 @@ const CommentBox = (props) => {
   return (
     <div className={styles.commentBoxContainer}>
       <div className={styles.commentBoxHeader}>
-        <div><Image src={currentUserProfile.profilePhoto} alt={`${currentUserProfile.displayName} photo`} width={40} height={40} className={styles.avatar} /></div>
-      <div  className={styles.submitCommentForm} ><NewCommentForm submitHandler={submitCommentHandler} /></div>
+        <div>
+          <Image
+            src={currentUserProfile.profilePhoto}
+            alt={`${currentUserProfile.displayName} photo`}
+            width={40}
+            height={40}
+            className={styles.avatar}
+          />
+        </div>
+        <div className={styles.submitCommentForm}>
+          <NewCommentForm submitHandler={submitCommentHandler} />
+        </div>
       </div>
       <div>{commentItems}</div>
-      {!noMoreComments && !loading && (
-        <div onClick={fetchMoreComments} className={styles.loadMoreBtn}>Load more</div>
+      {noCommentItems ? <p className={styles.loadMoreBtn}>No comments available.</p> : null}
+      {!isReachingEnd && !noCommentItems && (
+        <div onClick={handleLoadMoreComments} className={styles.loadMoreBtn}>
+          Load more
+        </div>
       )}
-      {noMoreComments && <p className={styles.loadMoreBtn} >All comments are loaded</p>}
-      {loading && !noMoreComments && <div className={styles.loadMoreBtn} >Loading...</div>}
-
+      {isReachingEnd && (
+        <p className={styles.loadMoreBtn}>All comments are loaded.</p>
+      )}
     </div>
   );
 };

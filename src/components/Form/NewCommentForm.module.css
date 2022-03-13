@@ -8,7 +8,7 @@
     border: none;
     background-color: var(--background-color-light);
     color: var(--text-color);
-    border: .5px solid var(--text-color);
+    border: 1px solid var(--border-color);
     padding: .5rem;
     resize: none;
 
