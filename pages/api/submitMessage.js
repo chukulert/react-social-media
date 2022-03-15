@@ -4,7 +4,7 @@ import { postNewMessage } from "../../src/utils/firebase-adminhelpers";
 const submitMessage = async (req, res) => {
     if (req.method === "POST") {
     const { sent_by, messageText, messageGroupID } = req.body;
-    console.log( sent_by, messageText, messageGroupID)
+
     try {
       if (sent_by) {
         const records = await postNewMessage({ sent_by, messageText, messageGroupID });

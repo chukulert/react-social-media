@@ -1,4 +1,4 @@
-import useSWR, { useSWRConfig } from "swr";
+import useSWR, { mutate, useSWRConfig } from "swr";
 import useSWRInfinite from "swr/infinite";
 import { fetcher } from "../src/utils";
 import { useAuth } from "../src/context/AuthContext";
@@ -11,10 +11,10 @@ const MessagesPage = () => {
   const { currentUserProfile } = useAuth();
   const [messageGroup, setMessageGroup] = useState(null);
   const [tempUser, setTempUser] = useState(false);
+  const [showFollowingModal, setShowFollowingModal] = useState(false)
+//   const [showMessageBoard, ]
 
   const getKey = (pageIndex, previousPageData) => {
-    // reached the end
-    if (previousPageData && !previousPageData.length) return null;
 
     // first page, we don't have `previousPageData`
     if (pageIndex === 0) return `/api/getMessagesByGroupId/${messageGroup.id}`;
@@ -35,17 +35,16 @@ const MessagesPage = () => {
       : null,
     fetcher
   );
-  //   const { data: messageGroups, error: messageGroupsError } = useSWR(
-  //     currentUserProfile
-  //       ? `/api/getMessageGroups/${currentUserProfile.userID}/${currentUserProfile.displayName}/${currentUserProfile.profilePhoto}`
-  //       : null,
-  //     fetcher
-  //   );
+
   const { data: following, error: followersError } = useSWR(
     currentUserProfile
       ? `/api/getFollowingById?id=${currentUserProfile.userID}`
       : null,
-    fetcher
+    fetcher, {
+        // refreshInterval: 1000,
+        revalidateIfStale: false,
+        revalidateOnFocus: false,
+      }
   );
 
   const {
@@ -59,9 +58,16 @@ const MessagesPage = () => {
   });
 
   const messageList = messages ? [].concat(...messages) : [];
+  const isLoadingInitialData = !messages && !messagesError;
+  const isLoadingMore =
+    isLoadingInitialData ||
+    (size > 0 && messages && typeof messages[size - 1] === "undefined");
+  const isEmpty = messages?.[0]?.length === 0;
+  const isReachingEnd =
+    isEmpty || (messages && messages[messages.length - 1]?.length < 5);
 
-  if (followersError) return <div>failed to load</div>;
-  if (!following) return <div>loading...</div>;
+//   if (followersError) return <div>failed to load</div>;
+//   if (!following) return <div>loading...</div>;
 
   //check for group if exists? store in a state. fetch messages
   const handleFollowingClick = async (e) => {
@@ -90,6 +96,22 @@ const MessagesPage = () => {
   const handleLoadMoreMessages = () => {
     setSize(size + 1);
   };
+
+  const handleMessageGroupClick = async (e) => {
+      const messageGroupID = e.currentTarget.id
+      const group = messageGroups.filter((group) => 
+        messageGroupID === group.id
+      )[0];
+      if (group) {
+        setMessageGroup(group);
+        setTempUser(null);
+      } else {
+        mutateMessageGroups()
+      }
+
+      //change to messageboard display
+
+  }
 
   const submitMessageHandler = async (messageText) => {
     try {
@@ -128,7 +150,6 @@ const MessagesPage = () => {
       }
 
       if (messageGroup) {
-        console.log("yes");
         // const submitMessage = async () => {
         await fetch(`/api/submitMessage`, {
           method: "POST",
@@ -181,14 +202,19 @@ const MessagesPage = () => {
       />
       <h3>Message Groups:</h3>
       <MessageGroup
+      handleMessageGroupClick={handleMessageGroupClick}
         messageGroups={messageGroups}
         currentUserProfile={currentUserProfile}
+        setShowFollowingModal={openFollowingModalHandler}
       />
       <p>Messages</p>
       <MessageBoard
         messages={messageList}
         handleLoadMore={handleLoadMoreMessages}
         submitMessageHandler={submitMessageHandler}
+        isReachingEnd={isReachingEnd}
+        messageGroup={messageGroup}
+        currentUserProfile={currentUserProfile}
       />
     </div>
   );

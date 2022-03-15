@@ -29,17 +29,17 @@ a {
 :root {
   --primary-color: #7B73FF;
   --primary-light-color: #8680fc;
-  --primary-dark-color: #645cf9;
+  --primary-dark-color: #44408d;
   --background-color: #1F2124;
+  --background-color-dark: #131416;
   --background-color-light: #24272ad3;
-  --background-color-hover: #3d3d3d;
+  --background-color-hover: #353638;
   --text-color: #C9D1D9;
   --button-text-color: var(--background-color);
   --button-text-color-hover: var(--text-color);
   --border-color: #838383;
   --navbar-background-color: transparent;
   --footer-background-color: #313332;
-
   --breakpoint-width-medium: 768px;
   --breakpoint-width-large: 1200px;
   --breakpoint-width-small: 360px;

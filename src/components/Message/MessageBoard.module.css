@@ -1,0 +1,32 @@
+.messageBoardContainer {
+    width: 100%;
+    background-color: var(--background-color);
+    padding: 1rem;
+}
+
+.messageBoardHeader {
+    width: 100%;
+    background-color: var(--background-color-light);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-around;
+    padding: .5rem 0;
+    margin-bottom: .5rem;
+}
+
+.messagesContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.messageBoardIntroMessage {
+    color: var(--border-color);
+}
+
+.loadMoreBtn{ 
+   text-align: center;
+   text-decoration: underline;
+   padding: .5rem 0;
+   cursor: pointer;
+}
+

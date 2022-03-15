@@ -227,11 +227,11 @@ export async function fetchMorePostComments(postID, snapshot) {
 
 export async function getCommentSnapshotByID(commentID) {
   try {
-    const doc = db.collection('comments').doc(commentID).get()
+    const doc = db.collection("comments").doc(commentID).get();
     return doc;
   } catch (error) {
     console.error(error);
-  } 
+  }
 }
 
 export async function updateFollowersFeed(userProfile, postData, postID) {
@@ -399,12 +399,15 @@ export async function createNewNotification({
 }
 
 //fetch data for an array of groups by user ID
-export async function fetchGroupsByUser({userID, displayName, profilePhoto}) {
-
+export async function fetchGroupsByUser({ userID, displayName, profilePhoto }) {
   try {
     const snapshots = await db
       .collection("groups")
-      .where("members", "array-contains", {id: userID, displayName, profilePhoto })
+      .where("members", "array-contains", {
+        id: userID,
+        displayName,
+        profilePhoto,
+      })
       .get();
 
     const groupData = snapshots.docs.map((group) => {
@@ -507,7 +510,6 @@ export async function fetchMessagesByGroupID(groupID) {
 
 export async function fetchMoreMessagesByGroupID(groupID, snapshot) {
   try {
-    
     const query = db
       .collection("messages")
       .doc(groupID)
@@ -517,7 +519,6 @@ export async function fetchMoreMessagesByGroupID(groupID, snapshot) {
       .limit(5);
     const snapshots = await query.get();
     const messages = snapshots.docs.map((message) => {
-     
       const data = {
         ...message.data(),
         id: message.id,
@@ -546,18 +547,18 @@ export async function getMessageSnapshotByID(groupID, messageID) {
     return doc;
   } catch (error) {
     console.error(error);
-  } 
+  }
 }
 
 export async function postNewMessage({ sent_by, messageText, messageGroupID }) {
- console.log(messageGroupID)
+  console.log(messageGroupID);
   try {
     const messageRef = db
       .collection("messages")
       .doc(messageGroupID)
       .collection("messages");
 
-    const timeStamp = Date.now()
+    const timeStamp = Date.now();
 
     const groupRef = db.collection("groups").doc(messageGroupID);
 
@@ -571,13 +572,16 @@ export async function postNewMessage({ sent_by, messageText, messageGroupID }) {
       await messageRef.add(messageData);
     };
     const updateGroup = async () => {
-      await groupRef.update({ modified_at: timeStamp});
+      await groupRef.update({
+        modified_at: timeStamp,
+        "last_message.created_at": timeStamp,
+        "last_message.textContent": messageText,
+      });
     };
 
     return await Promise.all([addMessage(), updateGroup()]);
   } catch (error) {}
 }
-
 
 export async function createNewMessageGroup({ membersArray, currentUserID }) {
   // console.log(membersArray,currentUserID)
@@ -586,17 +590,16 @@ export async function createNewMessageGroup({ membersArray, currentUserID }) {
       created_at: Date.now(),
       created_by: currentUserID,
       members: membersArray,
-      groupName: '',
+      groupName: "",
       modified_at: Date.now(),
-      type: 'private'
+      type: "private",
     };
-    const group = await db.collection('groups').add(groupData)
-    const fetchedGroup = await db.collection('groups').doc(group.id).get()
-    const data =  {
+    const group = await db.collection("groups").add(groupData);
+    const fetchedGroup = await db.collection("groups").doc(group.id).get();
+    const data = {
       ...fetchedGroup.data(),
-      id: group.id
-    }
+      id: group.id,
+    };
     return data;
-
   } catch (error) {}
 }

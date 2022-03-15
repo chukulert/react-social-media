@@ -1,9 +1,9 @@
 import MessageGroupItem from "./MessageGroupItem";
 
 const MessageGroup = (props) => {
-  const { messageGroups, currentUserProfile } = props;
+  const { messageGroups, currentUserProfile, handleMessageGroupClick } = props;
 
-    const messageGroupList = (
+  const messageGroupList = (
     <ul>
       {messageGroups?.map((group) => (
         <MessageGroupItem
@@ -11,6 +11,7 @@ const MessageGroup = (props) => {
           key={group.id}
           id={group.id}
           currentUserProfile={currentUserProfile}
+          handleMessageGroupClick={handleMessageGroupClick}
         />
       ))}
     </ul>

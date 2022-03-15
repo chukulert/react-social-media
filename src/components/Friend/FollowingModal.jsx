@@ -1,7 +1,7 @@
-import styles from "./FriendModal.module.css";
+import styles from "./FollowingModal.module.css";
 import FriendListItem from "./FriendListItem";
 
-const FriendModal = (props) => {
+const FollowingModal = (props) => {
   console.log(props)
   const followingList = (
     <ul>
@@ -32,4 +32,4 @@ const FriendModal = (props) => {
   );
 };
 
-export default FriendModal;
+export default FollowingModal;

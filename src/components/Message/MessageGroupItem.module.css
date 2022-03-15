@@ -1,0 +1,35 @@
+.messageGroupItemContainer{
+    display: flex;
+    align-content: flex-start;
+    padding: 0.5rem;
+    margin: .5rem;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.messageGroupItemContainer:hover{
+    background-color: var(--background-color-dark);
+}
+
+
+.messageGroupContent {
+    margin-left: .5rem;
+    flex-grow: 2;
+}
+
+.messageGroupNameGroup {
+    display: flex;
+    justify-content: space-between;
+}
+
+.active {
+    background-color: var(--background-color-dark);
+}
+
+.lastMessage {
+    color: var(--border-color)
+}
+
+.profileLink:hover{
+    text-decoration: underline;
+}

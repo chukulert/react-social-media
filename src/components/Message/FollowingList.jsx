@@ -3,8 +3,7 @@ const FollowingList = (props) => {
 
   const followingItems = (
     <ul>
-      {following.map((user) => (
-        // eslint-disable-next-line react/jsx-key
+      {following?.map((user) => (
 
         <li key={user.userID} onClick={handleUserClick} id={user.userID}>
           <p>{user.displayName}</p>

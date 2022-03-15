@@ -1,0 +1,30 @@
+
+.messageInputContainer {
+    display: flex;
+    width: 100%;
+    margin-top: 1rem;
+}
+.messageInput {
+    background-color: var(--background-color-light);
+    flex-grow: 2;
+    border-radius: 8px;
+    padding: .5rem;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}   
+
+.submitIcon {
+    height: 2rem;
+    width: 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 50%;
+    margin-left: .5rem;
+    cursor: pointer;
+}
+
+.submitIcon:hover {
+ border: 1px solid var(--text-color);
+}

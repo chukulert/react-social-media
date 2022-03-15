@@ -5,7 +5,7 @@ import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { useCallback, useRef, useState } from "react";
 import FormModal from "../src/components/Form/FormModal";
 import Link from "next/link";
-import FriendModal from "../src/components/Friend/FriendModal";
+import FollowingModal from "../src/components/Friend/FollowingModal";
 import Post from "../src/components/Post/Post";
 
 import { verifyToken } from "../src/utils/init-firebaseAdmin";
@@ -35,7 +35,7 @@ export default function Home(props) {
 
   //get initial feeds and setup intersection observer
   useEffect(() => {
-    if (feed.length === 0) {
+    if (feed?.length === 0) {
       getInitialFeed();
     }
     let currentElement;
@@ -109,7 +109,7 @@ export default function Home(props) {
 
   const newPostSubmitHandler = async ({ title, description, file }) => {
     try {
-      //create post in firestore
+      //create post in firestore. 
       const createPost = await addDoc(collection(db, "posts"), {
         user_id: userProfile.userID,
         title: title,
@@ -195,7 +195,7 @@ export default function Home(props) {
       {allUsersData && userItems}
 
       {showFriendsModal && (
-        <FriendModal
+        <FollowingModal
           closeModal={closeFriendsModalHandler}
           following={followingData}
         />

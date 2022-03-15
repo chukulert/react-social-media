@@ -1,0 +1,20 @@
+.messageBubble {
+    display: inline-block;
+    border-radius: 8px;
+    padding: .5rem;
+    margin: .3rem 0;
+    max-width: 40%;
+}
+
+.currentUserText {
+    background-color: var(--primary-dark-color);
+    margin-right: 0;
+    margin-left: auto; 
+}
+
+.othersText {
+    background-color: var(--background-color-hover);
+    margin-right: auto;
+    margin-left: 0;   
+}
+
