@@ -8,7 +8,7 @@ const epochs = [
 ];
 
 const getDuration = (timeAgoInSeconds) => {
-    if (timeAgoInSeconds === 0) {
+    if (!timeAgoInSeconds) {
         return {
             interval: 0,
             epoch: 'second',

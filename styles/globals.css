@@ -64,4 +64,8 @@ a {
   border-radius: 50%;
 }
 
+.active {
+  color: var(--primary-color);
+}
+
 

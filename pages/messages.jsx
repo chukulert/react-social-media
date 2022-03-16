@@ -4,6 +4,7 @@ import { fetcher } from "../src/utils";
 import { useAuth } from "../src/context/AuthContext";
 import { useState, useEffect } from "react";
 import FollowingList from "../src/components/Message/FollowingList";
+import FollowingModal from "../src/components/Friend/FollowingModal";
 import MessageBoard from "../src/components/Message/MessageBoard";
 import MessageGroup from "../src/components/Message/MessageGroupList";
 
@@ -71,6 +72,7 @@ const MessagesPage = () => {
 
   //check for group if exists? store in a state. fetch messages
   const handleFollowingClick = async (e) => {
+    setShowFollowingModal(false)
     setMessageGroup(null);
     const userID = e.currentTarget.id;
 
@@ -191,23 +193,23 @@ const MessagesPage = () => {
     }
   };
 
+  const handleShowModal = () => {
+      showFollowingModal ? setShowFollowingModal(false) : setShowFollowingModal(true)
+  }
+
   return (
     <div>
-      Messages page
-      <h3>followers:</h3>
-      <FollowingList
+      {showFollowingModal && <FollowingModal
         handleUserClick={handleFollowingClick}
         following={following}
-        currentUserProfile={currentUserProfile}
-      />
-      <h3>Message Groups:</h3>
+        setShowFollowingModal={handleShowModal}
+      />}
       <MessageGroup
       handleMessageGroupClick={handleMessageGroupClick}
         messageGroups={messageGroups}
         currentUserProfile={currentUserProfile}
-        setShowFollowingModal={openFollowingModalHandler}
+        setShowFollowingModal={handleShowModal}
       />
-      <p>Messages</p>
       <MessageBoard
         messages={messageList}
         handleLoadMore={handleLoadMoreMessages}
@@ -215,6 +217,7 @@ const MessagesPage = () => {
         isReachingEnd={isReachingEnd}
         messageGroup={messageGroup}
         currentUserProfile={currentUserProfile}
+        setShowFollowingModal={handleShowModal}
       />
     </div>
   );

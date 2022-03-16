@@ -1,0 +1,25 @@
+.friendListItemContainer {
+    border-radius: 8px;
+    padding: 1rem;
+    cursor: pointer;
+    display: flex;
+}
+
+.friendListItemContainer:hover {
+    background-color: var(--background-color-dark);
+}
+
+.displayNameContainer {
+    display: flex;
+    align-items: center;
+    padding: 0 .5rem;
+}
+
+
+.displayName {
+    font-size: 1.2rem;
+}
+
+.displayName:hover {
+    text-decoration: underline;
+}

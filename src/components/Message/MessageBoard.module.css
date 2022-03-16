@@ -1,5 +1,6 @@
 .messageBoardContainer {
     width: 100%;
+    
     background-color: var(--background-color);
     padding: 1rem;
 }
@@ -9,9 +10,10 @@
     background-color: var(--background-color-light);
     border-bottom: 1px solid var(--border-color);
     display: flex;
-    justify-content: space-around;
-    padding: .5rem 0;
+    justify-content: space-between;
+    padding: .5rem 1rem;
     margin-bottom: .5rem;
+    height: 5rem;
 }
 
 .messagesContent {
@@ -30,3 +32,32 @@
    cursor: pointer;
 }
 
+.backBtn {
+    /* padding: 1rem; */
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+.backBtn:hover {
+    color: var(--primary-color);
+}
+
+.profileDisplay {
+    display: flex;  
+}
+
+.flexCenter {
+    display: flex;
+    align-items: center;
+    margin-left: .5rem;
+}
+
+.newMessage {
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+
+.newMessage:hover {
+    color: var(--primary-color);
+}

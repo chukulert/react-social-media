@@ -1,16 +1,17 @@
 
 import styles from './FriendListItem.module.css'
 import Link from 'next/link'
+import Image from 'next/image'
 
 const FriendListItem = (props) => {
-    // const {displaName, profilePhoto} = props
+    const {displayName, profilePhoto, id, handleUserClick } = props
+
 
     return (
-        <div>
-            <p>Friend Item</p>
-            <Link href={`/profile/${props.id}`}><a>{props.displayName}</a></Link>
-            <p>{props.profilePhoto}</p>
-        </div>
+        <div className={styles.friendListItemContainer} onClick={handleUserClick} id={id}>
+           <div><Image src={profilePhoto} width={50} height={50} alt='profile photo'  className='avatar' /></div>
+            <div className={styles.displayNameContainer}><Link href={`/profile/${id}`}><a className={styles.displayName}>{displayName}</a></Link>
+</div>        </div>
     )
 }
 

@@ -1,9 +1,10 @@
 .navbar {
-    background-color: grey;
+    background-color: var(--background-color-dark);
     border-bottom: 1px solid black;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+
+    justify-content: space-between;
     
 }
 
@@ -11,10 +12,68 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 1rem;
+    justify-content: flex-end;
+    /* gap: .5rem; */
 }
 
 .navlink {
     padding: 1rem;
     cursor: pointer;
+    font-size: 1.5rem;
+}
+
+.navlink:hover {
+    color: var(--primary-color);
+}
+
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+
+.dropbtn:hover, .dropbtn:focus {
+    color: var(--primary-color);
+  }
+
+  .dropdownContent {
+    position: absolute;
+    right: 0;
+    left: auto;
+    background-color: var(--background-color-dark);
+    opacity: 0.9;
+    min-width: 10rem;
+    z-index: 1;
+  }
+
+  .dropdownContent a {
+    display: block;
+    padding: 1rem;
+    cursor: pointer;
+    
+  }
+
+  .dropdownContent a:hover {
+      background-color: var(--background-color-hover);
+}
+
+  .show {display:block;}
+
+  .profileLink {
+      height: 100%;
+      max-width: 10rem;
+      display: flex;
+      border-radius: 1rem;
+      padding: .5rem;
+  }
+
+  .profileLink:hover {
+  background-color: var(--background-color-light);    
+}
+
+.flexCenter {
+    display: flex;
+    align-items: center;
+    margin-left: .5rem;
 }

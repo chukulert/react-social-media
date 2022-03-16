@@ -22,7 +22,7 @@ import { useEffect } from "react/cjs/react.development";
 
 export default function Home(props) {
   const [showPostModal, setShowPostModal] = useState(false);
-  const [showFriendsModal, setShowFriendsModal] = useState(false);
+  const [showFollowingModal, setShowFollowingModal] = useState(false)
   const [feed, setFeed] = useState([]);
   const [lastFeedPost, setLastFeedPost] = useState("");
   const [element, setElement] = useState(null);
@@ -77,35 +77,16 @@ export default function Home(props) {
     </ul>
   );
 
-  // const friendsList = (
-  //   <ul>
-  //     {friendsData.map((user) => (
-  //       // eslint-disable-next-line react/jsx-key
-  //       <li key={user.userID}>
-  //         <Link href={`/profile/${user.userID}`}>
-  //           <a>{user.email}</a>
-  //         </Link>
-  //       </li>
-  //     ))}
-  //   </ul>
-  // );
 
   //modal handler functions
-  const closePostModalHandler = () => {
-    setShowPostModal(false);
+  const handleShowPostModal = () => {
+    showPostModal ? setShowPostModal(false) : setShowPostModal(true)
   };
 
-  const showPostModalHandler = () => {
-    setShowPostModal(true);
+  const handleShowFollowingModal = () => {
+    showFollowingModal ? setShowFollowingModal(false) : setShowFollowingModal(true)
   };
 
-  const closeFriendsModalHandler = () => {
-    setShowFriendsModal(false);
-  };
-
-  const showFriendsModalHandler = () => {
-    setShowFriendsModal(true);
-  };
 
   const newPostSubmitHandler = async ({ title, description, file }) => {
     try {
@@ -183,27 +164,23 @@ export default function Home(props) {
 
   return (
     <div>
-      <div>This is the homepage</div>
+      {userProfile && <button onClick={handleShowPostModal}>New Post</button>}
       {userProfile && (
-        <div>Email is ${userProfile.email}</div>
-      )}
-      {userProfile && <button onClick={showPostModalHandler}>New Post</button>}
-      {userProfile && (
-        <button onClick={showFriendsModalHandler}>Show Following</button>
+        <button onClick={handleShowFollowingModal}>Show Following</button>
       )}
 
       {allUsersData && userItems}
 
-      {showFriendsModal && (
+      {showFollowingModal && (
         <FollowingModal
-          closeModal={closeFriendsModalHandler}
+        setShowFollowingModal={handleShowFollowingModal}
           following={followingData}
         />
       )}
 
       {showPostModal && (
         <FormModal
-          closeModal={closePostModalHandler}
+          closeModal={handleShowPostModal}
           submitFormHandler={newPostSubmitHandler}
         />
       )}

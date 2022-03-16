@@ -10,10 +10,11 @@
 
 .modal{
     position: fixed;
+    background-color: var(--background-color-light);
+    color: var(--text-color);
     top: 8vh;
     left: 5%;
     width: 90%;
-    background-color: white;
     padding: 1rem;
     border-radius: 14px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
@@ -31,44 +32,24 @@
   max-height: 60vh; 
 }
 
-.modalBtn {
-  display: flex;
-  justify-content: space-between;
-}
-
-.modalBtn button {
-  margin-top: 1rem;
-  padding: 0.5rem;
-  font-weight: bold;
-  font-size: 1.2rem;
-  color: white;
-  background-color: #2A4D14;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-}
-
-.modalBtn button:hover {
-  background-color: #AFF9C9;
-  color: black;
-}
-
 .closeModalBtn {
   position: absolute;
+  color: var(--text-color);
   top: 1rem;
   right: 1rem;
   padding: 0.5rem;
   border: none;
-  background-color: white;
+  background-color: var(--background-color-hover);
   font-weight: bold;
   font-size: 1.2rem;
   cursor: pointer;
+  border-radius: 50%;
 }
 
-.emptyCartBtn {
-  background-color: none;
-  color: black;
+.closeModalBtn:hover {
+  color: var(--primary-color);
 }
+
 
 @media (min-width: 768px) {
     .modal {
