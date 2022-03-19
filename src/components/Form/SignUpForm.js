@@ -1,8 +1,22 @@
 import React from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Formik, Field, Form, ErrorMessage, useField } from 'formik';
 import * as Yup from 'yup';
+import styles from './SignUpForm.module.css'
 
 const SignupForm = ({submitHandler}) => {
+  const TextInput = ({ label, ...props }) => {
+    const [field, meta] = useField(props);
+
+    return (
+      <>
+        <label htmlFor={props.id || props.name}>{label}</label>
+        <input className={styles.formInput} {...field} {...props} />
+        {meta.touched && meta.error ? (
+          <div className={styles.formError}>{meta.error}</div>
+        ) : null}
+      </>
+    );
+  };
   return (
     <Formik
       initialValues={{ email: '', password: '' }}
@@ -18,16 +32,22 @@ const SignupForm = ({submitHandler}) => {
         submitHandler(values.email, values.password)
       }}
     >
-      <Form>
-        <label htmlFor="email">Email Address</label>
-        <Field name="email" type="email" />
-        <ErrorMessage name="email" />
+      <Form className={styles.formContainer}>
+      <TextInput
+            name="email"
+            type="email"
+            placeholder="Email address"
+          />
+              <TextInput
+            name="password"
+            type="text"
+            placeholder="Password"
+          />
 
-        <label htmlFor="password">Password</label>
-        <Field name="password" type="text" />
-        <ErrorMessage name="password" />
 
-        <button type="submit">Submit</button>
+<div className={styles.footer}><button type="submit" className={styles.submitBtn}>
+            Submit
+          </button></div>
       </Form>
     </Formik>
   );

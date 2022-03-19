@@ -35,6 +35,7 @@ a {
   --background-color-light: #24272ad3;
   --background-color-hover: #353638;
   --text-color: #C9D1D9;
+  --error-color: #CF6679;
   --button-text-color: var(--background-color);
   --button-text-color-hover: var(--text-color);
   --border-color: #838383;
@@ -66,6 +67,10 @@ a {
 
 .active {
   color: var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
 }
 
+.hide {
+  display: none;
+}
 

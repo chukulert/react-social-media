@@ -1,4 +1,4 @@
-import NavBar from "../src/components/NavBar";
+import NavBar from "../src/components/Nav/NavBar";
 import AuthContextProvider from "../src/context/AuthContext";
 import "../styles/globals.css";
 import useLocalStorage from "use-local-storage";

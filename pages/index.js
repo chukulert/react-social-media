@@ -1,9 +1,5 @@
 import Head from "next/head";
-import { db, storage } from "../src/utils/init-firebase";
-import { collection, addDoc, setDoc } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { useCallback, useRef, useState } from "react";
-import FormModal from "../src/components/Form/FormModal";
+import { useCallback, useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import FollowingModal from "../src/components/Friend/FollowingModal";
 import Post from "../src/components/Post/Post";
@@ -14,14 +10,11 @@ import {
   fetchAllUsers,
   fetchUserProfile,
   fetchFollowingData,
-  // fetchInitialFeedData,
+
 } from "../src/utils/firebase-adminhelpers";
 
 
-import { useEffect } from "react/cjs/react.development";
-
 export default function Home(props) {
-  const [showPostModal, setShowPostModal] = useState(false);
   const [showFollowingModal, setShowFollowingModal] = useState(false)
   const [feed, setFeed] = useState([]);
   const [lastFeedPost, setLastFeedPost] = useState("");
@@ -77,47 +70,8 @@ export default function Home(props) {
     </ul>
   );
 
-
-  //modal handler functions
-  const handleShowPostModal = () => {
-    showPostModal ? setShowPostModal(false) : setShowPostModal(true)
-  };
-
   const handleShowFollowingModal = () => {
     showFollowingModal ? setShowFollowingModal(false) : setShowFollowingModal(true)
-  };
-
-
-  const newPostSubmitHandler = async ({ title, description, file }) => {
-    try {
-      //create post in firestore. 
-      const createPost = await addDoc(collection(db, "posts"), {
-        user_id: userProfile.userID,
-        title: title,
-        description: description,
-        created_at: Date.now(),
-        likesCount: 0,
-        commentsCount: 0,
-        user_displayName: userProfile.displayName,
-        user_profilePhoto: userProfile.profilePhoto,
-        followers: [...userProfile.followers],
-      });
-
-      //if file exists, add to storage and update post
-      if (file) {
-        const storageRef = ref(
-          storage,
-          `/${userProfile.userID}/${createPost.id}`
-        );
-        const uploadTask = await uploadBytesResumable(storageRef, file);
-        const fileURL = await getDownloadURL(uploadTask.ref);
-        if (fileURL) {
-          await setDoc(createPost, { image: fileURL }, { merge: true });
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    }
   };
 
 
@@ -164,7 +118,7 @@ export default function Home(props) {
 
   return (
     <div>
-      {userProfile && <button onClick={handleShowPostModal}>New Post</button>}
+      {/* {userProfile && <button onClick={handleShowPostModal}>New Post</button>} */}
       {userProfile && (
         <button onClick={handleShowFollowingModal}>Show Following</button>
       )}
@@ -175,13 +129,6 @@ export default function Home(props) {
         <FollowingModal
         setShowFollowingModal={handleShowFollowingModal}
           following={followingData}
-        />
-      )}
-
-      {showPostModal && (
-        <FormModal
-          closeModal={handleShowPostModal}
-          submitFormHandler={newPostSubmitHandler}
         />
       )}
 

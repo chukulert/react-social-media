@@ -2,7 +2,8 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
+import useWindowSize from "../../hooks/useWindowSize";
 import styles from "./NavBar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -13,11 +14,15 @@ import {
   faCloudSun,
   faSquareCaretDown,
   faArrowRightFromBracket,
+  faBell,
 } from "@fortawesome/free-solid-svg-icons";
+import NavNewPost from "./NavNewPost";
 
 const NavBar = ({ switchTheme }) => {
   const { currentUser, logout, currentUserProfile } = useAuth();
   const [expandedMenu, setExpandedMenu] = useState(false);
+  const [expandedNotification, setExpandedNotification] = useState(false);
+  const { height, width } = useWindowSize();
   const dropDownRef = useRef();
   const router = useRouter();
   library.add(
@@ -26,7 +31,8 @@ const NavBar = ({ switchTheme }) => {
     faMessage,
     faCloudSun,
     faSquareCaretDown,
-    faArrowRightFromBracket
+    faArrowRightFromBracket,
+    faBell
   );
   const expandMenu = () => {
     setExpandedMenu(true);
@@ -38,10 +44,24 @@ const NavBar = ({ switchTheme }) => {
     dropDownRef.current.classList.toggle("active");
   };
 
+  const expandNotification = () => {
+    setExpandedNotification(true);
+    // dropDownRef.current.classList.toggle("active");
+  };
+
+  const closeNotification = () => {
+    setExpandedNotification(false);
+    // dropDownRef.current.classList.toggle("active");
+  };
+
+  const loadProfilePage = () => {
+    router.push(`/profile/${currentUser.uid}`);
+  };
+
   return (
     <div className={styles.navbar}>
       <div>
-        {currentUserProfile && (
+        {currentUserProfile && width > 768 && (
           <Link href={`/profile/${currentUser.uid}`}>
             <a className={styles.profileLink}>
               <Image
@@ -59,6 +79,7 @@ const NavBar = ({ switchTheme }) => {
         )}
       </div>
 
+      {/* home */}
       <div className={styles.navlinks}>
         <Link href="/">
           <a
@@ -71,31 +92,40 @@ const NavBar = ({ switchTheme }) => {
             <FontAwesomeIcon icon="fa-solid fa-house" />
           </a>
         </Link>
-        {!currentUser && (
-          <Link href="/login">
-            <a
-              className={
-                router.pathname == "/login"
-                  ? `${styles.navlink} active`
-                  : `${styles.navlink}`
-              }
-            >
-              Login
-            </a>
-          </Link>
+
+        {/* notification */}
+        {currentUser && (
+          <div
+            className={styles.dropdown}
+            tabIndex={0}
+            onFocus={expandNotification}
+            onBlur={closeNotification}
+          >
+            <div ref={dropDownRef}>
+              <FontAwesomeIcon
+                icon="fa-solid fa-bell"
+                className={`${styles.dropbtn} ${styles.navlink}`}
+              />
+            </div>
+
+            {expandedNotification && (
+              <div id="dropDown" className={styles.dropdownContent}>
+                <a onClick={switchTheme}>
+                  <FontAwesomeIcon icon="fa-solid fa-cloud-sun" /> Switch Theme
+                </a>
+                <a onClick={logout}>
+                  <FontAwesomeIcon icon="fa-solid fa-arrow-right-from-bracket" />
+                  Logout
+                </a>
+              </div>
+            )}
+          </div>
         )}
-        {!currentUser && (
-          <Link href="/sign-up">
-            <a
-              className={
-                router.pathname == "/sign-up"
-                  ? `${styles.navlink} active`
-                  : `${styles.navlink}`
-              }
-            >
-              Register
-            </a>
-          </Link>
+
+        {currentUser && (
+          <NavNewPost
+            currentUserProfile={currentUserProfile}
+          />
         )}
         {currentUser && (
           <Link href="/messages">
@@ -126,17 +156,14 @@ const NavBar = ({ switchTheme }) => {
 
             {expandedMenu && (
               <div id="dropDown" className={styles.dropdownContent}>
-                {/* <Link href={`/profile/${currentUser.uid}`}>
-                  <a>
-                    <FontAwesomeIcon icon="fa-solid fa-user" /> Profile Page
-                  </a>
-                </Link> */}
+                <a onClick={loadProfilePage}>
+                  <FontAwesomeIcon icon="fa-solid fa-user" /> Profile Page
+                </a>
 
                 <a onClick={switchTheme}>
                   <FontAwesomeIcon icon="fa-solid fa-cloud-sun" /> Switch Theme
                 </a>
                 <a onClick={logout}>
-                  
                   <FontAwesomeIcon icon="fa-solid fa-arrow-right-from-bracket" />
                   Logout
                 </a>
@@ -144,6 +171,34 @@ const NavBar = ({ switchTheme }) => {
             )}
           </div>
         )}
+
+        {!currentUser && (
+          <Link href="/login">
+            <a
+              className={
+                router.pathname == "/login"
+                  ? `${styles.navlink} active`
+                  : `${styles.navlink}`
+              }
+            >
+              Login
+            </a>
+          </Link>
+        )}
+        {!currentUser && (
+          <Link href="/sign-up">
+            <a
+              className={
+                router.pathname == "/sign-up"
+                  ? `${styles.navlink} active`
+                  : `${styles.navlink}`
+              }
+            >
+              Register
+            </a>
+          </Link>
+        )}
+
       </div>
     </div>
   );
