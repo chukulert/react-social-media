@@ -50,6 +50,29 @@
   color: var(--primary-color);
 }
 
+.header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: .5rem;
+}
+
+.active {
+  border-bottom: 1px solid var(--text-color) !important;
+}
+
+.button {
+  background-color: var(--background-color-light);
+  color: var(--text-color);
+  font-size: 1rem;
+  display: flex;
+  padding: .75rem;
+  border: none;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: var(--background-color-dark);
+}
 
 @media (min-width: 768px) {
     .modal {

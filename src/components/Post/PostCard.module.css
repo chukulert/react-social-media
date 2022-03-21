@@ -4,7 +4,6 @@
     border-top: 1px solid var(--border-color);
     max-width: 700px;
     margin: 1rem auto;
-    /* border-radius: 8px; */
     padding: 1rem;
 }
 
@@ -20,6 +19,7 @@
 
 .profilePhoto {
     border-radius: 50%;
+    z-index: 1;
 }
 
 .timeAgo {
@@ -43,6 +43,7 @@
 
 .image {
     width: 100%;
+    z-index: 1;
 }
 
 .displayNameLink {

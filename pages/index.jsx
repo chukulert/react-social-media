@@ -3,19 +3,17 @@ import { useCallback, useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import FollowingModal from "../src/components/Friend/FollowingModal";
 import Post from "../src/components/Post/Post";
+import HomeSideTab from "../src/components/HomeSideTab/HomeSideTab";
 
 import { verifyToken } from "../src/utils/init-firebaseAdmin";
 import nookies from "nookies";
 import {
-  fetchAllUsers,
+  fetchAllUsersData,
   fetchUserProfile,
-  fetchFollowingData,
-
+  // fetchFollowingData,
 } from "../src/utils/firebase-adminhelpers";
 
-
 export default function Home(props) {
-  const [showFollowingModal, setShowFollowingModal] = useState(false)
   const [feed, setFeed] = useState([]);
   const [lastFeedPost, setLastFeedPost] = useState("");
   const [element, setElement] = useState(null);
@@ -23,7 +21,9 @@ export default function Home(props) {
   const [error, setError] = useState(true);
   const [noMorePosts, setNoMorePosts] = useState(false);
 
-  const { userProfile, followingData, allUsersData, feedData } = props;
+  const { userProfile, allUsersData } = props;
+  // const { userProfile, followingData, allUsersData, followersData } = props;
+
   const observer = useRef();
 
   //get initial feeds and setup intersection observer
@@ -57,23 +57,6 @@ export default function Home(props) {
     },
     [feed, lastFeedPost]
   );
-
-  const userItems = (
-    <ul>
-      {allUsersData.map((user) => (
-        <li key={user.userID}>
-          <Link href={`/profile/${user.userID}`}>
-            <a>{user.email}</a>
-          </Link>
-        </li>
-      ))}
-    </ul>
-  );
-
-  const handleShowFollowingModal = () => {
-    showFollowingModal ? setShowFollowingModal(false) : setShowFollowingModal(true)
-  };
-
 
   const getInitialFeed = async () => {
     try {
@@ -112,23 +95,16 @@ export default function Home(props) {
       setIsLoading(false);
     } catch (error) {
       console.error(error);
-      setError(error)
+      setError(error);
     }
   };
 
   return (
     <div>
-      {/* {userProfile && <button onClick={handleShowPostModal}>New Post</button>} */}
       {userProfile && (
-        <button onClick={handleShowFollowingModal}>Show Following</button>
-      )}
-
-      {allUsersData && userItems}
-
-      {showFollowingModal && (
-        <FollowingModal
-        setShowFollowingModal={handleShowFollowingModal}
-          following={followingData}
+        <HomeSideTab
+          userProfile={userProfile}
+          allUsersData={allUsersData}
         />
       )}
 
@@ -149,12 +125,14 @@ export async function getServerSideProps(context) {
     //this returns the user profile in firestore
     if (uid) {
       const userProfile = await fetchUserProfile(uid);
-      const followingData = await fetchFollowingData(userProfile.following);
-      const allUsersData = await fetchAllUsers();
+      // const followingData = await fetchFollowingData(userProfile.following);
+      // const followersData = await fetchFollowingData(userProfile.followers);
+      const allUsersData = await fetchAllUsersData(uid);
       return {
         props: {
           userProfile: userProfile,
-          followingData: followingData ? followingData : [],
+          // followingData: followingData ? followingData : [],
+          // followersData: followersData ? followersData : [],
           allUsersData: allUsersData ? allUsersData : [],
         },
       };

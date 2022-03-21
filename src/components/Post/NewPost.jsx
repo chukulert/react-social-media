@@ -8,10 +8,10 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import {
 faPlus
 } from "@fortawesome/free-solid-svg-icons";
-import styles from './NavNewPost.module.css'
+import styles from './NewPost.module.css'
 import { useRouter } from "next/router";
 
-const NavNewPost = (props) => {
+const NewPost = (props) => {
     const [showPostModal, setShowPostModal] = useState(false);
     const router = useRouter()
 
@@ -64,8 +64,8 @@ const NavNewPost = (props) => {
 
       return (
           <>
-          <div onClick={handleShowPostModal} className={styles.navlink}>
-           <FontAwesomeIcon icon="fa-solid fa-plus" />
+          <div onClick={handleShowPostModal} className={styles.button}>
+           <FontAwesomeIcon icon="fa-solid fa-plus" className={styles.newPostBtn} /><span>New Post</span>
            </div>
         
         {showPostModal && (
@@ -78,4 +78,4 @@ const NavNewPost = (props) => {
       )
 }
 
-export default NavNewPost;
+export default NewPost;

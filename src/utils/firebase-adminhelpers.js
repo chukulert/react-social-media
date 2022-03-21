@@ -38,7 +38,22 @@ export async function fetchAllUsers() {
   try {
     // const db = getAdminDB()
     const allUsers = [];
-    const usersRef = db.collection("users");
+    const usersRef = db.collection("users")
+    const allFetchedUsers = await usersRef.get();
+    allFetchedUsers.forEach((user) => {
+      allUsers.push(user.data());
+    });
+    return allUsers;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function fetchAllUsersData(uid) {
+  try {
+    // const db = getAdminDB()
+    const allUsers = [];
+    const usersRef = db.collection("users").where('userID', '!=', uid);
     const allFetchedUsers = await usersRef.get();
     allFetchedUsers.forEach((user) => {
       allUsers.push(user.data());

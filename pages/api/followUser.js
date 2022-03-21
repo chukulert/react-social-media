@@ -7,6 +7,7 @@ import {
 const followUser = async (req, res) => {
   if (req.method === "PUT") {
     const { currentUserID, postUserID, type } = req.body;
+    console.log({ currentUserID, postUserID, type })
     try {
       if (currentUserID) {
         //update user id to postuser's following, and update postuser's followers

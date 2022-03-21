@@ -68,6 +68,7 @@ a {
 .active {
   color: var(--primary-color);
   border-bottom: 2px solid var(--primary-color);
+  z-index: 1;
 }
 
 .hide {

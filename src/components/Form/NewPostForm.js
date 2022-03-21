@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Formik, Field, Form, ErrorMessage, useField } from "formik";
 import * as Yup from "yup";
-import styles from "./NewPostForm.module.css";
+import styles from "./Form.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faImage } from "@fortawesome/free-solid-svg-icons";

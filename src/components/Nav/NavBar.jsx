@@ -16,7 +16,7 @@ import {
   faArrowRightFromBracket,
   faBell,
 } from "@fortawesome/free-solid-svg-icons";
-import NavNewPost from "./NavNewPost";
+
 
 const NavBar = ({ switchTheme }) => {
   const { currentUser, logout, currentUserProfile } = useAuth();
@@ -59,9 +59,15 @@ const NavBar = ({ switchTheme }) => {
   };
 
   return (
-    <div className={styles.navbar}>
-      <div>
-        {currentUserProfile && width > 768 && (
+    <div
+      className={
+        width > 768
+          ? `${styles.navbar}`
+          : `${styles.navbar} ${styles.navMobile}`
+      }
+    >
+      {currentUserProfile && width > 768 && (
+        <div>
           <Link href={`/profile/${currentUser.uid}`}>
             <a className={styles.profileLink}>
               <Image
@@ -76,11 +82,15 @@ const NavBar = ({ switchTheme }) => {
               </div>
             </a>
           </Link>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* home */}
-      <div className={styles.navlinks}>
+      <div className={
+        width > 768
+          ? `${styles.navlinks}`
+          : `${styles.navlinks} ${styles.navMobileLinks}`
+      }>
         <Link href="/">
           <a
             className={
@@ -122,11 +132,6 @@ const NavBar = ({ switchTheme }) => {
           </div>
         )}
 
-        {currentUser && (
-          <NavNewPost
-            currentUserProfile={currentUserProfile}
-          />
-        )}
         {currentUser && (
           <Link href="/messages">
             <a
@@ -198,7 +203,6 @@ const NavBar = ({ switchTheme }) => {
             </a>
           </Link>
         )}
-
       </div>
     </div>
   );

@@ -1,0 +1,43 @@
+.container {
+    margin: 0 auto;
+    width: fit-content;
+}
+
+.profileContainer{
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.holder {
+    border-bottom: var(--border-color);
+}
+
+.profileLink {
+    height: 100%;
+    max-width: 10rem;
+    display: flex;
+    border-radius: 1rem;
+    padding: .5rem;
+    font-size: 1.2rem;
+    
+}
+
+.profileLink:hover {
+    background-color: var(--background-color-light);
+}
+
+.flexCenter {
+    display: flex;
+    align-items: center;
+    margin-left: .5rem;
+}
+
+.footer {
+    display: flex;
+   flex-direction: column;
+   gap: .5rem;
+   justify-content: space-around;
+   margin-left: 2rem;
+
+}

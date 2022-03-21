@@ -7,6 +7,7 @@ import {
   fetchUserPosts,
   fetchUserProfile,
 } from "../../src/utils/firebase-adminhelpers";
+import FollowUserButton from "../../src/components/Friend/FollowUserButton";
 
 export async function getStaticProps(staticProps) {
   const userID = staticProps.params.id;
@@ -125,11 +126,9 @@ const ProfilePage = (props) => {
       )}
 
       {isLoading && <h1>Loading...</h1>}
-      {!isLoading && !isCurrentUserPage && (
-        <button onClick={followUserHandler}>
-          {isFollower ? "Unfollow" : "Follow"} User
-        </button>
-      )}
+      {!isLoading && !isCurrentUserPage && 
+       <button onClick={followUserHandler}>{isFollower ? "Unfollow" : "Follow"} User</button>
+      }
       {!isLoading && <Post posts={posts} currentUserPage={isCurrentUserPage} />}
     </>
   );

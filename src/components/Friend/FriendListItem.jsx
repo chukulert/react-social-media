@@ -1,18 +1,53 @@
-
-import styles from './FriendListItem.module.css'
-import Link from 'next/link'
-import Image from 'next/image'
+import { useState, useEffect } from "react";
+import styles from "./FriendListItem.module.css";
+import Link from "next/link";
+import Image from "next/image";
+// import FollowUserButton from "./FollowUserButton";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 
 const FriendListItem = (props) => {
-    const {displayName, profilePhoto, id, handleUserClick } = props
+  const { displayName, profilePhoto, id, followStatus, followUserHandler } = props;
+  const [isFollower, setIsFollower] = useState(null)
+  library.add(faUserPlus);
 
+  useEffect(() => {
+    if(followStatus) setIsFollower(true)
+  }, [])
 
-    return (
-        <div className={styles.friendListItemContainer} onClick={handleUserClick} id={id}>
-           <div><Image src={profilePhoto} width={50} height={50} alt='profile photo'  className='avatar' /></div>
-            <div className={styles.displayNameContainer}><Link href={`/profile/${id}`}><a className={styles.displayName}>{displayName}</a></Link>
-</div>        </div>
-    )
-}
+  const handleFollowClick = () => {
+    isFollower ? setIsFollower(false) : setIsFollower(true)
+    followUserHandler({id, isFollower})
+  }
 
-export default FriendListItem
+  return (
+    <div
+      className={styles.friendListItemContainer}
+      id={id}
+    >
+
+    <div className={styles.profileContainer}>
+        <Image
+          src={profilePhoto}
+          width={50}
+          height={50}
+          alt="profile photo"
+          className="avatar"
+        />
+      
+      <div className={styles.displayNameContainer}>
+        <Link href={`/profile/${id}`}>
+          <a className={styles.displayName}>{displayName}</a>
+        </Link>
+      </div>
+      </div>
+      <button className={styles.followBtn} onClick={handleFollowClick}>
+        <FontAwesomeIcon className={styles.followIcon} icon="fa-solid fa-user-plus" />
+        <span>{isFollower ? "Unfollow" : "Follow"} User</span>
+      </button>
+    </div>
+  );
+};
+
+export default FriendListItem;

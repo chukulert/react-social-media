@@ -1,6 +1,7 @@
 import PostCard from "./PostCard";
 import Container from "../Layout/Container";
 import styles from './Post.module.css'
+
        
 
 const Post = ({ posts }) => {
@@ -27,7 +28,9 @@ const Post = ({ posts }) => {
 
     return (
         <div className={styles.container}>
+            {/* <Container> */}
             {postItems}
+            {/* </Container> */}
         </div>
     )
 }

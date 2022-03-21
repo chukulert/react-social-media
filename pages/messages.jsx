@@ -7,12 +7,14 @@ import FollowingList from "../src/components/Message/FollowingList";
 import FollowingModal from "../src/components/Friend/FollowingModal";
 import MessageBoard from "../src/components/Message/MessageBoard";
 import MessageGroup from "../src/components/Message/MessageGroupList";
+import useWindowSize from "../src/hooks/useWindowSize";
 
 const MessagesPage = () => {
   const { currentUserProfile } = useAuth();
   const [messageGroup, setMessageGroup] = useState(null);
   const [tempUser, setTempUser] = useState(false);
   const [showFollowingModal, setShowFollowingModal] = useState(false)
+  const { height, width } = useWindowSize();
 //   const [showMessageBoard, ]
 
   const getKey = (pageIndex, previousPageData) => {

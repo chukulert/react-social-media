@@ -1,12 +1,16 @@
 .friendListItemContainer {
     border-radius: 8px;
     padding: 1rem;
-    cursor: pointer;
     display: flex;
+    justify-content: space-between;
 }
 
 .friendListItemContainer:hover {
     background-color: var(--background-color-dark);
+}
+
+.profileContainer {
+    display: flex;
 }
 
 .displayNameContainer {
@@ -22,4 +26,25 @@
 
 .displayName:hover {
     text-decoration: underline;
+}
+
+.followBtn {
+    background-color: var(--background-color-light);
+    color: var(--text-color);
+    font-size: 1rem;
+    display: flex;
+    padding: .75rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    align-items: center;
+
+}
+
+.followBtn:hover{
+    background-color: var(--background-color-hover);
+}
+
+.followIcon{
+    margin-right: .5rem;
 }
