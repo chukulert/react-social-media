@@ -1,8 +1,21 @@
+.messagePageContainer {
+    display: flex;
+    min-height: 90vh;
+}
+
 .messageBoardContainer {
+    flex-grow: 2;
+    overflow: hidden;
+    max-height: 100%;
+}
+
+.messagesContainer {
+    position: absolute;
     width: 100%;
-    
-    background-color: var(--background-color);
-    padding: 1rem;
+    height: 75%;
+    background-color: var(--background-color-light);
+    padding: 1rem 2rem;
+    overflow: auto; 
 }
 
 .messageBoardHeader {
@@ -14,12 +27,15 @@
     padding: .5rem 1rem;
     margin-bottom: .5rem;
     height: 5rem;
+    position: sticky;
+    top: 0;
 }
 
 .messagesContent {
     display: flex;
     flex-direction: column;
 }
+
 
 .messageBoardIntroMessage {
     color: var(--border-color);
@@ -57,7 +73,36 @@
     cursor: pointer;
 }
 
-
 .newMessage:hover {
     color: var(--primary-color);
+}
+
+.emptyMessageBoard {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100%;
+    font-size: 1.2rem;
+}
+
+.button{
+    background-color: var(--background-color-light);
+    color: var(--text-color);
+    display: flex;
+    padding: .75rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.button:hover {
+    background-color: var(--background-color-dark);
+}
+
+@media (min-width: 768px) {
+    .messagesContainer {
+        width: calc(100vw - 360px);
+    }
 }

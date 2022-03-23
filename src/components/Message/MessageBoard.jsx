@@ -1,15 +1,17 @@
+import { useState, useEffect, useCallback, useRef } from "react";
 import MessageInput from "./MessageInput";
 import MessageItem from "./MessageItem";
 import styles from "./MessageBoard.module.css";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import {
-    faCaretLeft,
-    faCommentDots
-  } from "@fortawesome/free-solid-svg-icons";
+import { faCaretLeft, faCommentDots } from "@fortawesome/free-solid-svg-icons";
 
 const MessageBoard = (props) => {
+    const [element, setElement] = useState(null);
+    const observer = useRef();
+    const messagesEndRef = useRef()
+    
   const {
     messages,
     handleLoadMore,
@@ -18,16 +20,54 @@ const MessageBoard = (props) => {
     messageGroup,
     currentUserProfile,
     setShowFollowingModal,
+    width,
+    toggleMessageBoardDisplay,
+    tempUser
   } = props;
 
-  library.add(faCaretLeft, faCommentDots)
+  library.add(faCaretLeft, faCommentDots);
 
-  const chatUser = messageGroup?.members.filter(
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView()
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messageGroup])
+
+  useEffect(() => {
+    let currentElement;
+    let currentObserver;
+    observer.current = new IntersectionObserver(handleObserver, {
+      threshold: 1,
+    });
+    currentElement = element;
+    currentObserver = observer.current;
+
+    if (currentElement) {
+      currentObserver.observe(currentElement);
+    console.log('observe')
+    }
+    return () => {
+      if (currentElement) {
+        currentObserver.disconnect();
+      }
+    };
+  }, [messages]);
+
+  const handleObserver = useCallback((entries) => {
+    if (entries[0].isIntersecting) {
+        console.log('yes')
+        // handleLoadMore()
+    }
+  }, []);
+
+  const chatUser = tempUser ? tempUser : messageGroup?.members.filter(
     (member) => member.id !== currentUserProfile.userID
   )[0];
 
   const messageItems = (
-    <ul className={styles.messagesContent}>
+    <div className={styles.messagesContent}>
       {[...messages]?.reverse().map((message) => (
         <MessageItem
           key={message.id}
@@ -38,41 +78,63 @@ const MessageBoard = (props) => {
           sent_at={message.sent_at}
         />
       ))}
-    </ul>
+    </div>
   );
   const noMessageItems = !messageItems.props.children.length;
 
   return (
-    <>
+    <div className={styles.messageBoardContainer}>
       <div className={styles.messageBoardHeader}>
-        <div className={styles.flexCenter}><FontAwesomeIcon icon="fa-solid fa-caret-left" className={styles.backBtn} /></div>
-        {chatUser && <div className={styles.profileDisplay}>
-            <div className={styles.flexCenter}><Image src={chatUser.profilePhoto} alt='profile photo' width={50} height={50} className='avatar' /></div>
-            <div className={styles.flexCenter}><p>{chatUser.displayName}</p></div> 
-        </div> }
-        <div className={styles.flexCenter}><FontAwesomeIcon icon="fa-solid fa-comment-dots" onClick={setShowFollowingModal} className={styles.newMessage} /></div>
-
+        <div className={styles.flexCenter}>
+          <FontAwesomeIcon
+            icon="fa-solid fa-caret-left"
+            className={width > 768 ? "hide" : `${styles.backBtn}`}
+            onClick={toggleMessageBoardDisplay}
+          />
+        </div>
+        {chatUser && (
+          <div className={styles.profileDisplay}>
+            <div className={styles.flexCenter}>
+              <Image
+                src={chatUser.profilePhoto}
+                alt="profile photo"
+                width={50}
+                height={50}
+                className="avatar"
+              />
+            </div>
+            <div className={styles.flexCenter}>
+              <p>{chatUser.displayName}</p>
+            </div>
+          </div>
+        )}
+        <div className={styles.flexCenter}>
+          <FontAwesomeIcon
+            icon="fa-solid fa-comment-dots"
+            onClick={setShowFollowingModal}
+            className={styles.newMessage}
+          />
+        </div>
       </div>
-      <div className={styles.messageBoardContainer}>
-        {messageGroup && isReachingEnd && noMessageItems && (
+      <div className={styles.messagesContainer}>
+        {isReachingEnd && (
           <p className={styles.loadMoreBtn}>All messages are loaded.</p>
         )}
-        {messageGroup && !isReachingEnd && !noMessageItems && (
-          <p onClick={handleLoadMore} className={styles.loadMoreBtn}>
+        {!isReachingEnd && !noMessageItems && messageGroup && (
+          <p onClick={handleLoadMore} className={styles.loadMoreBtn} ref={setElement}>
             Load more
           </p>
         )}
-
         {messageItems}
         {noMessageItems && !messageGroup && (
           <p className={styles.messageBoardIntroMessage}>
             Start a new conversation by entering a new message.
           </p>
         )}
-
-        <MessageInput submitMessageHandler={submitMessageHandler} />
+        <div ref={messagesEndRef}/>
       </div>
-    </>
+        <MessageInput submitMessageHandler={submitMessageHandler} />
+    </div>
   );
 };
 

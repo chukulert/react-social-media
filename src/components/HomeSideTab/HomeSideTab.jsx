@@ -129,7 +129,7 @@ const HomeSideTab = (props) => {
               icon="fa-solid fa-user-group"
               className={styles.userGroupBtn}
             />
-            <span>Show Following</span>
+            <span>Show Users</span>
           </button>
           <NewPost />
         </div>

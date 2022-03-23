@@ -1,4 +1,5 @@
 .messageGroupItemContainer{
+    min-width: 360px;
     display: flex;
     align-content: flex-start;
     padding: 0.5rem;

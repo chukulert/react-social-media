@@ -16,7 +16,7 @@ const MessageInput = ({ submitMessageHandler }) => {
   };
 
   return (
-    <div>
+    <>
       <form onSubmit={handleSubmit} className={styles.messageInputContainer}>
         <input
           type="text"
@@ -30,7 +30,7 @@ const MessageInput = ({ submitMessageHandler }) => {
           <FontAwesomeIcon icon="fa-solid fa-arrow-right-from-bracket" />
         </div>
       </form>
-    </div>
+    </>
   );
 };
 

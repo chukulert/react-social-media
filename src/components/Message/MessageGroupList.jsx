@@ -1,7 +1,7 @@
 import MessageGroupItem from "./MessageGroupItem";
 
 const MessageGroup = (props) => {
-  const { messageGroups, currentUserProfile, handleMessageGroupClick } = props;
+  const { messageGroups, currentUserProfile, handleMessageGroupClick, handleShowModal } = props;
 
   const messageGroupList = (
     <ul>

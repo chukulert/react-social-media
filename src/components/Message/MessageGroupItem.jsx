@@ -7,7 +7,7 @@ const MessageGroupItem = (props) => {
   const { messageGroup, currentUserProfile, handleMessageGroupClick, id } =
     props;
 
-  const date = timeAgo(messageGroup.last_message.created_at);
+  const date = timeAgo(messageGroup.last_message?.created_at);
 
   const chatUser = messageGroup.members.filter(
     (member) => member.id !== currentUserProfile.userID
@@ -35,7 +35,7 @@ const MessageGroupItem = (props) => {
         </div>
         {/* <p>{messageGroup.groupName}</p> */}
         <div className={styles.lastMessage}>
-          {messageGroup.last_message.textContent}{" "}
+          {messageGroup.last_message?.textContent}
         </div>
       </div>
     </div>

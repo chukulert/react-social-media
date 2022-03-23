@@ -508,7 +508,7 @@ export async function fetchMessagesByGroupID(groupID) {
       .doc(groupID)
       .collection("messages")
       .orderBy("sent_at", "desc")
-      .limit(5);
+      .limit(15);
     const snapshots = await query.get();
     const messages = snapshots.docs.map((message) => {
       const data = {
@@ -531,7 +531,7 @@ export async function fetchMoreMessagesByGroupID(groupID, snapshot) {
       .collection("messages")
       .orderBy("sent_at", "desc")
       .startAfter(snapshot)
-      .limit(5);
+      .limit(15);
     const snapshots = await query.get();
     const messages = snapshots.docs.map((message) => {
       const data = {
@@ -566,7 +566,7 @@ export async function getMessageSnapshotByID(groupID, messageID) {
 }
 
 export async function postNewMessage({ sent_by, messageText, messageGroupID }) {
-  console.log(messageGroupID);
+
   try {
     const messageRef = db
       .collection("messages")

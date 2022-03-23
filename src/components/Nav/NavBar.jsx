@@ -22,7 +22,7 @@ const NavBar = ({ switchTheme }) => {
   const { currentUser, logout, currentUserProfile } = useAuth();
   const [expandedMenu, setExpandedMenu] = useState(false);
   const [expandedNotification, setExpandedNotification] = useState(false);
-  const { height, width } = useWindowSize();
+  const { width } = useWindowSize();
   const dropDownRef = useRef();
   const router = useRouter();
   library.add(

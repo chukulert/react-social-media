@@ -8,26 +8,38 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 
 const FriendListItem = (props) => {
-  const { displayName, profilePhoto, id, followStatus, followUserHandler } = props;
-  const [isFollower, setIsFollower] = useState(null)
+  const {
+    displayName,
+    profilePhoto,
+    id,
+    followStatus,
+    followUserHandler,
+    handleUserClick,
+    modalType,
+  } = props;
+  const [isFollower, setIsFollower] = useState(null);
   library.add(faUserPlus);
 
   useEffect(() => {
-    if(followStatus) setIsFollower(true)
-  }, [])
+    if (followStatus) setIsFollower(true);
+  }, []);
 
   const handleFollowClick = () => {
-    isFollower ? setIsFollower(false) : setIsFollower(true)
-    followUserHandler({id, isFollower})
-  }
+    isFollower ? setIsFollower(false) : setIsFollower(true);
+    followUserHandler({ id, isFollower });
+  };
 
   return (
     <div
-      className={styles.friendListItemContainer}
+      className={
+        modalType === "message"
+          ? `${styles.pointer} ${styles.friendListItemContainer}`
+          : `${styles.friendListItemContainer}`
+      }
       id={id}
+      onClick={modalType === "message" ? handleUserClick : null}
     >
-
-    <div className={styles.profileContainer}>
+      <div className={styles.profileContainer}>
         <Image
           src={profilePhoto}
           width={50}
@@ -35,17 +47,22 @@ const FriendListItem = (props) => {
           alt="profile photo"
           className="avatar"
         />
-      
-      <div className={styles.displayNameContainer}>
-        <Link href={`/profile/${id}`}>
-          <a className={styles.displayName}>{displayName}</a>
-        </Link>
+
+        <div className={styles.displayNameContainer}>
+          <Link href={`/profile/${id}`}>
+            <a className={styles.displayName}>{displayName}</a>
+          </Link>
+        </div>
       </div>
-      </div>
-      <button className={styles.followBtn} onClick={handleFollowClick}>
-        <FontAwesomeIcon className={styles.followIcon} icon="fa-solid fa-user-plus" />
-        <span>{isFollower ? "Unfollow" : "Follow"} User</span>
-      </button>
+      {modalType !== "message" && (
+        <button className={styles.followBtn} onClick={handleFollowClick}>
+          <FontAwesomeIcon
+            className={styles.followIcon}
+            icon="fa-solid fa-user-plus"
+          />
+          <span>{isFollower ? "Unfollow" : "Follow"} User</span>
+        </button>
+      )}
     </div>
   );
 };

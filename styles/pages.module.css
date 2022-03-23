@@ -2,6 +2,11 @@
     width: 90%;
     padding: 1rem;
     text-align: center;
+    max-width: 800px;
+}
+
+.pageContainer h1 {
+    margin-bottom: 1.5rem;
 }
 
 

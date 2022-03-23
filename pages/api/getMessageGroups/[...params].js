@@ -11,15 +11,15 @@ const getMessageGroups = async (req, res) => {
         if (records.length !== 0) {
           res.json(records);
         } else {
-          res.json({ message: `id could not be found` });
+          res.json(null);
         }
       } else {
         res.status(400);
-        res.json({ message: "Id is missing" });
+        res.json(null);
       }
     } catch (err) {
       res.status(500);
-      res.json({ message: "Something went wrong", err });
+      res.json(null);
     }
   };
   

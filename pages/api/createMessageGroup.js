@@ -1,10 +1,15 @@
-import { createNewMessageGroup, fetchUserProfile} from "../../src/utils/firebase-adminhelpers";
+import {
+  createNewMessageGroup,
+  fetchUserProfile,
+} from "../../src/utils/firebase-adminhelpers";
 import { db } from "../../src/utils/init-firebaseAdmin";
 
 const createMessageGroup = async (req, res) => {
   if (req.method === "POST") {
     const {
       chatUserID,
+      chatUserProfilePhoto,
+      chatUserDisplayName,
       currentUserID,
       currentUserProfilePhoto,
       currentUserDisplayName,
@@ -12,23 +17,23 @@ const createMessageGroup = async (req, res) => {
 
     // console.log(chatUserID, currentUserID, currentUserDisplayName, currentUserProfilePhoto);
     try {
-      if (currentUserID && chatUserID ) {
-          const chatUser = await fetchUserProfile(chatUserID)
-          const membersArray = [{
-            displayName: currentUserDisplayName,
+      if (currentUserID && chatUserID) {
+        const membersArray = [
+          {
             id: currentUserID,
-            profilePhoto: currentUserProfilePhoto
-          }, {
-            displayName: chatUser.displayName,
+            displayName: currentUserDisplayName,
+            profilePhoto: currentUserProfilePhoto,
+          },
+          {
             id: chatUserID,
-            profilePhoto: chatUser.profilePhoto
-          }]
+            displayName: chatUserDisplayName,
+            profilePhoto: chatUserProfilePhoto,
+          },
+        ];
         const records = await createNewMessageGroup({
-            membersArray, currentUserID
+          membersArray,
+          currentUserID,
         });
-        // console.log(messageData)
-        // const data = await db.collection('messages').doc(records.id).set()
-        // console.log(data)
         if (records.length !== 0) {
           res.json(records);
         } else {

@@ -48,3 +48,7 @@
 .followIcon{
     margin-right: .5rem;
 }
+
+.pointer {
+    cursor: pointer;
+}
