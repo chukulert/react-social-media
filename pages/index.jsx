@@ -1,17 +1,15 @@
 import Head from "next/head";
 import { useCallback, useRef, useState, useEffect } from "react";
-import Link from "next/link";
-import FollowingModal from "../src/components/Friend/FollowingModal";
 import Post from "../src/components/Post/Post";
 import HomeSideTab from "../src/components/HomeSideTab/HomeSideTab";
-
 import { verifyToken } from "../src/utils/init-firebaseAdmin";
 import nookies from "nookies";
 import {
   fetchAllUsersData,
   fetchUserProfile,
-  // fetchFollowingData,
 } from "../src/utils/firebase-adminhelpers";
+import styles from '../styles/pages.module.css'
+import NavBar from "../src/components/Nav/NavBar";
 
 export default function Home(props) {
   const [feed, setFeed] = useState([]);
@@ -100,6 +98,8 @@ export default function Home(props) {
   };
 
   return (
+    <>
+    <NavBar currentUserProfile={userProfile} />
     <div>
       {userProfile && (
         <HomeSideTab
@@ -112,8 +112,9 @@ export default function Home(props) {
       <div ref={setElement}></div>
       {loading && <div>Loading...</div>}
       {error && !noMorePosts && <div>{error}</div>}
-      {noMorePosts && !loading && <div>No More posts</div>}
+      {noMorePosts && !loading && <div className={styles.centerText}>No posts available. Follow other users to view posts on your feed.</div>}
     </div>
+    </>
   );
 }
 

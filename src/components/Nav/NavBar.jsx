@@ -1,4 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import useSWR, { mutate, useSWRConfig } from "swr";
+import { fetcher } from "../../utils";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
@@ -16,10 +18,13 @@ import {
   faArrowRightFromBracket,
   faBell,
 } from "@fortawesome/free-solid-svg-icons";
+import useLocalStorage from "use-local-storage";
+import NotificationItem from "./NotificationItem";
 
 
-const NavBar = ({ switchTheme }) => {
-  const { currentUser, logout, currentUserProfile } = useAuth();
+
+const NavBar = ({currentUserProfile}) => {
+  const { logout } = useAuth();
   const [expandedMenu, setExpandedMenu] = useState(false);
   const [expandedNotification, setExpandedNotification] = useState(false);
   const { width } = useWindowSize();
@@ -34,6 +39,58 @@ const NavBar = ({ switchTheme }) => {
     faArrowRightFromBracket,
     faBell
   );
+
+  const [theme, setTheme] = useLocalStorage(
+    "theme", ''
+  );
+
+  useEffect(() => {
+    const defaultDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (defaultDark) setTheme('dark')
+  }, [])
+
+  const switchTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    if (newTheme === "light") {
+      document.body.classList.add("light-theme");
+    } else {
+      document.body.classList.remove("light-theme");
+    }
+    setTheme(newTheme);
+  };
+
+  const { data: notifications, error: notificationsError } = useSWR(
+    currentUserProfile ? `/api/getNotifications?id=${currentUserProfile.userID}` : null,
+    fetcher,
+    {
+      // refreshInterval: 1000,
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+    }
+  );
+  if(notifications) console.log(notifications)
+
+  const notificationsList = (
+    <div>
+      {notifications?.map((notification) => (
+        <NotificationItem
+          key={notification.id}
+          id={notification.id}
+          created_at={notification.created_at}
+          link={notification.link}
+          message={notification.message}
+          read={notification.read}
+          sent_user_displayName={notification.sent_user_displayName}
+          sent_user_id={notification.sent_user_id}
+          type={notification.type}
+          user_id={notification.user_id}
+        />
+      ))}
+    </div>
+  );
+
+  
+
   const expandMenu = () => {
     setExpandedMenu(true);
     dropDownRef.current.classList.toggle("active");
@@ -45,8 +102,7 @@ const NavBar = ({ switchTheme }) => {
   };
 
   const expandNotification = () => {
-    setExpandedNotification(true);
-    // dropDownRef.current.classList.toggle("active");
+        setExpandedNotification(true);
   };
 
   const closeNotification = () => {
@@ -55,7 +111,7 @@ const NavBar = ({ switchTheme }) => {
   };
 
   const loadProfilePage = () => {
-    router.push(`/profile/${currentUser.uid}`);
+    router.push(`/profile/${currentUserProfile.userID}`);
   };
 
   return (
@@ -68,7 +124,7 @@ const NavBar = ({ switchTheme }) => {
     >
       {currentUserProfile && width > 768 && (
         <div>
-          <Link href={`/profile/${currentUser.uid}`}>
+          <Link href={`/profile/${currentUserProfile.userID}`}>
             <a className={styles.profileLink}>
               <Image
                 src={currentUserProfile.profilePhoto}
@@ -85,13 +141,14 @@ const NavBar = ({ switchTheme }) => {
         </div>
       )}
 
-      {/* home */}
+     
       <div className={
         width > 768
           ? `${styles.navlinks}`
           : `${styles.navlinks} ${styles.navMobileLinks}`
       }>
-        <Link href="/">
+         {/* home */}
+        {currentUserProfile && (<Link href="/">
           <a
             className={
               router.pathname == "/"
@@ -101,10 +158,24 @@ const NavBar = ({ switchTheme }) => {
           >
             <FontAwesomeIcon icon="fa-solid fa-house" />
           </a>
-        </Link>
+        </Link>)}
+      
+        {currentUserProfile && (
+          <Link href="/messages">
+            <a
+              className={
+                router.pathname == "/messages"
+                  ? `${styles.navlink} active`
+                  : `${styles.navlink}`
+              }
+            >
+              <FontAwesomeIcon icon="fa-solid fa-message" />
+            </a>
+          </Link>
+        )}
 
         {/* notification */}
-        {currentUser && (
+        {currentUserProfile && (
           <div
             className={styles.dropdown}
             tabIndex={0}
@@ -120,32 +191,13 @@ const NavBar = ({ switchTheme }) => {
 
             {expandedNotification && (
               <div id="dropDown" className={styles.dropdownContent}>
-                <a onClick={switchTheme}>
-                  <FontAwesomeIcon icon="fa-solid fa-cloud-sun" /> Switch Theme
-                </a>
-                <a onClick={logout}>
-                  <FontAwesomeIcon icon="fa-solid fa-arrow-right-from-bracket" />
-                  Logout
-                </a>
+                {notificationsList}
               </div>
             )}
           </div>
         )}
 
-        {currentUser && (
-          <Link href="/messages">
-            <a
-              className={
-                router.pathname == "/messages"
-                  ? `${styles.navlink} active`
-                  : `${styles.navlink}`
-              }
-            >
-              <FontAwesomeIcon icon="fa-solid fa-message" />
-            </a>
-          </Link>
-        )}
-        {currentUser && (
+        {currentUserProfile && (
           <div
             className={styles.dropdown}
             tabIndex={0}
@@ -177,7 +229,7 @@ const NavBar = ({ switchTheme }) => {
           </div>
         )}
 
-        {!currentUser && (
+        {!currentUserProfile && (
           <Link href="/login">
             <a
               className={
@@ -190,7 +242,7 @@ const NavBar = ({ switchTheme }) => {
             </a>
           </Link>
         )}
-        {!currentUser && (
+        {!currentUserProfile && (
           <Link href="/sign-up">
             <a
               className={

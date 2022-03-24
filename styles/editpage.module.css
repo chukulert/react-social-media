@@ -1,0 +1,131 @@
+.formContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.formInput {
+    padding: .5rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    background-color: var(--background-color-light);
+    flex-grow: 2;
+    color: var(--text-color);
+    margin: .5rem 0;
+}
+
+.formInput ::placeholder {
+   
+  }
+
+
+.formLabel {
+    color: var(--text-color);
+}
+
+.formError {
+    margin: 0;
+    color: var(--error-color);
+    font-size: .9rem;   
+}
+
+.textArea {
+    resize: none;
+}
+
+.submitBtn {
+    padding: .5rem 2rem;
+    font-size: 1.2rem;
+    background-color: var(--primary-dark-color);
+    color: var(--text-color);
+    box-shadow: none;
+    border: none;
+    border-radius: 8px;
+    margin: .5rem auto;
+    cursor: pointer;
+}
+
+.submitBtn:hover {
+    background-color: var(--primary-color);
+}
+
+.image {
+    border-radius: 16px;
+}
+
+.imageOverlay {
+transition: .5s ease;
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  text-align: center;
+}
+.imageLabelContainer {
+    min-width: 300px;
+    align-self: center;
+}
+
+.uploadFileLabelContainer {
+    position: relative;
+    border: 1px solid var(--border-color);
+    background-color: var(--background-color-light);
+    border-radius: 16px;
+    text-align: center;
+    max-width: 300px;
+    margin: .5rem auto;
+    font-size: 1.2rem;  
+    cursor: pointer;
+}
+
+.uploadFileLabelContainer:hover .image {
+    opacity: 0.3;
+}
+
+.uploadFileLabelContainer:hover .imageOverlay {
+    opacity: 1;
+  } 
+
+.uploadFileLabel {
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+.footer {
+    display: flex;
+    align-items: flex-end;
+}
+
+.pageContainer{
+    width: 90%;
+    padding: 1rem;
+    text-align: center;
+    max-width: 800px;
+    background-color: var(--background-color-dark);
+    border-radius: 1rem;
+    margin: 1rem 0;
+}
+
+.pageContainer h1 {
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem;
+}
+
+
+.pageContainer h4 {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    text-align: left;
+}
+
+
+@media (min-width: 768px) {
+    .pageContainer {
+        width: 60%;
+    }
+}

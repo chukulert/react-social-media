@@ -27,7 +27,7 @@
     padding: .5rem 1rem;
     margin-bottom: .5rem;
     height: 5rem;
-    position: sticky;
+    /* position: sticky; */
     top: 0;
 }
 
@@ -87,6 +87,16 @@
     font-size: 1.2rem;
 }
 
+.emptyMessageBoardMobile {
+    margin-top: 2rem;
+    display: flex;
+    font-size: 1.2rem;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+}
+
 .button{
     background-color: var(--background-color-light);
     color: var(--text-color);
@@ -99,6 +109,13 @@
 
 .button:hover {
     background-color: var(--background-color-dark);
+}
+
+.alignLeft {
+    text-align: right;
+    margin: .5rem;
+    /* font-size: 2rem;
+    cursor: pointer; */
 }
 
 @media (min-width: 768px) {

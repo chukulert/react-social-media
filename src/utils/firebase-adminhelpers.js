@@ -319,19 +319,6 @@ export async function updatePostFollowing(currentUserID, postID, type) {
   }
 }
 
-// const fetchMoreComments = async () => {
-// const nextQuery = query(
-//   collection(db, "comments"),
-//   where("post_ID", "==", props.postID),
-//   orderBy("created_at", "desc"),
-//   orderBy("likesCount", "desc"),
-//   startAfter(lastDoc),
-//   limit(2)
-// );
-//   const documentSnapshots = await getDocs(nextQuery);
-//   updateCommentsState(documentSnapshots);
-// };
-
 export async function fetchInitialFeedData(userID) {
   try {
     const query = db
@@ -541,11 +528,7 @@ export async function fetchMoreMessagesByGroupID(groupID, snapshot) {
       return data;
     });
     return messages;
-    // const lastDoc = snapshots.docs[snapshots.docs.length - 1].data();
-    // return {
-    //   messages,
-    //   lastDoc,
-    // };
+
   } catch (e) {
     console.error(e);
   }
@@ -617,4 +600,40 @@ export async function createNewMessageGroup({ membersArray, currentUserID }) {
     };
     return data;
   } catch (error) {}
+}
+
+export async function fetchNotificationsById(uid) {
+  try {
+    const userNotifications = [];
+    const notifRef = db.collection("notifications").where("user_id", "==", uid).where("read", "==", false);
+
+    const querySnapshot = await notifRef.get();
+    querySnapshot.forEach((doc) => {
+      const data = {
+        ...doc.data(),
+        id: doc.id,
+      };
+      userNotifications.push(data);
+    });
+    return userNotifications;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function readNotification(id) {
+  const notifRef = db.collection('notifications').doc(id);
+    return await notifRef.update({read: true});
+}
+
+export async function readAllNotifications(notifications) {
+  try {
+  await Promise.all(
+    notifications.map(async (notification) => {
+      const notifRef = db.collection("notifications").doc(notification.id);
+      return await notifRef.update({read: true});
+    })
+  ); } catch (error) {
+    console.error(error)
+  }
 }

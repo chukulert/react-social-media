@@ -13,6 +13,7 @@ import styles from "../src/components/Message/MessageBoard.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCommentDots } from "@fortawesome/free-solid-svg-icons";
+import NavBar from "../src/components/Nav/NavBar";
 
 const MessagesPage = ({ userProfile }) => {
   const [messageGroup, setMessageGroup] = useState(null);
@@ -116,6 +117,7 @@ const MessagesPage = ({ userProfile }) => {
       setMessageGroup(null);
       setTempUser(fetchedUser);
     }
+    if (width < 768) toggleMessageBoardDisplay();
   };
 
   const handleLoadMoreMessages = () => {
@@ -223,6 +225,8 @@ const MessagesPage = ({ userProfile }) => {
   };
 
   return (
+      <>
+      <NavBar currentUserProfile={userProfile}/>
     <div className={width < 768 ? null : `${styles.messagePageContainer}`}>
       {showUserModal && (
         <MessageUserModal
@@ -237,6 +241,7 @@ const MessagesPage = ({ userProfile }) => {
           messageGroups={messageGroups}
           currentUserProfile={userProfile}
           handleShowModal={handleShowModal}
+          width={width}
         />
       )}
       {showMessageBoard && hasUser && (
@@ -265,7 +270,21 @@ const MessagesPage = ({ userProfile }) => {
           </p>
         </div>
       )}
+      {!messageGroups && !showMessageBoard && (
+          <div className={styles.emptyMessageBoardMobile}>
+          <p>Start a new conversation.</p>
+          <p className={styles.button} onClick={handleShowModal}>
+            <FontAwesomeIcon
+              icon="fa-solid fa-comment-dots"
+              onClick={handleShowModal}
+            />
+            <span className={styles.flexCenter}>Show users</span>
+          </p>
+        </div>
+      )}
+    
     </div>
+    </>
   );
 };
 

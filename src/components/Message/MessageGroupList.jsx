@@ -1,7 +1,19 @@
 import MessageGroupItem from "./MessageGroupItem";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faCaretLeft, faCommentDots } from "@fortawesome/free-solid-svg-icons";
+import styles from "./MessageBoard.module.css";
 
 const MessageGroup = (props) => {
-  const { messageGroups, currentUserProfile, handleMessageGroupClick, handleShowModal } = props;
+  const {
+    messageGroups,
+    currentUserProfile,
+    handleMessageGroupClick,
+    handleShowModal,
+    width,
+  } = props;
+
+  library.add(faCaretLeft, faCommentDots);
 
   const messageGroupList = (
     <ul>
@@ -17,7 +29,21 @@ const MessageGroup = (props) => {
     </ul>
   );
 
-  return <div>{messageGroupList}</div>;
+  return (
+    <div>
+      {width < 768 && (
+        <div className={styles.alignLeft}>
+          <FontAwesomeIcon
+            icon="fa-solid fa-comment-dots"
+            onClick={handleShowModal}
+            className={styles.newMessage}
+          />
+        </div>
+      )}
+
+      {messageGroupList}
+    </div>
+  );
 };
 
 export default MessageGroup;

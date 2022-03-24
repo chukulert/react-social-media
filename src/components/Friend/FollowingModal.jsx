@@ -58,7 +58,7 @@ const FollowingModal = (props) => {
                   : `${styles.button}`
               }
             >
-              Show Following
+              Following
             </button>
             <button
               onClick={handleTabClick}
@@ -69,7 +69,7 @@ const FollowingModal = (props) => {
                   : `${styles.button}`
               }
             >
-              Show Followers
+              Followers
             </button>
             <button
               onClick={handleTabClick}
@@ -80,7 +80,7 @@ const FollowingModal = (props) => {
                   : `${styles.button}`
               }
             >
-              Show Suggestions
+              Suggestions
             </button>
           </div>
           {usersDisplayList}

@@ -3,6 +3,7 @@ import Link from "next/link";
 import SignupForm from "../src/components/Form/SignUpForm";
 import styles from "../styles/pages.module.css";
 import Container from "../src/components/Layout/Container";
+import NavBar from "../src/components/Nav/NavBar";
 
 import { useAuth } from "../src/context/AuthContext";
 
@@ -10,6 +11,8 @@ const logInPage = () => {
   const { login, signInWithGoogle } = useAuth();
 
   return (
+    <>
+    <NavBar />
     <Container>
       <div className={styles.pageContainer}>
         <h1>Login</h1>
@@ -24,6 +27,7 @@ const logInPage = () => {
         </div>
       </div>
     </Container>
+    </>
   );
 };
 

@@ -33,6 +33,10 @@
     font-size: .9rem;
 }
 
+.centerText {
+    text-align: center;
+}
+
 @media (min-width: 768px) {
     .pageContainer {
         width: 60%;
