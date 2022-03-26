@@ -1,74 +1,62 @@
-import { useAuth } from "../../src/context/AuthContext";
+
 import { useState, useEffect } from "react";
 import Post from "../../src/components/Post/Post";
-import Link from "next/link";
+import { verifyToken } from "../../src/utils/init-firebaseAdmin";
+import nookies from "nookies";
 import {
-  fetchAllUsers,
   fetchUserPosts,
   fetchUserProfile,
 } from "../../src/utils/firebase-adminhelpers";
-import FollowUserButton from "../../src/components/Friend/FollowUserButton";
+import NavBar from "../../src/components/Nav/NavBar";
+import ProfileSideTab from "../../src/components/ProfileSideTab/ProfileSideTab";
 
-export async function getStaticProps(staticProps) {
-  const userID = staticProps.params.id;
+// export async function getStaticProps(staticProps) {
+//   const userID = staticProps.params.id;
 
-  const userProfile = await fetchUserProfile(userID);
-  const posts = await fetchUserPosts(userID);
+//   const userProfile = await fetchUserProfile(userID);
+//   const posts = await fetchUserPosts(userID);
 
-  return {
-    props: {
-      postUser: userProfile,
-      posts: posts,
-    },
-  };
-}
+//   return {
+//     props: {
+//       postUser: userProfile,
+//       posts: posts,
+//     },
+//   };
+// }
 
-//get static paths which are paths that can be found
-export async function getStaticPaths() {
-  const allUsers = await fetchAllUsers();
-  const paths = allUsers.map((user) => {
-    return {
-      params: {
-        id: user.userID,
-      },
-    };
-  });
-  return {
-    paths,
-    fallback: true,
-  };
-}
+// //get static paths which are paths that can be found
+// export async function getStaticPaths() {
+//   const allUsers = await fetchAllUsers();
+//   const paths = allUsers.map((user) => {
+//     return {
+//       params: {
+//         id: user.userID,
+//       },
+//     };
+//   });
+//   return {
+//     paths,
+//     fallback: true,
+//   };
+// }
 
 const ProfilePage = (props) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [currentUser, setCurrentUser] = useState("");
   const [isCurrentUserPage, setIsCurrentUserPage] = useState(false);
-  const [isFollower, setIsFollower] = useState(false);
-  const { currentUserProfile } = useAuth();
+  const [isFollowing, setIsFollowing] = useState(false);
 
-  const { postUser, posts } = props;
+  const { profilePageUser, posts, userProfile } = props;
 
-  //checking if current user is on his own profile page or is a friend of the user
+  //checking if current user is on his own profile page. If not, is profilepage user a followed user
   useEffect(() => {
-    const updateUser = async () => {
-      const response = await fetch(
-        `/api/fetchUserProfile?id=${currentUserProfile.userID}`
-      );
-      const fetchedUser = await response.json();
-      console.log(fetchedUser);
-      if (postUser.userID === fetchedUser.userID) {
-        setIsCurrentUserPage(true);
-      }
-      if (fetchedUser.following.includes(postUser.userID)) {
-        setIsFollower(true);
-      }
-      setCurrentUser(fetchedUser);
-    };
-    if (currentUserProfile) {
-      updateUser();
-    }
+    if (!profilePageUser) setIsCurrentUserPage(true);
+    if (
+      profilePageUser &&
+      userProfile.following.includes(profilePageUser.userID)
+    )
+      setIsFollowing(true);
     return () => {};
-  }, [currentUserProfile]);
+  }, []);
 
   const followUserHandler = async () => {
     if (currentUserProfile) {
@@ -80,37 +68,33 @@ const ProfilePage = (props) => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              currentUserID: currentUser.userID,
-              postUserID: postUser.userID,
-              type: isFollower ? "unfollow" : "follow",
+              currentUserID: userProfile.userID,
+              postUserID: profilePageUser.userID,
+              type: isFollowing ? "unfollow" : "follow",
             }),
           });
         };
         const createNotification = async () => {
-          if (!isFollower) {
+          if (!isFollowing) {
             await fetch(`/api/createNotification`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                sent_user_id: currentUser.userID,
-                sent_user_displayName: currentUser.displayName,
-                user_id: postUser.userID,
-                link: `/profile/${currentUser.userID}`,
+                sent_user_id: userProfile.userID,
+                sent_user_displayName: userProfile.displayName,
+                user_id: profilePageUser.userID,
+                link: `/profile/${userProfile.userID}`,
                 type: "follow",
-                message: `${currentUser.displayName} has followed you`,
+                message: `${userProfile.displayName} has followed you.`,
               }),
             });
           }
         };
 
         await Promise.all([followUser(), createNotification()]);
-        if (isFollower) {
-          setIsFollower(false);
-        } else {
-          setIsFollower(true);
-        }
+        isFollowing ? setIsFollowing(false) : setIsFollowing(true);
       } catch (error) {
         console.error(error);
       }
@@ -119,19 +103,66 @@ const ProfilePage = (props) => {
 
   return (
     <>
-      {isCurrentUserPage && (
-        <Link href="/profile/edit">
-          <a>Edit Profile</a>
-        </Link>
-      )}
+      <NavBar currentUserProfile={userProfile} />
+      <ProfileSideTab
+        profilePageUser={profilePageUser}
+        followUserHandler={followUserHandler}
+        isCurrentUserPage={isCurrentUserPage}
+        isFollowing={isFollowing}
+        userProfile={userProfile}
+      />
 
       {isLoading && <h1>Loading...</h1>}
-      {!isLoading && !isCurrentUserPage && 
-       <button onClick={followUserHandler}>{isFollower ? "Unfollow" : "Follow"} User</button>
-      }
-      {!isLoading && <Post posts={posts} currentUserPage={isCurrentUserPage} />}
+      {!isLoading && !isCurrentUserPage && (
+        <button onClick={followUserHandler}>
+          {isFollowing ? "Unfollow" : "Follow"} User
+        </button>
+      )}
+      {!isLoading && (
+        <Post posts={posts} currentUserProfile={userProfile}/>
+      )}
     </>
   );
 };
+
+export async function getServerSideProps(context) {
+  try {
+    const profilePageId = context.params.id;
+    const cookies = nookies.get(context);
+    const token = await verifyToken(cookies.token);
+    const { uid } = token;
+
+    if (uid) {
+      const userProfile = await fetchUserProfile(uid);
+      if (uid === profilePageId) {
+        const posts = await fetchUserPosts(uid);
+        return {
+          props: {
+            userProfile,
+            posts,
+          },
+        };
+      } else {
+        const profilePageUser = await fetchUserProfile(profilePageId);
+        const posts = await fetchUserPosts(profilePageId);
+        return {
+          props: {
+            userProfile,
+            profilePageUser,
+            posts,
+          },
+        };
+      }
+    }
+    return {
+      props: {},
+    };
+  } catch (err) {
+    console.log(err);
+    context.res.writeHead(302, { Location: "/login" });
+    context.res.end();
+    return { props: {} };
+  }
+}
 
 export default ProfilePage;

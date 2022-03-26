@@ -1,6 +1,6 @@
 .navbar {
     background-color: var(--background-color-dark);
-    border-bottom: 1px solid black;
+    /* border-bottom: 1px solid black; */
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -47,7 +47,7 @@
     color: var(--primary-color);
   }
 
-  .dropdownContent {
+.dropdownContent {
     position: absolute;
     right: 0;
     left: auto;
@@ -57,18 +57,53 @@
     z-index: 1;
   }
 
-  .dropdownContent a {
+.dropdownContent a {
     display: block;
     padding: 1rem;
     cursor: pointer;
+    transition: .5s;
     
   }
 
-  .dropdownContent a:hover {
-      background-color: var(--background-color-hover);
+.dropdownContent a:hover {
+      background-color: var(--background-color-light);
 }
 
-  .show {display:block;}
+.notificationDropDown {
+  position: absolute;
+  max-height: 20rem;
+  overflow:auto;
+  min-width: 20rem;
+  right: -100%;
+  left: auto;
+  background-color: var(--background-color-dark);
+  opacity: 0.9;
+  z-index: 9999;
+}
+
+.noNotifMessage {
+  text-align: center;
+  padding: 1rem;
+}
+
+.button{
+  background-color: var(--background-color-light);
+  color: var(--text-color);
+  font-size: 1rem;
+  padding: .75rem;
+  border: none;
+  cursor: pointer;
+  /* border-radius: 8px; */
+  width: 8rem;
+  text-align: center;
+}
+
+.button:hover{
+  background-color: var(--background-color-hover);
+  /* background-color: green; */
+}
+
+.show {display:block;}
 
 .profileLink {
       height: 100%;
@@ -87,4 +122,9 @@
     display: flex;
     align-items: center;
     margin-left: .5rem;
+}
+
+.flexEnd {
+  display: flex;
+  justify-content: flex-end;
 }

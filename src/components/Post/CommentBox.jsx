@@ -103,7 +103,7 @@ const CommentBox = (props) => {
                 user_id: props.userID,
                 link: `/post/${props.postID}`,
                 type: "comment",
-                message: `${currentUserProfile.displayName} has commented on your post.`,
+                message: `${currentUserProfile.displayName} commented on your post.`,
               }),
             });
           }

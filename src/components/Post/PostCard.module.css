@@ -2,14 +2,14 @@
     background-color: var(--background-color-light);
     border-bottom: 1px solid var(--border-color);
     border-top: 1px solid var(--border-color);
-    max-width: 700px;
+    max-width: 768px;
     margin: 1rem auto;
-    padding: 1rem;
 }
 
 .titleBar {
     display: flex;
     justify-content: space-between;
+    padding: 1rem;
 }
 
 .titleBarContent{
@@ -28,7 +28,7 @@
 }   
 
 .description {
-    padding: 1rem 0;
+   padding: 0 1rem 1rem 1rem;
 }
 
 .postTitle {
@@ -39,7 +39,6 @@
 .postContent {
     font-size: .9rem;
 }
-
 
 .image {
     width: 100%;
@@ -55,13 +54,13 @@
 }
 
 .commentContainer {
-
+    padding: 0 1rem 0 1rem;
 }
 
 .commentHeaderTop {
     display: flex;
     justify-content: space-between;
-    padding: .5rem;
+    padding: .5rem 0;
     border-bottom: .1px solid var(--border-color);
     font-size: .8rem;
 }
@@ -69,12 +68,12 @@
 .commentHeaderBtm {
     display: flex;
     justify-content: space-between;
-    padding: .5rem;
-    font-size: .8rem;
+    padding: 1rem 0;
+    font-size: .9rem;
 }
 
-.commentBox {
-    
+.iconContainer{
+    align-self: center;
 }
 
 .iconContainer:hover .commentHeaderIcons {
@@ -88,7 +87,6 @@
     margin-right: .2rem;
 }
 
-
 .likedPost{
     color: var(--primary-color)
 }
@@ -101,6 +99,7 @@
 @media (min-width: 768px) {
     .cardContainer {
         width: 80%;
+        min-width: 768px;
         border: 1px solid var(--border-color);
         border-radius: 8px;
     }

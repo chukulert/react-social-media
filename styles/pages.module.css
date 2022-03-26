@@ -9,11 +9,11 @@
     margin-bottom: 1.5rem;
 }
 
-
 .googleSignInBtn {
     border-radius: 8px;
     padding: .5rem;
     border: 0;
+    cursor: pointer;
 }
 
 .forgotPasswordBtn{
@@ -25,7 +25,6 @@
     text-decoration: underline;
 }
 
-
 .signInFormFooter {
     display: flex;
     justify-content: space-around;
@@ -35,6 +34,11 @@
 
 .centerText {
     text-align: center;
+    margin: 2rem 0;
+}
+
+.container {
+    min-height: 91vh;
 }
 
 @media (min-width: 768px) {

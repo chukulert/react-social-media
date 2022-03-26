@@ -1,19 +1,25 @@
-import useSWR, { mutate, useSWRConfig } from "swr";
+//swr
+import useSWR from "swr";
 import useSWRInfinite from "swr/infinite";
 import { fetcher } from "../src/utils";
+//react
 import { useState, useEffect } from "react";
+//components
 import MessageUserModal from "../src/components/Message/MessageGroupModal";
 import MessageBoard from "../src/components/Message/MessageBoard";
 import MessageGroup from "../src/components/Message/MessageGroupList";
-import useWindowSize from "../src/hooks/useWindowSize";
+import NavBar from "../src/components/Nav/NavBar";
+//firebase admin and veritifcation
 import { verifyToken } from "../src/utils/init-firebaseAdmin";
 import nookies from "nookies";
 import { fetchUserProfile } from "../src/utils/firebase-adminhelpers";
+//styles and icons
 import styles from "../src/components/Message/MessageBoard.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCommentDots } from "@fortawesome/free-solid-svg-icons";
-import NavBar from "../src/components/Nav/NavBar";
+//custom hooks
+import useWindowSize from "../src/hooks/useWindowSize";
 
 const MessagesPage = ({ userProfile }) => {
   const [messageGroup, setMessageGroup] = useState(null);
@@ -144,6 +150,9 @@ const MessagesPage = ({ userProfile }) => {
   };
 
   const submitMessageHandler = async (messageText) => {
+    //problems refactoring for both situations
+    //1. If there is no message group, create a new message group and send a new message and notification
+    //2. If there is a message group, send a new message and notification
     try {
       if (userProfile && !messageGroup) {
         const response = await fetch(`/api/createMessageGroup`, {
@@ -164,57 +173,76 @@ const MessagesPage = ({ userProfile }) => {
         setMessageGroup(groupData);
         setTempUser(null);
         mutateMessageGroups();
+
         //does not send a message if this block of code is not here
-        await fetch(`/api/submitMessage`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            sent_by: userProfile.userID,
-            messageText,
-            messageGroupID: groupData.id,
-          }),
-        });
+        const submitMessage = async () => {
+          await fetch(`/api/submitMessage`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              sent_by: userProfile.userID,
+              messageText,
+              messageGroupID: groupData.id,
+            }),
+          });
+        };
+        const createNotification = async () => {
+          await fetch(`/api/createNotification`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              sent_user_id: userProfile.userID,
+              sent_user_displayName: userProfile.displayName,
+              user_id: tempUser.userID,
+              link: `/messages`,
+              type: "message",
+              message: `${userProfile.displayName} sent you a message.`,
+            }),
+          });
+        };
+        await Promise.all([submitMessage(), createNotification()]);
       }
 
-      if (messageGroup) {
-        // const submitMessage = async () => {
-        await fetch(`/api/submitMessage`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            sent_by: userProfile.userID,
-            messageText,
-            messageGroupID: messageGroup.id,
-          }),
-        });
+      if (userProfile && messageGroup) {
+        const chatUser = messageGroup.members.filter(
+          (member) => member.id !== userProfile.userID
+        )[0];
+        const submitMessage = async () => {
+          await fetch(`/api/submitMessage`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              sent_by: userProfile.userID,
+              messageText,
+              messageGroupID: messageGroup.id,
+            }),
+          });
+        };
+        const createNotification = async () => {
+          await fetch(`/api/createNotification`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              sent_user_id: userProfile.userID,
+              sent_user_displayName: userProfile.displayName,
+              user_id: chatUser.userID,
+              link: `/messages`,
+              type: "message",
+              message: `${userProfile.displayName} sent you a message.`,
+            }),
+          });
+        };
+        await Promise.all([submitMessage(), createNotification()]);
       }
       mutateMessages();
-      //   await Promise.all([submitMessage()]);
-
-      // };
-      // const createNotification = async () => {
-      //     if(props.userID !== currentUserProfile.userID) {
-      //       await fetch(`/api/createNotification`, {
-      //         method: "POST",
-      //         headers: {
-      //           "Content-Type": "application/json",
-      //         },
-      //         body: JSON.stringify({
-      //           sent_user_id: currentUserProfile.userID,
-      //           sent_user_displayName: currentUserProfile.displayName,
-      //           user_id: props.userID,
-      //           link: `/post/${props.postID}`,
-      //           type: "comment",
-      //           message: `${currentUserProfile.displayName} has commented on your post.`,
-      //         }),
-      //       });
-      //     }
-      //   };
-      //   await Promise.all([submitMessage(), createNotification()]);
     } catch (error) {
       console.error(error);
     }
@@ -225,65 +253,64 @@ const MessagesPage = ({ userProfile }) => {
   };
 
   return (
-      <>
-      <NavBar currentUserProfile={userProfile}/>
-    <div className={width < 768 ? null : `${styles.messagePageContainer}`}>
-      {showUserModal && (
-        <MessageUserModal
-          handleUserClick={handleFollowingClick}
-          usersList={following}
-          handleShowModal={handleShowModal}
-        />
-      )}
-      {showMessageGroup && (
-        <MessageGroup
-          handleMessageGroupClick={handleMessageGroupClick}
-          messageGroups={messageGroups}
-          currentUserProfile={userProfile}
-          handleShowModal={handleShowModal}
-          width={width}
-        />
-      )}
-      {showMessageBoard && hasUser && (
-        <MessageBoard
-          messages={messageList}
-          handleLoadMore={handleLoadMoreMessages}
-          submitMessageHandler={submitMessageHandler}
-          isReachingEnd={isReachingEnd}
-          messageGroup={messageGroup}
-          currentUserProfile={userProfile}
-          setShowFollowingModal={handleShowModal}
-          width={width}
-          toggleMessageBoardDisplay={toggleMessageBoardDisplay}
-          tempUser={tempUser}
-        />
-      )}
-      {showMessageBoard && !hasUser && (
-        <div className={styles.emptyMessageBoard}>
-          <p>Click on an existing conversation group to display messages.</p>
-          <p className={styles.button} onClick={handleShowModal}>
-            <FontAwesomeIcon
-              icon="fa-solid fa-comment-dots"
-              onClick={handleShowModal}
-            />
-            <span className={styles.flexCenter}>Show users</span>
-          </p>
-        </div>
-      )}
-      {!messageGroups && !showMessageBoard && (
+    <>
+      <NavBar currentUserProfile={userProfile} />
+      <div className={width < 768 ? null : `${styles.messagePageContainer}`}>
+        {showUserModal && (
+          <MessageUserModal
+            handleUserClick={handleFollowingClick}
+            usersList={following}
+            handleShowModal={handleShowModal}
+          />
+        )}
+        {showMessageGroup && (
+          <MessageGroup
+            handleMessageGroupClick={handleMessageGroupClick}
+            messageGroups={messageGroups}
+            currentUserProfile={userProfile}
+            handleShowModal={handleShowModal}
+            width={width}
+          />
+        )}
+        {showMessageBoard && hasUser && (
+          <MessageBoard
+            messages={messageList}
+            handleLoadMore={handleLoadMoreMessages}
+            submitMessageHandler={submitMessageHandler}
+            isReachingEnd={isReachingEnd}
+            messageGroup={messageGroup}
+            currentUserProfile={userProfile}
+            setShowFollowingModal={handleShowModal}
+            width={width}
+            toggleMessageBoardDisplay={toggleMessageBoardDisplay}
+            tempUser={tempUser}
+          />
+        )}
+        {showMessageBoard && !hasUser && (
+          <div className={styles.emptyMessageBoard}>
+            <p>Click on an existing conversation group to display messages.</p>
+            <p className={styles.button} onClick={handleShowModal}>
+              <FontAwesomeIcon
+                icon="fa-solid fa-comment-dots"
+                onClick={handleShowModal}
+              />
+              <span className={styles.flexCenter}>Show users</span>
+            </p>
+          </div>
+        )}
+        {!messageGroups && !showMessageBoard && (
           <div className={styles.emptyMessageBoardMobile}>
-          <p>Start a new conversation.</p>
-          <p className={styles.button} onClick={handleShowModal}>
-            <FontAwesomeIcon
-              icon="fa-solid fa-comment-dots"
-              onClick={handleShowModal}
-            />
-            <span className={styles.flexCenter}>Show users</span>
-          </p>
-        </div>
-      )}
-    
-    </div>
+            <p>Start a new conversation.</p>
+            <p className={styles.button} onClick={handleShowModal}>
+              <FontAwesomeIcon
+                icon="fa-solid fa-comment-dots"
+                onClick={handleShowModal}
+              />
+              <span className={styles.flexCenter}>Show users</span>
+            </p>
+          </div>
+        )}
+      </div>
     </>
   );
 };
@@ -293,7 +320,6 @@ export async function getServerSideProps(context) {
     const cookies = nookies.get(context);
     const token = await verifyToken(cookies.token);
     const { uid } = token;
-    //this returns the user profile in firestore
     if (uid) {
       const userProfile = await fetchUserProfile(uid);
       return {

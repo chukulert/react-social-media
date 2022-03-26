@@ -2,7 +2,7 @@
     background-color: var(--background-color-light);
     /* padding: .5rem; */
     border-radius: 8px;
-    max-width: 700px;
+    max-width: 768px;
     margin: 1rem auto;
 }
 
@@ -36,11 +36,93 @@
     background-color: var(--background-color-dark);
 }
 
+.followBtn {
+    background-color: var(--background-color-light);
+    color: var(--text-color);
+    font-size: 1rem;
+    display: flex;
+    padding: .75rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    align-items: center;
+}
+
+.followBtn:hover{
+    background-color: var(--background-color-dark);
+}
+
+.followIcon{
+    margin-right: .5rem;
+}
+
+
+/* profile page css */
+
+.profileTabContainer {
+    background-color: var(--background-color-light);
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    max-width: 700px;
+    margin: 0 auto 1rem auto;
+}
+.bannerPhotoContainer {
+    position: relative;
+    width: 100%;
+    height: 12rem;
+}
+
+.profileContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    min-height: 200px;
+}
+
+.profilePhotoContainer {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 4px solid white;
+    align-self: center;
+    margin-top: -10%;
+}
+
+.profilePhoto {
+    border-radius: 50%;
+}
+
+.profileInfoContainer {
+    margin: 0 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.profileInfoContainer h2 {
+    padding-bottom: .5rem   ;
+}
+
+.displayNameContainer {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+}
+
+.userSummary {
+    color: grey;
+}
+
 
 @media (min-width: 768px) {
     .sideTabContainer {
         width: 80%;
-        /* border: 1px solid var(--border-color); */
+        min-width: 768px;
         border-radius: 8px;
+    }
+
+    .profileTabContainer {
+        width: 80%;
+        min-width: 768px;
     }
   }

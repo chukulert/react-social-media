@@ -120,6 +120,6 @@
 
 @media (min-width: 768px) {
     .messagesContainer {
-        width: calc(100vw - 360px);
+        width: calc(100vw - 378px);
     }
 }

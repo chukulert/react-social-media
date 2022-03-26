@@ -11,6 +11,7 @@ import {
 import styles from '../styles/pages.module.css'
 import NavBar from "../src/components/Nav/NavBar";
 
+
 export default function Home(props) {
   const [feed, setFeed] = useState([]);
   const [lastFeedPost, setLastFeedPost] = useState("");
@@ -100,7 +101,7 @@ export default function Home(props) {
   return (
     <>
     <NavBar currentUserProfile={userProfile} />
-    <div>
+    <div className={styles.container}>
       {userProfile && (
         <HomeSideTab
           userProfile={userProfile}
@@ -108,11 +109,11 @@ export default function Home(props) {
         />
       )}
 
-      {feed && <Post posts={feed} />}
+      {feed && <Post posts={feed} currentUserProfile={userProfile} />}
       <div ref={setElement}></div>
       {loading && <div>Loading...</div>}
       {error && !noMorePosts && <div>{error}</div>}
-      {noMorePosts && !loading && <div className={styles.centerText}>No posts available. Follow other users to view posts on your feed.</div>}
+      {noMorePosts && !loading && <div className={styles.centerText}>No more posts available. Follow other users to view more posts on your feed.</div>}
     </div>
     </>
   );

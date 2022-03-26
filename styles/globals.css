@@ -8,7 +8,6 @@ body {
   background-color: var(--background-color);
   color: var(--text-color);
   transition: .5s;
-  
 }
 
 a {
@@ -39,25 +38,25 @@ a {
   --button-text-color: var(--background-color);
   --button-text-color-hover: var(--text-color);
   --border-color: #838383;
-  --navbar-background-color: transparent;
-  --footer-background-color: #313332;
   --breakpoint-width-medium: 768px;
   --breakpoint-width-large: 1200px;
   --breakpoint-width-small: 360px;
 }
 
 .light-theme {
-  --primary-color: #E5542E;
-  --background-color:#FFFAF4;
-  --background-color-light: #fcf3e8;
-  --background-color-hover: #f1f1f1;
-  --text-color: #121212;
-  --border-color: #c3c3c3;
+  --primary-color: #7B73FF;
+  --primary-light-color: #8680fc;
+  --primary-dark-color: var(--primary-light-color);
+  --background-color: #F0F2F5;
+  --background-color-dark: #D8DADF;
+  --background-color-light: #FFFFFF;
+  --background-color-hover: #cacacb;
+  --text-color: #272626;
+  --border-color: #454545;
+  --error-color: #ca5469;
   --button-text-color: var(--background-color);
   --button-text-color-hover: var(--text-color);
-  --footer-background-color: #f6dcbc;
-  --navbar-background-color: var(--footer-background-color);
-  --flash-color: var(--background-color-hover);
+  --border-color: var(--background-color);
 }
 
 
@@ -67,7 +66,7 @@ a {
 
 .active {
   color: var(--primary-color);
-  border-bottom: 2px solid var(--primary-color);
+  border-bottom: 3px solid var(--primary-color);
   z-index: 1;
 }
 
@@ -75,3 +74,20 @@ a {
   display: none;
 }
 
+
+::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: var(--background-color-dark);
+}
+
+::-webkit-scrollbar
+{
+	width: 6px;
+	background-color: var(--background-color-dark);
+}
+
+::-webkit-scrollbar-thumb
+{
+	background-color: var(--primary-dark-color);
+}

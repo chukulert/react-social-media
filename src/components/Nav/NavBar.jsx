@@ -1,11 +1,19 @@
-import { useState, useRef, useEffect } from "react";
-import useSWR, { mutate, useSWRConfig } from "swr";
+//swr
+import useSWR from "swr";
 import { fetcher } from "../../utils";
+//react
+import { useState, useRef, useEffect } from "react";
+//nextjs
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
+//hooks
 import { useAuth } from "../../context/AuthContext";
 import useWindowSize from "../../hooks/useWindowSize";
+import useLocalStorage from "use-local-storage";
+//components
+import NotificationItem from "./NotificationItem";
+//styles and icons
 import styles from "./NavBar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -18,17 +26,16 @@ import {
   faArrowRightFromBracket,
   faBell,
 } from "@fortawesome/free-solid-svg-icons";
-import useLocalStorage from "use-local-storage";
-import NotificationItem from "./NotificationItem";
+//helpers
+import { sortNotifications } from "../../utils";
 
-
-
-const NavBar = ({currentUserProfile}) => {
-  const { logout } = useAuth();
+const NavBar = ({ currentUserProfile }) => {
   const [expandedMenu, setExpandedMenu] = useState(false);
   const [expandedNotification, setExpandedNotification] = useState(false);
+  const { logout } = useAuth();
   const { width } = useWindowSize();
   const dropDownRef = useRef();
+  const notifDropDownRef = useRef()
   const router = useRouter();
   library.add(
     faHouse,
@@ -40,14 +47,14 @@ const NavBar = ({currentUserProfile}) => {
     faBell
   );
 
-  const [theme, setTheme] = useLocalStorage(
-    "theme", ''
-  );
+  const [theme, setTheme] = useLocalStorage("theme", "");
 
   useEffect(() => {
-    const defaultDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    if (defaultDark) setTheme('dark')
-  }, [])
+    const defaultDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    if (defaultDark) setTheme("dark");
+  }, []);
 
   const switchTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
@@ -59,20 +66,28 @@ const NavBar = ({currentUserProfile}) => {
     setTheme(newTheme);
   };
 
-  const { data: notifications, error: notificationsError } = useSWR(
-    currentUserProfile ? `/api/getNotifications?id=${currentUserProfile.userID}` : null,
+  const {
+    data: notifications,
+    error: notificationsError,
+    mutate: mutateNotifications,
+  } = useSWR(
+    currentUserProfile
+      ? `/api/getNotifications?id=${currentUserProfile.userID}`
+      : null,
     fetcher,
     {
-      // refreshInterval: 1000,
       revalidateIfStale: false,
       revalidateOnFocus: false,
     }
   );
-  if(notifications) console.log(notifications)
+
+  const sortedNotifications = notifications
+    ? sortNotifications(notifications)
+    : [];
 
   const notificationsList = (
     <div>
-      {notifications?.map((notification) => (
+      {sortedNotifications?.map((notification) => (
         <NotificationItem
           key={notification.id}
           id={notification.id}
@@ -83,13 +98,12 @@ const NavBar = ({currentUserProfile}) => {
           sent_user_displayName={notification.sent_user_displayName}
           sent_user_id={notification.sent_user_id}
           type={notification.type}
+          mutateNotifications={mutateNotifications}
           user_id={notification.user_id}
         />
       ))}
     </div>
   );
-
-  
 
   const expandMenu = () => {
     setExpandedMenu(true);
@@ -102,16 +116,30 @@ const NavBar = ({currentUserProfile}) => {
   };
 
   const expandNotification = () => {
-        setExpandedNotification(true);
+    setExpandedNotification(true);
+    notifDropDownRef.current.classList.toggle("active");
   };
 
   const closeNotification = () => {
     setExpandedNotification(false);
-    // dropDownRef.current.classList.toggle("active");
+    notifDropDownRef.current.classList.toggle("active");
   };
 
   const loadProfilePage = () => {
     router.push(`/profile/${currentUserProfile.userID}`);
+  };
+
+  const handleReadAllNotifications = async () => {
+    await fetch(`/api/readNotification`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        notifications,
+      }),
+    });
+    mutateNotifications();
   };
 
   return (
@@ -141,25 +169,28 @@ const NavBar = ({currentUserProfile}) => {
         </div>
       )}
 
-     
-      <div className={
-        width > 768
-          ? `${styles.navlinks}`
-          : `${styles.navlinks} ${styles.navMobileLinks}`
-      }>
-         {/* home */}
-        {currentUserProfile && (<Link href="/">
-          <a
-            className={
-              router.pathname == "/"
-                ? `${styles.navlink} active`
-                : `${styles.navlink}`
-            }
-          >
-            <FontAwesomeIcon icon="fa-solid fa-house" />
-          </a>
-        </Link>)}
-      
+      <div
+        className={
+          width > 768
+            ? `${styles.navlinks}`
+            : `${styles.navlinks} ${styles.navMobileLinks}`
+        }
+      >
+        {/* home */}
+        {currentUserProfile && (
+          <Link href="/">
+            <a
+              className={
+                router.pathname == "/"
+                  ? `${styles.navlink} active`
+                  : `${styles.navlink}`
+              }
+            >
+              <FontAwesomeIcon icon="fa-solid fa-house" />
+            </a>
+          </Link>
+        )}
+
         {currentUserProfile && (
           <Link href="/messages">
             <a
@@ -182,7 +213,7 @@ const NavBar = ({currentUserProfile}) => {
             onFocus={expandNotification}
             onBlur={closeNotification}
           >
-            <div ref={dropDownRef}>
+            <div ref={notifDropDownRef}>
               <FontAwesomeIcon
                 icon="fa-solid fa-bell"
                 className={`${styles.dropbtn} ${styles.navlink}`}
@@ -190,7 +221,11 @@ const NavBar = ({currentUserProfile}) => {
             </div>
 
             {expandedNotification && (
-              <div id="dropDown" className={styles.dropdownContent}>
+              <div id="dropDown" className={styles.notificationDropDown}>
+                 {notifications.length !== 0 && <div>
+                  <div className={styles.flexEnd}><div onClick={handleReadAllNotifications} className={styles.button}>Clear All</div></div>
+                </div>}
+                {notifications.length === 0 && <div className={styles.noNotifMessage}>You have no notifications.</div>}
                 {notificationsList}
               </div>
             )}

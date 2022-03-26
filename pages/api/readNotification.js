@@ -5,7 +5,7 @@ import {
 
 const submitMessage = async (req, res) => {
   if (req.method === "POST") {
-    const { id, notifications } = req.body;
+    const { id, sent_user_id, link, user_id, notifications } = req.body;
 
     try {
       if (notifications) {
@@ -13,10 +13,10 @@ const submitMessage = async (req, res) => {
         if (records.length !== 0) {
           res.json(records);
         } else {
-          res.json({ message: `userid could not be found` });
+          res.json({ message: `notifications could not be found` });
         }
       } else {
-        const records = await readNotification(id);
+        const records = await readNotification({sent_user_id, user_id, link});
         if (records.length !== 0) {
           res.json(records);
         } else {

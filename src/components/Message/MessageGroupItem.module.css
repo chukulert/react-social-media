@@ -28,7 +28,7 @@
 }
 
 .lastMessage {
-    color: var(--border-color)
+    color: grey;
 }
 
 .profileLink:hover{

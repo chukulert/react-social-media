@@ -1,6 +1,4 @@
 import { FieldValue } from "firebase-admin/firestore";
-import { useDebugValue } from "react";
-import { unstable_renderSubtreeIntoContainer } from "react-dom";
 import { db } from "./init-firebaseAdmin";
 
 export async function fetchUserProfile(uid) {
@@ -36,9 +34,8 @@ export async function fetchFollowingData(following) {
 
 export async function fetchAllUsers() {
   try {
-    // const db = getAdminDB()
     const allUsers = [];
-    const usersRef = db.collection("users")
+    const usersRef = db.collection("users");
     const allFetchedUsers = await usersRef.get();
     allFetchedUsers.forEach((user) => {
       allUsers.push(user.data());
@@ -51,9 +48,8 @@ export async function fetchAllUsers() {
 
 export async function fetchAllUsersData(uid) {
   try {
-    // const db = getAdminDB()
     const allUsers = [];
-    const usersRef = db.collection("users").where('userID', '!=', uid);
+    const usersRef = db.collection("users").where("userID", "!=", uid);
     const allFetchedUsers = await usersRef.get();
     allFetchedUsers.forEach((user) => {
       allUsers.push(user.data());
@@ -528,7 +524,6 @@ export async function fetchMoreMessagesByGroupID(groupID, snapshot) {
       return data;
     });
     return messages;
-
   } catch (e) {
     console.error(e);
   }
@@ -549,7 +544,6 @@ export async function getMessageSnapshotByID(groupID, messageID) {
 }
 
 export async function postNewMessage({ sent_by, messageText, messageGroupID }) {
-
   try {
     const messageRef = db
       .collection("messages")
@@ -605,9 +599,13 @@ export async function createNewMessageGroup({ membersArray, currentUserID }) {
 export async function fetchNotificationsById(uid) {
   try {
     const userNotifications = [];
-    const notifRef = db.collection("notifications").where("user_id", "==", uid).where("read", "==", false);
+    const query = db
+      .collection(`notifications`)
+      .where("user_id", "==", uid)
+      .where("read", "==", false)
+      .orderBy("created_at", "desc");
 
-    const querySnapshot = await notifRef.get();
+    const querySnapshot = await query.get();
     querySnapshot.forEach((doc) => {
       const data = {
         ...doc.data(),
@@ -621,19 +619,44 @@ export async function fetchNotificationsById(uid) {
   }
 }
 
-export async function readNotification(id) {
-  const notifRef = db.collection('notifications').doc(id);
-    return await notifRef.update({read: true});
+export async function readNotification({ sent_user_id, user_id, link }) {
+  try {
+    const userNotifications = [];
+    const query = db
+      .collection(`notifications`)
+      .where("user_id", "==", user_id)
+      .where("read", "==", false)
+      .where("sent_user_id", "==", sent_user_id)
+      .where("link", "==", link);
+
+    const querySnapshot = await query.get();
+    querySnapshot.forEach((doc) => {
+      const data = {
+        ...doc.data(),
+        id: doc.id,
+      };
+      userNotifications.push(data);
+    });
+    await Promise.all(
+      userNotifications.map(async (notification) => {
+        const notifRef = db.collection("notifications").doc(notification.id);
+        return await notifRef.update({ read: true });
+      })
+    );
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 export async function readAllNotifications(notifications) {
   try {
-  await Promise.all(
-    notifications.map(async (notification) => {
-      const notifRef = db.collection("notifications").doc(notification.id);
-      return await notifRef.update({read: true});
-    })
-  ); } catch (error) {
-    console.error(error)
+    await Promise.all(
+      notifications.map(async (notification) => {
+        const notifRef = db.collection("notifications").doc(notification.id);
+        return await notifRef.update({ read: true });
+      })
+    );
+  } catch (error) {
+    console.error(error);
   }
 }

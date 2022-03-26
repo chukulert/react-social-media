@@ -1,13 +1,18 @@
-
 import { postNewComment } from "../../src/utils/firebase-adminhelpers";
 
 const submitComment = async (req, res) => {
-    if (req.method === "POST") {
-    const { user_id, user_displayName, user_profilePhoto, content, postID } = req.body;
-    console.log(user_id, user_displayName, user_profilePhoto, content )
+  if (req.method === "POST") {
+    const { user_id, user_displayName, user_profilePhoto, content, postID } =
+      req.body;
     try {
       if (user_id) {
-        const records = await postNewComment({user_id, user_displayName, user_profilePhoto, content, postID} );
+        const records = await postNewComment({
+          user_id,
+          user_displayName,
+          user_profilePhoto,
+          content,
+          postID,
+        });
         if (records.length !== 0) {
           res.json(records);
         } else {
@@ -21,6 +26,7 @@ const submitComment = async (req, res) => {
       res.status(500);
       res.json({ message: "Something went wrong", err });
     }
-  }};
-  
-  export default submitComment;
+  }
+};
+
+export default submitComment;

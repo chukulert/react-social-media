@@ -2,15 +2,14 @@ import { fetchNotificationsById } from "../../src/utils/firebase-adminhelpers";
 
 const getNotifications = async (req, res) => {
     const { id } = req.query;
-    console.log({id})
-    console.log('YES YES YES ')
+
     try {
       if (id) {
         const records = await fetchNotificationsById(id);
         if (records.length !== 0) {
           res.json(records);
         } else {
-          res.json({ message: `id could not be found` });
+          res.json([]);
         }
       } else {
         res.status(400);

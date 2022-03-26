@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import { timeAgo } from "../../utils";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,13 +11,11 @@ import styles from './NotificationItem.module.css'
 
 
 const NotificationItem = (props) => {
-    const {id, created_at, link,  message, read, user_id } = props
+    const {id, created_at, link,  message, read, user_id, sent_user_id, mutateNotifications } = props
     const [readNotif, setReadNotif] = useState(read)
-
     library.add(faCheck)
-
-    const router = useRouter;
-    const date = timeAgo(created_at.Date.now())
+    const router = useRouter()
+    const date = timeAgo(created_at)
     
     const updateNotifReadStatus = async (id) => {
         await fetch(`/api/readNotification`, {
@@ -26,9 +24,12 @@ const NotificationItem = (props) => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              id,
+            sent_user_id,
+            link,
+            user_id
             }),
           });
+          mutateNotifications()
     }
 
     const handleReadNotif = async () => {
@@ -42,10 +43,13 @@ const NotificationItem = (props) => {
     }
 
     return (
-        <div>
-            <div onClick={handleNotificationClick}>{message}</div>
-            <div onClick={handleReadNotif}><FontAwesomeIcon icon="fa-solid fa-check" /></div>
-            <div>{date}</div>
+        <div className={styles.notifItemContainer}>
+            <div>
+            <div onClick={handleNotificationClick} className={styles.message}>{message}</div>
+            <div className={styles.date}>{date}</div>
+            </div>
+            <div onClick={handleReadNotif} className={styles.readNotifBtn}><FontAwesomeIcon icon="fa-solid fa-check" className={styles.icon}/></div>
+            
         </div>
     )
 }

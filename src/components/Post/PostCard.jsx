@@ -1,32 +1,36 @@
-import { useState, useEffect } from "react";
+//swr
+import { fetcher } from "../../utils";
+import useSWR from "swr";
+//nextjs
 import Image from "next/image";
 import Link from "next/link";
-import { useAuth } from "../../context/AuthContext";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { library } from "@fortawesome/fontawesome-svg-core";
+//react
+import { useState, useEffect } from "react";
+//components
 import CommentBox from "./CommentBox";
 import TextContent from "./TextContent";
-import { timeAgo } from "../../utils/index";
+//styles and icons
 import styles from "./PostCard.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { library } from "@fortawesome/fontawesome-svg-core";
 import {
   faThumbsUp,
   faComment,
   faShare,
 } from "@fortawesome/free-solid-svg-icons";
-
-import { fetcher } from "../../utils";
-import useSWR from "swr";
+//helpers
+import { timeAgo } from "../../utils/index";
 
 const PostCard = (props) => {
+  const { currentUserProfile, likesCount, postCommentsCount, id } = props;
+  const postID = id;
   const [displayComments, setDisplayComments] = useState(false);
   const [likedPost, setLikedPost] = useState(false);
-  const { currentUserProfile } = useAuth();
-  const [likes, setLikes] = useState(props.likesCount);
-  const [post, setPost] = useState(props);
-  const [commentsCount, setCommentsCount] = useState(props.commentsCount);
+  const [likes, setLikes] = useState(likesCount);
+  const [commentsCount, setCommentsCount] = useState(postCommentsCount);
 
   library.add(faThumbsUp, faComment, faShare);
-  const postID = props.id;
+
   useEffect(() => {
     if (currentUserProfile) {
       if (currentUserProfile.likedPosts.includes(postID)) {
@@ -130,7 +134,9 @@ const PostCard = (props) => {
       <div className={styles.commentContainer}>
         <div className={styles.commentHeaderTop}>
           <div>Likes: {likes}</div>
-          <div>Comments: {commentsCount}</div>
+          <div className={styles.label} onClick={showCommentsHandler}>
+            Comments: {commentsCount}
+          </div>
         </div>
 
         <div className={styles.commentHeaderBtm}>

@@ -30,6 +30,7 @@
 
 .textArea {
     resize: none;
+    height: 10rem;
 }
 
 .submitBtn {

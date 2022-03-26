@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { storage, db } from "../../src/utils/init-firebase";
 import { setDoc, doc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { useRouter } from "next/router";
 import nookies from "nookies";
 import { verifyToken } from "../../src/utils/init-firebaseAdmin";
 import { fetchUserProfile } from "../../src/utils/firebase-adminhelpers";
@@ -16,11 +15,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   Formik,
-  Field,
   Form,
-  ErrorMessage,
   useField,
-  prepareDataForValidation,
 } from "formik";
 import * as Yup from "yup";
 import NavBar from "../../src/components/Nav/NavBar";
