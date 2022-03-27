@@ -18,8 +18,6 @@ const MessageUserModal = (props) => {
           profilePhoto={user.profilePhoto}
           handleUserClick={handleUserClick}
           modalType='message'
-        //   followUserHandler={followUserHandler}
-        //   followStatus={checkUserFollowingStatus(user.userID)}
         />
       ))}
     </ul>
@@ -39,6 +37,7 @@ const MessageUserModal = (props) => {
           >
             X
           </button>
+          {usersList.length === 0 && <div className={styles.noUsers}><p>No users displayed. Follow other users to message them.</p></div>}
           {usersDisplayList}
         </div>
       </div>

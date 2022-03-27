@@ -1,13 +1,16 @@
-
 import { postNewMessage } from "../../src/utils/firebase-adminhelpers";
 
 const submitMessage = async (req, res) => {
-    if (req.method === "POST") {
+  if (req.method === "POST") {
     const { sent_by, messageText, messageGroupID } = req.body;
 
     try {
       if (sent_by) {
-        const records = await postNewMessage({ sent_by, messageText, messageGroupID });
+        const records = await postNewMessage({
+          sent_by,
+          messageText,
+          messageGroupID,
+        });
         if (records.length !== 0) {
           res.json(records);
         } else {
@@ -21,6 +24,7 @@ const submitMessage = async (req, res) => {
       res.status(500);
       res.json({ message: "Something went wrong", err });
     }
-  }};
-  
-  export default submitMessage;
+  }
+};
+
+export default submitMessage;

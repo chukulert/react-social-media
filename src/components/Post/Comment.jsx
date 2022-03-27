@@ -3,16 +3,10 @@ import { timeAgo } from "../../utils";
 import styles from "./Comment.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import {
-  faThumbsUp,
-  faComment,
-  faShare,
-} from "@fortawesome/free-solid-svg-icons";
+import { faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import TextContent from "./TextContent";
 import Image from "next/image";
-
-
 
 const Comment = (props) => {
   const {
@@ -25,14 +19,14 @@ const Comment = (props) => {
     postID,
     currentUserID,
     userLikes,
-    id
+    id,
   } = props;
 
   const [likedComment, setLikedComment] = useState(false);
   const [likes, setLikes] = useState(likesCount);
 
   const date = timeAgo(created_at);
-  library.add(faThumbsUp)
+  library.add(faThumbsUp);
 
   useEffect(() => {
     if (userLikes.includes(currentUserID)) {
@@ -48,9 +42,9 @@ const Comment = (props) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-        commentId: id,
+          commentId: id,
           uid: currentUserID,
-          type: likedComment ? "unlike" : "like"
+          type: likedComment ? "unlike" : "like",
         }),
       });
       if (likedComment) {
@@ -66,35 +60,45 @@ const Comment = (props) => {
   };
 
   const likeBtnStyles = likedComment
-  ? `${styles.likeBtn} ${styles.likedComment}`
-  : `${styles.likeBtn}`;
+    ? `${styles.likeBtn} ${styles.likedComment}`
+    : `${styles.likeBtn}`;
 
   return (
     <div className={styles.commentContainer}>
       <div className={styles.imageContainer}>
-          <Image src={profilePhoto} alt='user profile photo' width={40} height={40} className={styles.avartar}/>
+        <Image
+          src={profilePhoto}
+          alt="user profile photo"
+          width={40}
+          height={40}
+          className={styles.avartar}
+        />
       </div>
 
       <div className={styles.commentRightContainer}>
-
-      <div className={styles.commentContentsContainer}>
-      <div className={styles.titleBarContent}>
+        <div className={styles.commentContentsContainer}>
+          <div className={styles.titleBarContent}>
             <Link href={`/profile/${userID}`}>
               <a className={styles.displayNameLink}>{displayName}</a>
             </Link>
             <p className={styles.timeAgo}>{date}</p>
-      </div>
-      <TextContent>{content}</TextContent>
-      </div>
+          </div>
+          <TextContent>{content}</TextContent>
+        </div>
 
-      <div className={styles.commentBtmContainer}>
-        <div className={styles.iconContainer} onClick={likeCommentHandler}>
-      <FontAwesomeIcon icon="fa-solid fa-thumbs-up" className={likeBtnStyles} id='commentLikeBtn' />
-      <label htmlFor="commentLikeBtn" className={styles.label}>Like</label>
-      </div>
-      <div>Likes: {likes}</div>
-      </div>
-
+        <div className={styles.commentBtmContainer}>
+          <div className={styles.iconContainer} onClick={likeCommentHandler}>
+            <FontAwesomeIcon
+              icon="fa-solid fa-thumbs-up"
+              className={likeBtnStyles}
+              id="commentLikeBtn"
+            />
+            <label htmlFor="commentLikeBtn" className={styles.label}>
+              Like
+            </label>
+          </div>
+          <div>Likes: {likes}</div>
+        </div>
       </div>
     </div>
   );

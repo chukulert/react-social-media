@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import styles from "./FriendListItem.module.css";
 import Link from "next/link";
 import Image from "next/image";
-// import FollowUserButton from "./FollowUserButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";

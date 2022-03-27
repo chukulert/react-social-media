@@ -10,36 +10,6 @@ import {
 import NavBar from "../../src/components/Nav/NavBar";
 import ProfileSideTab from "../../src/components/ProfileSideTab/ProfileSideTab";
 
-// export async function getStaticProps(staticProps) {
-//   const userID = staticProps.params.id;
-
-//   const userProfile = await fetchUserProfile(userID);
-//   const posts = await fetchUserPosts(userID);
-
-//   return {
-//     props: {
-//       postUser: userProfile,
-//       posts: posts,
-//     },
-//   };
-// }
-
-// //get static paths which are paths that can be found
-// export async function getStaticPaths() {
-//   const allUsers = await fetchAllUsers();
-//   const paths = allUsers.map((user) => {
-//     return {
-//       params: {
-//         id: user.userID,
-//       },
-//     };
-//   });
-//   return {
-//     paths,
-//     fallback: true,
-//   };
-// }
-
 const ProfilePage = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isCurrentUserPage, setIsCurrentUserPage] = useState(false);
@@ -113,11 +83,6 @@ const ProfilePage = (props) => {
       />
 
       {isLoading && <h1>Loading...</h1>}
-      {!isLoading && !isCurrentUserPage && (
-        <button onClick={followUserHandler}>
-          {isFollowing ? "Unfollow" : "Follow"} User
-        </button>
-      )}
       {!isLoading && (
         <Post posts={posts} currentUserProfile={userProfile}/>
       )}

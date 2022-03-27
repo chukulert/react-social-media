@@ -7,6 +7,7 @@
     flex-grow: 2;
     overflow: hidden;
     max-height: 100%;
+    /* display: flex; */
 }
 
 .messagesContainer {
@@ -27,7 +28,6 @@
     padding: .5rem 1rem;
     margin-bottom: .5rem;
     height: 5rem;
-    /* position: sticky; */
     top: 0;
 }
 
@@ -49,7 +49,6 @@
 }
 
 .backBtn {
-    /* padding: 1rem; */
     font-size: 2rem;
     cursor: pointer;
 }
@@ -114,12 +113,15 @@
 .alignLeft {
     text-align: right;
     margin: .5rem;
-    /* font-size: 2rem;
-    cursor: pointer; */
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: .5rem;
 }
 
 @media (min-width: 768px) {
     .messagesContainer {
         width: calc(100vw - 378px);
+    }
+    .messagesContainer.singleContainer {
+        width: 100vw;
     }
 }

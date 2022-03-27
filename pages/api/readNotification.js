@@ -16,7 +16,7 @@ const submitMessage = async (req, res) => {
           res.json({ message: `notifications could not be found` });
         }
       } else {
-        const records = await readNotification({sent_user_id, user_id, link});
+        const records = await readNotification({ sent_user_id, user_id, link });
         if (records.length !== 0) {
           res.json(records);
         } else {

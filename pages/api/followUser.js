@@ -1,13 +1,13 @@
 import {
   updateFollowUser,
   fetchUserPosts,
-  updatePostFollowing
+  updatePostFollowing,
 } from "../../src/utils/firebase-adminhelpers";
 
 const followUser = async (req, res) => {
   if (req.method === "PUT") {
     const { currentUserID, postUserID, type } = req.body;
-    console.log({ currentUserID, postUserID, type })
+
     try {
       if (currentUserID) {
         //update user id to postuser's following, and update postuser's followers
@@ -15,7 +15,6 @@ const followUser = async (req, res) => {
 
         //fetch all of postuser's posts
         const posts = await fetchUserPosts(postUserID);
-        console.log(posts)
 
         //update postusers posts' followers to add/remove userID
         const records = await Promise.all(

@@ -8,10 +8,10 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCaretLeft, faCommentDots } from "@fortawesome/free-solid-svg-icons";
 
 const MessageBoard = (props) => {
-    const [element, setElement] = useState(null);
-    const observer = useRef();
-    const messagesEndRef = useRef()
-    
+  const [element, setElement] = useState(null);
+  const observer = useRef();
+  const messagesEndRef = useRef();
+
   const {
     messages,
     handleLoadMore,
@@ -22,18 +22,18 @@ const MessageBoard = (props) => {
     setShowFollowingModal,
     width,
     toggleMessageBoardDisplay,
-    tempUser
+    tempUser,
   } = props;
 
   library.add(faCaretLeft, faCommentDots);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView()
-  }
+    messagesEndRef.current?.scrollIntoView();
+  };
 
   useEffect(() => {
-    scrollToBottom()
-  }, [messageGroup])
+    scrollToBottom();
+  }, [messageGroup]);
 
   useEffect(() => {
     let currentElement;
@@ -46,7 +46,7 @@ const MessageBoard = (props) => {
 
     if (currentElement) {
       currentObserver.observe(currentElement);
-    console.log('observe')
+      console.log("observe");
     }
     return () => {
       if (currentElement) {
@@ -57,14 +57,16 @@ const MessageBoard = (props) => {
 
   const handleObserver = useCallback((entries) => {
     if (entries[0].isIntersecting) {
-        console.log('yes')
-        // handleLoadMore()
+      console.log("yes");
+      // handleLoadMore()
     }
   }, []);
 
-  const chatUser = tempUser ? tempUser : messageGroup?.members.filter(
-    (member) => member.id !== currentUserProfile.userID
-  )[0];
+  const chatUser = tempUser
+    ? tempUser
+    : messageGroup?.members.filter(
+        (member) => member.id !== currentUserProfile.userID
+      )[0];
 
   const messageItems = (
     <div className={styles.messagesContent}>
@@ -85,6 +87,7 @@ const MessageBoard = (props) => {
   return (
     <div className={styles.messageBoardContainer}>
       <div className={styles.messageBoardHeader}>
+        {/* Back Button */}
         <div className={styles.flexCenter}>
           <FontAwesomeIcon
             icon="fa-solid fa-caret-left"
@@ -92,6 +95,7 @@ const MessageBoard = (props) => {
             onClick={toggleMessageBoardDisplay}
           />
         </div>
+        {/* Chat User icon */}
         {chatUser && (
           <div className={styles.profileDisplay}>
             <div className={styles.flexCenter}>
@@ -103,11 +107,13 @@ const MessageBoard = (props) => {
                 className="avatar"
               />
             </div>
+            {/* Chat User display name */}
             <div className={styles.flexCenter}>
               <p>{chatUser.displayName}</p>
             </div>
           </div>
         )}
+        {/* Modal for following */}
         <div className={styles.flexCenter}>
           <FontAwesomeIcon
             icon="fa-solid fa-comment-dots"
@@ -116,12 +122,16 @@ const MessageBoard = (props) => {
           />
         </div>
       </div>
-      <div className={styles.messagesContainer}>
+      <div className={messageGroup || tempUser ? `${styles.messagesContainer}` : `${styles.messagesContainer} ${styles.singleContainer}` }>
         {isReachingEnd && (
           <p className={styles.loadMoreBtn}>All messages are loaded.</p>
         )}
         {!isReachingEnd && !noMessageItems && messageGroup && (
-          <p onClick={handleLoadMore} className={styles.loadMoreBtn} ref={setElement}>
+          <p
+            onClick={handleLoadMore}
+            className={styles.loadMoreBtn}
+            ref={setElement}
+          >
             Load more
           </p>
         )}
@@ -131,9 +141,9 @@ const MessageBoard = (props) => {
             Start a new conversation by entering a new message.
           </p>
         )}
-        <div ref={messagesEndRef}/>
+        <div ref={messagesEndRef} />
       </div>
-        <MessageInput submitMessageHandler={submitMessageHandler} />
+      <MessageInput submitMessageHandler={submitMessageHandler} tempUser={tempUser} messageGroup={messageGroup} />
     </div>
   );
 };

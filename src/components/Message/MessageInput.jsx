@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
-const MessageInput = ({ submitMessageHandler }) => {
+const MessageInput = ({ submitMessageHandler, messageGroup, tempUser }) => {
   const inputBox = useRef();
 
   library.add(faArrowRightFromBracket);
@@ -17,7 +17,7 @@ const MessageInput = ({ submitMessageHandler }) => {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className={styles.messageInputContainer}>
+      <form onSubmit={handleSubmit} className={messageGroup || tempUser ? styles.messageInputContainer : `${styles.messageInputContainer} ${styles.singleContainer}`}>
         <input
           type="text"
           maxLength="500"

@@ -9,11 +9,10 @@ import Image from "next/image";
 
 const NewPostForm = ({ submitHandler }) => {
   const [uploadedImage, setUploadedImage] = useState(null);
-  console.log(uploadedImage);
   library.add(faImage);
+
   const TextInput = ({ label, ...props }) => {
     const [field, meta] = useField(props);
-
     return (
       <>
         <label htmlFor={props.id || props.name}>{label}</label>

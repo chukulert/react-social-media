@@ -1,19 +1,16 @@
 .navbar {
     background-color: var(--background-color-dark);
-    /* border-bottom: 1px solid black; */
     display: flex;
     align-items: center;
     justify-content: space-between;
     position: sticky; 
-    
+    z-index: 2;
 }
 
 .navlinks {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    /* justify-content: flex-end; */
-    /* gap: .5rem; */
 }
 
 .navMobile {
@@ -54,7 +51,6 @@
     background-color: var(--background-color-dark);
     opacity: 0.9;
     min-width: 10rem;
-    z-index: 1;
   }
 
 .dropdownContent a {
@@ -78,7 +74,6 @@
   left: auto;
   background-color: var(--background-color-dark);
   opacity: 0.9;
-  z-index: 9999;
 }
 
 .noNotifMessage {

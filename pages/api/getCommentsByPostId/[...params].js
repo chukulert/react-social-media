@@ -1,19 +1,19 @@
-import { fetchPostComments, fetchMorePostComments, getCommentSnapshotByID } from "../../../src/utils/firebase-Adminhelpers";
+import {
+  fetchPostComments,
+  fetchMorePostComments,
+  getCommentSnapshotByID,
+} from "../../../src/utils/firebase-Adminhelpers";
 
 const getCommentsByPost = async (req, res) => {
   const { params } = req.query;
   const postID = params[0];
   const cursor = params[1];
 
-  console.log('PostID: ', postID, 'cursor:', cursor)
-
   try {
     if (postID) {
       if (cursor) {
         const docSnapshot = await getCommentSnapshotByID(cursor);
-        // console.log(docSnapshot)
         const records = await fetchMorePostComments(postID, docSnapshot);
-        console.log(records);
         if (records.length !== 0) {
           res.json(records);
         } else {
@@ -32,8 +32,7 @@ const getCommentsByPost = async (req, res) => {
     }
   } catch (err) {
     res.status(500);
-    res.json(null)
-    
+    res.json(null);
   }
 };
 export default getCommentsByPost;

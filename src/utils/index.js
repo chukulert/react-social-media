@@ -39,7 +39,6 @@ export const isEmpty = (obj) => {
 export const fetcher = (url) => fetch(url).then((res) => res.json());
 
 export const sortNotifications = (notifications) => {
-    console.log(notifications)
     if (notifications.length === 0) return;
   let messageArr = [];
   let commentArr = [];
@@ -70,8 +69,5 @@ export const sortNotifications = (notifications) => {
       if (!obj) followArr.push(notification);
     }
   });
-//   console.log({messageArr})
-//   console.log({commentArr})
-//   console.log({followArr})
   return [...messageArr, ...commentArr, ...followArr];
 };

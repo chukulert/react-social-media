@@ -38,7 +38,6 @@ const ProfileSideTab = (props) => {
               height="100%"
               layout="fill"
               objectFit="cover"
-              placeholder="blur"
             />
           </div>
           <div className={styles.profileContainer}>
@@ -51,7 +50,6 @@ const ProfileSideTab = (props) => {
                 layout="responsive"
                 objectFit="cover"
                 className={styles.profilePhoto}
-                placeholder="blur"
               />
             </div>
             <div className={styles.profileInfoContainer}>

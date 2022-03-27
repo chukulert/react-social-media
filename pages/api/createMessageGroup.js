@@ -1,8 +1,4 @@
-import {
-  createNewMessageGroup,
-  fetchUserProfile,
-} from "../../src/utils/firebase-adminhelpers";
-import { db } from "../../src/utils/init-firebaseAdmin";
+import { createNewMessageGroup } from "../../src/utils/firebase-adminhelpers";
 
 const createMessageGroup = async (req, res) => {
   if (req.method === "POST") {

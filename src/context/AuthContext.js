@@ -5,7 +5,6 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
-  onAuthStateChanged,
   onIdTokenChanged,
   signInWithPopup,
   GoogleAuthProvider,
@@ -13,9 +12,6 @@ import {
   confirmPasswordReset,
 } from "firebase/auth";
 import {
-  collection,
-  addDoc,
-  getDocs,
   doc,
   setDoc,
   getDoc,
@@ -64,12 +60,18 @@ export default function AuthContextProvider({ children }) {
     const unsubscribe = async () => {
       onIdTokenChanged(auth, async (user) => {
         if (!user) {
+          console.log({user})
+          console.log({auth})
+          console.log({token})
           setCurrentUser(null);
           setCurrentUserProfile(null);
           nookies.set(undefined, "token", "", {});
           return;
         }
         const token = await user.getIdToken();
+        console.log({user})
+        console.log({auth})
+        console.log({token})
         setCurrentUser(user);
         setUserProfile(user)
         nookies.set(undefined, "token", token, {});
@@ -84,7 +86,6 @@ export default function AuthContextProvider({ children }) {
   useEffect(() => {
     const handle = setInterval(async () => {
       const user = auth.currentUser;
-      console.log(user)
       if (user) await user.getIdToken(true);
     }, 10 * 60 * 1000);
 
@@ -115,6 +116,28 @@ export default function AuthContextProvider({ children }) {
     }
   };
 
+  const setNewUserDoc = async (newUser) => {
+    await setDoc(
+      doc(db, "users", newUser.user.uid),
+      {
+        userID: newUser.user.uid,
+        email: newUser.user.email,
+        displayName: newUser.user.displayName || "",
+        profilePhoto: newUser.user.photoURL ? newUser.user.photoURL : `https://pixabay.com/images/id-1577909/`,
+        bannerPhoto: newUser.user.photoURL ? newUser.user.photoURL : `https://pixabay.com/images/id-1275780/` ,
+        joinDate: newUser.user.metadata.creationTime,
+        likedPosts: [],
+        postsCounter: 0,
+        following: [],
+        followers: [],
+        messagesCounter: 0,
+        notifications: [],
+        userSummary: "",
+        private: false
+      }
+    );
+  }
+
   const register = async (email, password) => {
     try {
       const newUser = await createUserWithEmailAndPassword(
@@ -122,24 +145,7 @@ export default function AuthContextProvider({ children }) {
         email,
         password
       );
-      const newUserProfile = await setDoc(
-        doc(db, "users", `${newUser.user.uid}`),
-        {
-          userID: newUser.user.uid,
-          email: email,
-          displayName: newUser.user.displayName || "",
-          profilePhoto: newUser.user.photoURL,
-          joinDate: newUser.user.metadata.creationTime,
-          likedPosts: [],
-          postsCounter: 0,
-          following: [],
-          followers: [],
-          messagesCounter: 0,
-          notifications: [],
-          userSummary: "",
-          private: false
-        }
-      );
+      await setNewUserDoc(newUser)
       setError(null);
       router.push("/");
     } catch (error) {
@@ -186,8 +192,14 @@ export default function AuthContextProvider({ children }) {
   const signInWithGoogle = async () => {
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
-      router.push("/profile");
+      const response = await signInWithPopup(auth, provider);
+      console.log(response)
+      const docRef = doc(db, "users", `${response.user.uid}`);
+      const userProfile = await getDoc(docRef);
+      if(!userProfile.exists()) {
+        await setNewUserDoc(response)
+      }
+      router.push("/");
     } catch (error) {
       console.error("Something went wrong", error);
       setError(error.message);

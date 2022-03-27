@@ -10,7 +10,7 @@ const createNotification = async (req, res) => {
       type,
       message,
     } = req.body;
-    console.log(sent_user_id, sent_user_displayName, user_id, link, type, message);
+
     try {
       if (user_id) {
         const records = await createNewNotification({
@@ -19,7 +19,7 @@ const createNotification = async (req, res) => {
           user_id,
           link,
           type,
-          message
+          message,
         });
         if (records.length !== 0) {
           res.json(records);

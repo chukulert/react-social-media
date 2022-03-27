@@ -85,15 +85,7 @@ const EditProfile = ({ userProfile }) => {
         setBannerPhoto(),
         setProfileDetails(),
       ]);
-      toast.success('Profile saved!', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        });
+    
 
     } catch (error) {
       console.error(error);
@@ -230,10 +222,10 @@ const EditProfile = ({ userProfile }) => {
             displayName: Yup.string().required("Please enter a display name"),
           })}
           onSubmit={(values, { setSubmitting }) => {
-            setTimeout(() => {
-              alert(JSON.stringify(values, null, 2));
-              setSubmitting(false);
-            }, 400);
+            // setTimeout(() => {
+            //   alert(JSON.stringify(values, null, 2));
+            //   setSubmitting(false);
+            // }, 400);
 
             submitHandler({
               displayName: values.displayName,
@@ -241,6 +233,15 @@ const EditProfile = ({ userProfile }) => {
               profilePhoto: values.profilePhoto,
               bannerPhoto: values.bannerPhoto,
             });
+            toast.success('Profile saved!', {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              });
           }}
         >
           {(props) => (

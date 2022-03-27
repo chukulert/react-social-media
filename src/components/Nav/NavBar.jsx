@@ -35,7 +35,7 @@ const NavBar = ({ currentUserProfile }) => {
   const { logout } = useAuth();
   const { width } = useWindowSize();
   const dropDownRef = useRef();
-  const notifDropDownRef = useRef()
+  const notifDropDownRef = useRef();
   const router = useRouter();
   library.add(
     faHouse,
@@ -49,11 +49,17 @@ const NavBar = ({ currentUserProfile }) => {
 
   const [theme, setTheme] = useLocalStorage("theme", "");
 
+  // useEffect(() => {
+  //   const defaultDark = window.matchMedia(
+  //     "(prefers-color-scheme: dark)"
+  //   ).matches;
+  //   if (defaultDark) setTheme("dark");
+  // }, []);
+
   useEffect(() => {
-    const defaultDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    if (defaultDark) setTheme("dark");
+    theme === "light"
+      ? document.body.classList.add("light-theme")
+      : document.body.classList.remove("light-theme");
   }, []);
 
   const switchTheme = () => {
@@ -222,16 +228,29 @@ const NavBar = ({ currentUserProfile }) => {
 
             {expandedNotification && (
               <div id="dropDown" className={styles.notificationDropDown}>
-                 {notifications.length !== 0 && <div>
-                  <div className={styles.flexEnd}><div onClick={handleReadAllNotifications} className={styles.button}>Clear All</div></div>
-                </div>}
-                {notifications.length === 0 && <div className={styles.noNotifMessage}>You have no notifications.</div>}
+                {notifications.length !== 0 && (
+                  <div>
+                    <div className={styles.flexEnd}>
+                      <div
+                        onClick={handleReadAllNotifications}
+                        className={styles.button}
+                      >
+                        Clear All
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {notifications.length === 0 && (
+                  <div className={styles.noNotifMessage}>
+                    You have no notifications.
+                  </div>
+                )}
                 {notificationsList}
               </div>
             )}
           </div>
         )}
-
+        {/* profile dropdown */}
         {currentUserProfile && (
           <div
             className={styles.dropdown}

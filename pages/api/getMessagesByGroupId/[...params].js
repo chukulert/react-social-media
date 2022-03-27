@@ -1,14 +1,14 @@
 import {
   fetchMessagesByGroupID,
   getMessageSnapshotByID,
-  fetchMoreMessagesByGroupID
+  fetchMoreMessagesByGroupID,
 } from "../../../src/utils/firebase-adminhelpers";
 
 const getMessagesByGroupId = async (req, res) => {
   const { params } = req.query;
   const messageGroupId = params[0];
   const cursor = params[1];
-  // console.log(cursor)
+
   try {
     if (messageGroupId) {
       if (cursor) {
@@ -16,7 +16,6 @@ const getMessagesByGroupId = async (req, res) => {
           messageGroupId,
           cursor
         );
-        // console.log(docSnapshot)
         const records = await fetchMoreMessagesByGroupID(
           messageGroupId,
           docSnapshot
@@ -24,7 +23,7 @@ const getMessagesByGroupId = async (req, res) => {
         if (records.length !== 0) {
           res.json(records);
         } else {
-          console.log('something wrong here')
+          console.log("something wrong here");
         }
       }
       const records = await fetchMessagesByGroupID(messageGroupId);

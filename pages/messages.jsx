@@ -21,7 +21,7 @@ import { faCommentDots } from "@fortawesome/free-solid-svg-icons";
 //custom hooks
 import useWindowSize from "../src/hooks/useWindowSize";
 
-const MessagesPage = ({ userProfile }) => {
+const MessagesPage = ({ userProfile, switchTheme }) => {
   const [messageGroup, setMessageGroup] = useState(null);
   const [tempUser, setTempUser] = useState(false);
   const [hasUser, setHasUser] = useState(false);
@@ -73,8 +73,7 @@ const MessagesPage = ({ userProfile }) => {
     userProfile ? `/api/getFollowingById?id=${userProfile.userID}` : null,
     fetcher,
     {
-      // refreshInterval: 1000,
-      revalidateIfStale: false,
+      revalidateIfStale: true,
       revalidateOnFocus: false,
     }
   );
@@ -86,7 +85,8 @@ const MessagesPage = ({ userProfile }) => {
     setSize,
     mutate: mutateMessages,
   } = useSWRInfinite(messageGroup ? getKey : null, fetcher, {
-    // refreshInterval: 1000,
+    refreshInterval: 1000,
+    revalidateIfStale: true,
   });
 
   const messageList = messages ? [].concat(...messages) : [];
@@ -99,7 +99,7 @@ const MessagesPage = ({ userProfile }) => {
     isEmpty || (messages && messages[messages.length - 1]?.length < 15);
 
   //   if (followersError) return <div>failed to load</div>;
-  //   if (!following) return <div>loading...</div>;
+  //   if (!following) return <div>loading...</div>;    
 
   //check for group if exists? store in a state. fetch messages
   const handleFollowingClick = async (e) => {
@@ -127,9 +127,7 @@ const MessagesPage = ({ userProfile }) => {
   };
 
   const handleLoadMoreMessages = () => {
-    console.log("setting size + 1");
     setSize(size + 1);
-    console.log(size);
   };
 
   const handleMessageGroupClick = async (e) => {
@@ -205,6 +203,7 @@ const MessagesPage = ({ userProfile }) => {
           });
         };
         await Promise.all([submitMessage(), createNotification()]);
+        mutateMessages();
       }
 
       if (userProfile && messageGroup) {
@@ -254,7 +253,7 @@ const MessagesPage = ({ userProfile }) => {
 
   return (
     <>
-      <NavBar currentUserProfile={userProfile} />
+      <NavBar currentUserProfile={userProfile} switchTheme={switchTheme} />
       <div className={width < 768 ? null : `${styles.messagePageContainer}`}>
         {showUserModal && (
           <MessageUserModal

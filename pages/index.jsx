@@ -123,7 +123,7 @@ export async function getServerSideProps(context) {
   try {
     const cookies = nookies.get(context);
     const token = await verifyToken(cookies.token);
-    const { uid, email } = token;
+    const { uid } = token;
     //this returns the user profile in firestore
     if (uid) {
       const userProfile = await fetchUserProfile(uid);

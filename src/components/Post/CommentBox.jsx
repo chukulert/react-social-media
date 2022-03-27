@@ -7,13 +7,11 @@ import useSWRInfinite from "swr/infinite";
 import NewCommentForm from "../Form/NewCommentForm";
 import Image from "next/image";
 
-
 const CommentBox = (props) => {
   const { currentUserProfile } = useAuth();
   const { postID, userID } = props;
 
   const getKey = (pageIndex, previousPageData) => {
-
     //initlal load
     if (pageIndex === 0) return `/api/getCommentsByPostId/${postID}`;
 
@@ -42,11 +40,9 @@ const CommentBox = (props) => {
   const isReachingEnd =
     isEmpty || (comments && comments[comments.length - 1]?.length < 5);
 
-
   const handleLoadMoreComments = () => {
     setSize(size + 1);
   };
-
 
   const commentItems = (
     <div>
@@ -67,11 +63,10 @@ const CommentBox = (props) => {
       ))}
     </div>
   );
-  const noCommentItems = !commentItems.props.children.length 
+  const noCommentItems = !commentItems.props.children.length;
 
   //handle add comment
   const submitCommentHandler = async ({ content }) => {
-    console.log(content)
     if (currentUserProfile) {
       try {
         const submitComment = async () => {
@@ -133,7 +128,9 @@ const CommentBox = (props) => {
         </div>
       </div>
       <div>{commentItems}</div>
-      {noCommentItems ? <p className={styles.loadMoreBtn}>No comments available.</p> : null}
+      {noCommentItems ? (
+        <p className={styles.loadMoreBtn}>No comments available.</p>
+      ) : null}
       {!isReachingEnd && !noCommentItems && (
         <div onClick={handleLoadMoreComments} className={styles.loadMoreBtn}>
           Load more
