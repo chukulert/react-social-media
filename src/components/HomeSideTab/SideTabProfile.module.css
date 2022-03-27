@@ -15,7 +15,7 @@
 
 .profileLink {
     height: 100%;
-    max-width: 10rem;
+    max-width: 20rem;
     display: flex;
     border-radius: 1rem;
     padding: .5rem;
@@ -31,6 +31,7 @@
     display: flex;
     align-items: center;
     margin-left: .5rem;
+    overflow: hidden;
 }
 
 .footer {

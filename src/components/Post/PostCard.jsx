@@ -20,6 +20,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 //helpers
 import { timeAgo } from "../../utils/index";
+//react copy to clipboard
+import {CopyToClipboard} from 'react-copy-to-clipboard';
+//toast
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const PostCard = (props) => {
   const { currentUserProfile, likesCount, postCommentsCount, id } = props;
@@ -88,6 +93,18 @@ const PostCard = (props) => {
   const likeBtnStyles = likedPost
     ? `${styles.commentHeaderIcons} ${styles.likedPost}`
     : `${styles.commentHeaderIcons}`;
+
+  const handleCopyClick = () => {
+    toast.success("Post link copied to clipboard!", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  }
 
   return (
     <div className={styles.cardContainer}>
@@ -160,7 +177,10 @@ const PostCard = (props) => {
               Comment
             </label>
           </div>
-          <div className={styles.iconContainer}>
+          <CopyToClipboard
+          text={`localhost:3000/post/${id}`}
+          >
+            <div className={styles.iconContainer} onClick={handleCopyClick}>
             <FontAwesomeIcon
               icon="fa-solid fa-share"
               className={styles.commentHeaderIcons}
@@ -170,11 +190,13 @@ const PostCard = (props) => {
               Share
             </label>
           </div>
+        </CopyToClipboard>
         </div>
         {displayComments && (
           <CommentBox postID={props.id} userID={props.userID} />
         )}
       </div>
+      <ToastContainer />
     </div>
   );
 };

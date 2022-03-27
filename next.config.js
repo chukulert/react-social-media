@@ -1,7 +1,7 @@
 module.exports = {
   reactStrictMode: true,
   images: {
-    domains: ["firebasestorage.googleapis.com", "lh3.googleusercontent.com"],
+    domains: ["firebasestorage.googleapis.com", "lh3.googleusercontent.com", "pixabay.com"],
   },
   // webpack5: true,
   // webpack: (config) => {

@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { timeAgo } from "../../utils";
 import { useState } from "react";
+//styles and icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";

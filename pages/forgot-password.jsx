@@ -1,10 +1,9 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import ResetPasswordForm from "../src/components/Form/ResetPasswordForm";
 import { useAuth } from "../src/context/AuthContext";
 import Container from "../src/components/Layout/Container";
 import styles from "../styles/pages.module.css";
 
-const forgotPasswordPage = () => {
+const ForgotPasswordPage = () => {
   const { forgotPassword } = useAuth();
 
   return (
@@ -17,4 +16,4 @@ const forgotPasswordPage = () => {
   );
 };
 
-export default forgotPasswordPage;
+export default ForgotPasswordPage;

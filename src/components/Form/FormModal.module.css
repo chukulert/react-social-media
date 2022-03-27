@@ -44,7 +44,6 @@
 .flex{
   display: flex;
   justify-content: center;
-  /* align-items: ; */
 }
 
 @media (min-width: 768px) {

@@ -22,7 +22,6 @@
 .messageBoardHeader {
     width: 100%;
     background-color: var(--background-color-light);
-    border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     padding: .5rem 1rem;
@@ -38,7 +37,7 @@
 
 
 .messageBoardIntroMessage {
-    color: var(--border-color);
+    color: grey;
 }
 
 .loadMoreBtn{ 

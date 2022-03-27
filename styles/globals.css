@@ -1,5 +1,6 @@
 html {
   min-height: 100%;
+  font-size: 16px;
 }
 
 body {
@@ -45,6 +46,12 @@ a {
   --breakpoint-width-medium: 768px;
   --breakpoint-width-large: 1200px;
   --breakpoint-width-small: 360px;
+  --toastify-color-progress-light: linear-gradient(
+    to right,
+    var(--primary-light-color),
+    var(--primary-color),
+    var(--primary-dark-color)
+  );
 }
 
 .light-theme {

@@ -1,25 +1,27 @@
+//react
 import { useState } from "react";
+//nextjs
 import Image from "next/image";
+//fireabse
 import { storage, db } from "../../src/utils/init-firebase";
 import { setDoc, doc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import nookies from "nookies";
 import { verifyToken } from "../../src/utils/init-firebaseAdmin";
 import { fetchUserProfile } from "../../src/utils/firebase-adminhelpers";
+import nookies from "nookies";
+//components
+import Container from "../../src/components/Layout/Container";
+//styles and icons
 import styles from "../../styles/editpage.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faImage } from "@fortawesome/free-solid-svg-icons";
-import Container from "../../src/components/Layout/Container";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import {
-  Formik,
-  Form,
-  useField,
-} from "formik";
+//toast
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+//fromik
+import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
-import NavBar from "../../src/components/Nav/NavBar";
 
 const EditProfile = ({ userProfile }) => {
   const [newProfilePhoto, setNewProfilePhoto] = useState(null);
@@ -85,8 +87,15 @@ const EditProfile = ({ userProfile }) => {
         setBannerPhoto(),
         setProfileDetails(),
       ]);
-    
-
+      toast.success("Profile saved!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     } catch (error) {
       console.error(error);
     }
@@ -118,7 +127,7 @@ const EditProfile = ({ userProfile }) => {
     const [field, meta] = useField(props);
     return (
       <div className={styles.imageLabelContainer}>
-        <label htmlFor={props.id || props.name} >
+        <label htmlFor={props.id || props.name}>
           <div className={styles.uploadFileLabelContainer}>
             {newProfilePhoto && (
               <Image
@@ -206,104 +215,92 @@ const EditProfile = ({ userProfile }) => {
 
   return (
     <>
-    <NavBar currentUserProfile={userProfile}/>
-    <Container>
-      <div className={styles.pageContainer}>
-        <h1>Edit Profile</h1>
-        <Formik
-          enableReinitialize={true}
-          initialValues={{
-            displayName: `${userProfile.displayName}`,
-            userSummary: `${userProfile.userSummary}`,
-            bannerPhoto: "",
-            profilePhoto: "",
-          }}
-          validationSchema={Yup.object({
-            displayName: Yup.string().required("Please enter a display name"),
-          })}
-          onSubmit={(values, { setSubmitting }) => {
-            // setTimeout(() => {
-            //   alert(JSON.stringify(values, null, 2));
-            //   setSubmitting(false);
-            // }, 400);
-
-            submitHandler({
-              displayName: values.displayName,
-              userSummary: values.userSummary,
-              profilePhoto: values.profilePhoto,
-              bannerPhoto: values.bannerPhoto,
-            });
-            toast.success('Profile saved!', {
-              position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
+      <Container>
+        <div className={styles.pageContainer}>
+          <h1>Edit Profile</h1>
+          <Formik
+            enableReinitialize={true}
+            initialValues={{
+              displayName: `${userProfile.displayName}`,
+              userSummary: `${userProfile.userSummary}`,
+              bannerPhoto: "",
+              profilePhoto: "",
+            }}
+            validationSchema={Yup.object({
+              displayName: Yup.string()
+                .required("Please enter a display name")
+                .max(25, "Must be 25 characters or less"),
+            })}
+            onSubmit={(values) => {
+              submitHandler({
+                displayName: values.displayName,
+                userSummary: values.userSummary,
+                profilePhoto: values.profilePhoto,
+                bannerPhoto: values.bannerPhoto,
               });
-          }}
-        >
-          {(props) => (
-            <Form className={styles.formContainer}>
-              <h4>Profile Photo</h4>
-              <ProfilePhotoInput
-                id="profilePhoto"
-                name="profilePhoto"
-                type="file"
-                accept="image/*"
-                label="Profile Photo"
-                onChange={(event) => {
-                  const imageURL = URL.createObjectURL(
-                    event.currentTarget.files[0]
-                  );
-                  setNewProfilePhoto(imageURL);
-                  props.setFieldValue(
-                    "profilePhoto",
-                    event.currentTarget.files[0]
-                  );
-                }}
-              />
-              <h4>Banner Photo</h4>
-              <BannerPhotoInput
-                id="bannerPhoto"
-                name="bannerPhoto"
-                type="file"
-                accept="image/*"
-                label="Banner Photo"
-                onChange={(event) => {
-                  const imageURL = URL.createObjectURL(
-                    event.currentTarget.files[0]
-                  );
-                  setNewBannerPhoto(imageURL);
-                  props.setFieldValue(
-                    "bannerPhoto",
-                    event.currentTarget.files[0]
-                  );
-                }}
-              />
-              <h4>Display Name</h4>
-              <TextInput
-                name="displayName"
-                type="text"
-                placeholder="Display Name"
-              />
-              <h4>Personal Summary</h4>
-              <TextInput
-                name="userSummary"
-                type="textarea"
-                placeholder="Personal Summary"
-              />
-              <div className={styles.footer}>
-                <button type="submit" className={styles.submitBtn}>
-                  Save
-                </button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      </div>
-    </Container>
+            }}
+          >
+            {(props) => (
+              <Form className={styles.formContainer}>
+                <h4>Profile Photo</h4>
+                <ProfilePhotoInput
+                  id="profilePhoto"
+                  name="profilePhoto"
+                  type="file"
+                  accept="image/*"
+                  label="Profile Photo"
+                  onChange={(event) => {
+                    const imageURL = URL.createObjectURL(
+                      event.currentTarget.files[0]
+                    );
+                    setNewProfilePhoto(imageURL);
+                    props.setFieldValue(
+                      "profilePhoto",
+                      event.currentTarget.files[0]
+                    );
+                  }}
+                />
+                <h4>Banner Photo</h4>
+                <BannerPhotoInput
+                  id="bannerPhoto"
+                  name="bannerPhoto"
+                  type="file"
+                  accept="image/*"
+                  label="Banner Photo"
+                  onChange={(event) => {
+                    const imageURL = URL.createObjectURL(
+                      event.currentTarget.files[0]
+                    );
+                    setNewBannerPhoto(imageURL);
+                    props.setFieldValue(
+                      "bannerPhoto",
+                      event.currentTarget.files[0]
+                    );
+                  }}
+                />
+                <h4>Display Name</h4>
+                <TextInput
+                  name="displayName"
+                  type="text"
+                  placeholder="Display Name"
+                />
+                <h4>Personal Summary</h4>
+                <TextInput
+                  name="userSummary"
+                  type="textarea"
+                  placeholder="Personal Summary"
+                />
+                <div className={styles.footer}>
+                  <button type="submit" className={styles.submitBtn}>
+                    Save
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        </div>
+        <ToastContainer />
+      </Container>
     </>
   );
 };

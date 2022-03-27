@@ -2,7 +2,7 @@
 import useSWR from "swr";
 import { fetcher } from "../../utils";
 //react
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 //nextjs
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -10,12 +10,13 @@ import Image from "next/image";
 //hooks
 import { useAuth } from "../../context/AuthContext";
 import useWindowSize from "../../hooks/useWindowSize";
-import useLocalStorage from "use-local-storage";
 //components
 import NotificationItem from "./NotificationItem";
 //styles and icons
 import styles from "./NavBar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import '../../../node_modules/@fortawesome/fontawesome-svg-core/styles.css'
+// import '../node_modules/@fortawesome/fontawesome-svg-core/styles.css'
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
   faHouse,
@@ -29,10 +30,10 @@ import {
 //helpers
 import { sortNotifications } from "../../utils";
 
-const NavBar = ({ currentUserProfile }) => {
+const NavBar = ({switchTheme}) => {
   const [expandedMenu, setExpandedMenu] = useState(false);
   const [expandedNotification, setExpandedNotification] = useState(false);
-  const { logout } = useAuth();
+  const { logout, currentUserProfile } = useAuth();
   const { width } = useWindowSize();
   const dropDownRef = useRef();
   const notifDropDownRef = useRef();
@@ -46,31 +47,6 @@ const NavBar = ({ currentUserProfile }) => {
     faArrowRightFromBracket,
     faBell
   );
-
-  const [theme, setTheme] = useLocalStorage("theme", "");
-
-  // useEffect(() => {
-  //   const defaultDark = window.matchMedia(
-  //     "(prefers-color-scheme: dark)"
-  //   ).matches;
-  //   if (defaultDark) setTheme("dark");
-  // }, []);
-
-  useEffect(() => {
-    theme === "light"
-      ? document.body.classList.add("light-theme")
-      : document.body.classList.remove("light-theme");
-  }, []);
-
-  const switchTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    if (newTheme === "light") {
-      document.body.classList.add("light-theme");
-    } else {
-      document.body.classList.remove("light-theme");
-    }
-    setTheme(newTheme);
-  };
 
   const {
     data: notifications,
@@ -268,15 +244,15 @@ const NavBar = ({ currentUserProfile }) => {
             {expandedMenu && (
               <div id="dropDown" className={styles.dropdownContent}>
                 <a onClick={loadProfilePage}>
-                  <FontAwesomeIcon icon="fa-solid fa-user" /> Profile Page
+                  <FontAwesomeIcon icon="fa-solid fa-user" className={styles.icons}/> <p>Profile Page</p>
                 </a>
 
                 <a onClick={switchTheme}>
-                  <FontAwesomeIcon icon="fa-solid fa-cloud-sun" /> Switch Theme
+                  <FontAwesomeIcon icon="fa-solid fa-cloud-sun" className={styles.icons} /> <p>Switch Theme</p>
                 </a>
                 <a onClick={logout}>
-                  <FontAwesomeIcon icon="fa-solid fa-arrow-right-from-bracket" />
-                  Logout
+                  <FontAwesomeIcon icon="fa-solid fa-arrow-right-from-bracket" className={styles.icons}/>
+                  <p>Logout</p>
                 </a>
               </div>
             )}

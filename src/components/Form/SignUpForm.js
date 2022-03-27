@@ -1,5 +1,5 @@
 import React from "react";
-import { Formik, Field, Form, ErrorMessage, useField } from "formik";
+import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
 import styles from "./Form.module.css";
 
@@ -21,16 +21,14 @@ const SignupForm = ({ submitHandler }) => {
     <Formik
       initialValues={{ email: "", password: "" }}
       validationSchema={Yup.object({
-        email: Yup.string().email("Invalid email address").required("Please enter an email address"),
+        email: Yup.string()
+          .email("Invalid email address")
+          .required("Please enter an email address"),
         password: Yup.string()
           .min(5, "Must be 5 characters or more")
           .required("Please enter a password"),
       })}
-      onSubmit={(values, { setSubmitting }) => {
-        setTimeout(() => {
-          alert(JSON.stringify(values, null, 2));
-          setSubmitting(false);
-        }, 400);
+      onSubmit={(values) => {
         submitHandler(values.email, values.password);
       }}
     >

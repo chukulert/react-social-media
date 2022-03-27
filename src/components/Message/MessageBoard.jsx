@@ -18,6 +18,7 @@ const MessageBoard = (props) => {
     submitMessageHandler,
     isReachingEnd,
     messageGroup,
+    messageGroups,
     currentUserProfile,
     setShowFollowingModal,
     width,
@@ -61,6 +62,7 @@ const MessageBoard = (props) => {
       // handleLoadMore()
     }
   }, []);
+
 
   const chatUser = tempUser
     ? tempUser
@@ -122,7 +124,7 @@ const MessageBoard = (props) => {
           />
         </div>
       </div>
-      <div className={messageGroup || tempUser ? `${styles.messagesContainer}` : `${styles.messagesContainer} ${styles.singleContainer}` }>
+      <div className={messageGroups ? `${styles.messagesContainer}` : `${styles.messagesContainer} ${styles.singleContainer}` }>
         {isReachingEnd && (
           <p className={styles.loadMoreBtn}>All messages are loaded.</p>
         )}
@@ -143,7 +145,7 @@ const MessageBoard = (props) => {
         )}
         <div ref={messagesEndRef} />
       </div>
-      <MessageInput submitMessageHandler={submitMessageHandler} tempUser={tempUser} messageGroup={messageGroup} />
+      <MessageInput submitMessageHandler={submitMessageHandler}  messageGroups={messageGroups} />
     </div>
   );
 };

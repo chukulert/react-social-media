@@ -60,19 +60,35 @@ export async function fetchAllUsersData(uid) {
   }
 }
 
+export async function fetchAllPosts() {
+  try {
+    const allPosts = [];
+    const allFetchedPosts = await db.collection("posts").get();
+    allFetchedPosts.forEach((post) => {
+      const data = {
+        ...post.data(),
+        id: post.id,
+      };
+      allPosts.push(data);
+    });
+    return allPosts;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export async function fetchUserPosts(uid) {
   try {
     //get posts of user page
     const userPosts = [];
     const postsRef = db.collection("posts");
 
-    const querySnapshot = await postsRef.where("user_id", "==", uid).get();
+    const querySnapshot = await postsRef.where("user_id", "==", uid).orderBy("created_at", "desc").get();
     querySnapshot.forEach((doc) => {
       const data = {
         ...doc.data(),
         id: doc.id,
       };
-      // doc.data() is never undefined for query doc snapshots
       userPosts.push(data);
     });
     return userPosts;

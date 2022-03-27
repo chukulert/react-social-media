@@ -6,6 +6,8 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faUserGroup, faGlobe } from "@fortawesome/free-solid-svg-icons";
 import NewPost from "../Post/NewPost";
 import FollowingModal from "../Friend/FollowingModal";
+// import { ToastContainer, toast } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
 
 const HomeSideTab = (props) => {
   const { userProfile, allUsersData } = props;
@@ -131,7 +133,7 @@ const HomeSideTab = (props) => {
             />
             <span>Show Users</span>
           </button>
-          <NewPost />
+          <NewPost userProfile={userProfile}/>
         </div>
       </div>
       {showFollowingModal && (

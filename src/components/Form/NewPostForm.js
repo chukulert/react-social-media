@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Formik, Field, Form, ErrorMessage, useField } from "formik";
+import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
 import styles from "./Form.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -66,13 +66,12 @@ const NewPostForm = ({ submitHandler }) => {
             )}
           </div>
         </label>
-        
+
         <input className="hide" {...field} {...props} value={undefined} />
 
         {meta.touched && meta.error ? (
           <p className={styles.formError}>{meta.error}</p>
         ) : null}
-        
       </div>
     );
   };
@@ -83,12 +82,7 @@ const NewPostForm = ({ submitHandler }) => {
       validationSchema={Yup.object({
         description: Yup.string().required("Please enter a description"),
       })}
-      onSubmit={(values, { setSubmitting }) => {
-        setTimeout(() => {
-          alert(JSON.stringify(values, null, 2));
-          setSubmitting(false);
-        }, 400);
-
+      onSubmit={(values) => {
         submitHandler({
           title: values.title,
           description: values.description,
@@ -98,11 +92,7 @@ const NewPostForm = ({ submitHandler }) => {
     >
       {(props) => (
         <Form className={styles.formContainer}>
-          <TextInput
-            name="title"
-            type="title"
-            placeholder="Post Title"
-          />
+          <TextInput name="title" type="title" placeholder="Post Title" />
           <TextareaInput
             name="description"
             type="textarea"
@@ -122,9 +112,11 @@ const NewPostForm = ({ submitHandler }) => {
               props.setFieldValue("file", event.currentTarget.files[0]);
             }}
           />
-          <div className={styles.footer}><button type="submit" className={styles.submitBtn}>
-            Post
-          </button></div>
+          <div className={styles.footer}>
+            <button type="submit" className={styles.submitBtn}>
+              Post
+            </button>
+          </div>
         </Form>
       )}
     </Formik>

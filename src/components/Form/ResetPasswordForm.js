@@ -17,10 +17,10 @@ const ResetPasswordForm = ({ submitHandler, type, oobCode }) => {
         type: validation,
       })}
       onSubmit={(values, { setSubmitting }) => {
-        setTimeout(() => {
-          alert(JSON.stringify(values, null, 2));
-          setSubmitting(false);
-        }, 400);
+        // setTimeout(() => {
+        //   alert(JSON.stringify(values, null, 2));
+        //   setSubmitting(false);
+        // }, 400);
         if (oobCode) {
           submitHandler(oobCode, values.type);
         } else {

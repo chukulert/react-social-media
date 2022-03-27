@@ -111,10 +111,14 @@
     align-content: center;
 }
 
+.displayNameContainer h2 {
+    overflow: hidden;
+    max-width: 22rem;
+}
+
 .userSummary {
     color: grey;
 }
-
 
 @media (min-width: 768px) {
     .sideTabContainer {

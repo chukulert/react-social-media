@@ -54,15 +54,21 @@
   }
 
 .dropdownContent a {
-    display: block;
-    padding: 1rem;
+    display: flex;
+    padding: 1rem .25rem;
     cursor: pointer;
     transition: .5s;
-    
   }
+
 
 .dropdownContent a:hover {
       background-color: var(--background-color-light);
+}
+
+.icons {
+  width: 2rem;
+  margin-right: .5rem;
+  font-size: 16px;
 }
 
 .notificationDropDown {
@@ -82,27 +88,26 @@
 }
 
 .button{
-  background-color: var(--background-color-light);
   color: var(--text-color);
+  margin-top: .5rem;
   font-size: 1rem;
   padding: .75rem;
   border: none;
   cursor: pointer;
-  /* border-radius: 8px; */
   width: 8rem;
   text-align: center;
+  transition: .5s;
 }
 
 .button:hover{
-  background-color: var(--background-color-hover);
-  /* background-color: green; */
+  background-color: var(--background-color-light);
 }
 
 .show {display:block;}
 
 .profileLink {
       height: 100%;
-      max-width: 10rem;
+      max-width: 20rem;
       display: flex;
       border-radius: 1rem;
       padding: .5rem;
@@ -117,9 +122,11 @@
     display: flex;
     align-items: center;
     margin-left: .5rem;
+    overflow: hidden;
 }
 
 .flexEnd {
   display: flex;
   justify-content: flex-end;
 }
+

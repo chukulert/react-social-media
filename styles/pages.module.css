@@ -14,6 +14,22 @@
     padding: .5rem;
     border: 0;
     cursor: pointer;
+    background-color: var(--text-color);
+    color: var(--background-color);
+}
+
+.registerBtn {
+    border-radius: 8px;
+    padding: .5rem;
+    border: 0;
+    cursor: pointer;
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: bold;
+}
+
+.registerBtn:hover {
+    background-color: var(--primary-dark-color);
 }
 
 .forgotPasswordBtn{
@@ -28,7 +44,7 @@
 .signInFormFooter {
     display: flex;
     justify-content: space-around;
-    margin: 1rem 0;
+    margin: 2rem 0;
     font-size: .9rem;
 }
 

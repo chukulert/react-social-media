@@ -253,7 +253,6 @@ const MessagesPage = ({ userProfile, switchTheme }) => {
 
   return (
     <>
-      <NavBar currentUserProfile={userProfile} switchTheme={switchTheme} />
       <div className={width < 768 ? null : `${styles.messagePageContainer}`}>
         {showUserModal && (
           <MessageUserModal
@@ -278,6 +277,7 @@ const MessagesPage = ({ userProfile, switchTheme }) => {
             submitMessageHandler={submitMessageHandler}
             isReachingEnd={isReachingEnd}
             messageGroup={messageGroup}
+            messageGroups={messageGroups}
             currentUserProfile={userProfile}
             setShowFollowingModal={handleShowModal}
             width={width}

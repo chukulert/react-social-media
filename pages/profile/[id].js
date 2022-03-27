@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import Post from "../../src/components/Post/Post";
 import { verifyToken } from "../../src/utils/init-firebaseAdmin";
@@ -7,7 +6,6 @@ import {
   fetchUserPosts,
   fetchUserProfile,
 } from "../../src/utils/firebase-adminhelpers";
-import NavBar from "../../src/components/Nav/NavBar";
 import ProfileSideTab from "../../src/components/ProfileSideTab/ProfileSideTab";
 
 const ProfilePage = (props) => {
@@ -73,7 +71,6 @@ const ProfilePage = (props) => {
 
   return (
     <>
-      <NavBar currentUserProfile={userProfile} />
       <ProfileSideTab
         profilePageUser={profilePageUser}
         followUserHandler={followUserHandler}
@@ -83,9 +80,8 @@ const ProfilePage = (props) => {
       />
 
       {isLoading && <h1>Loading...</h1>}
-      {!isLoading && (
-        <Post posts={posts} currentUserProfile={userProfile}/>
-      )}
+      {!isLoading && <Post posts={posts} currentUserProfile={userProfile} />}
+      {/* For re-route from new post */}
     </>
   );
 };

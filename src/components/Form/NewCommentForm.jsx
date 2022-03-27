@@ -11,12 +11,7 @@ const NewCommentForm = ({ submitHandler }) => {
       validationSchema={Yup.object({
         content: Yup.string().required("Required"),
       })}
-      onSubmit={(values, { setSubmitting }) => {
-        // setTimeout(() => {
-        //   alert(JSON.stringify(values, null, 2));
-        //   setSubmitting(false);
-        // }, 400);
-        //get file from input
+      onSubmit={(values) => {
         submitHandler({
           content: values.content,
         });

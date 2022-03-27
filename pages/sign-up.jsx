@@ -1,17 +1,20 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-
 import SignupForm from "../src/components/Form/SignUpForm";
 import { useAuth } from "../src/context/AuthContext";
 import Container from "../src/components/Layout/Container";
 import styles from '../styles/pages.module.css'
-import NavBar from "../src/components/Nav/NavBar";
+import { useRouter } from "next/router";
 
-const signUpPage = () => {
-  const { register } = useAuth();
+const SignUpPage = () => {
+  const { register, currentUserProfile } = useAuth();
+  const router = useRouter()
+
+  if(currentUserProfile) {
+    router.push('./')
+  }
+
 
   return (
     <>
-    <NavBar />
     <Container>
       <div className={styles.pageContainer}>
         <h1>Register for an Account</h1>
@@ -22,4 +25,4 @@ const signUpPage = () => {
   );
 };
 
-export default signUpPage;
+export default SignUpPage;
