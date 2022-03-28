@@ -45,7 +45,7 @@ const PostPage = ({ postData }) => {
     <>
       <Head>
         <title>
-          {postData.user_displayName ? postData.user_displayName : null}&apos;s
+          {postData?.user_displayName ? postData?.user_displayName : null}&apos;s
           Post
         </title>
         <meta name="description" content="Post" />
@@ -53,22 +53,22 @@ const PostPage = ({ postData }) => {
       </Head>
       <main className={styles.container}>
         <PostCard
-          key={postData.id ? postData.id : null}
-          id={postData.id ? postData.id : null}
-          userID={postData.user_id ? postData.user_id : null}
+          key={postData?.id ? postData?.id : null}
+          id={postData?.id ? postData?.id : null}
+          userID={postData?.user_id ? postData?.user_id : null}
           displayName={
-            postData.user_displayName ? postData.user_displayName : null
+            postData?.user_displayName ? postData?.user_displayName : null
           }
           profilePhoto={
-            postData.user_profilePhoto ? postData.user_profilePhoto : null
+            postData?.user_profilePhoto ? postData?.user_profilePhoto : null
           }
-          image={postData.image ? postData.image : null}
-          title={postData.title ? postData.title : null}
-          description={postData.description ? postData.description : null}
-          created_at={postData.created_at ? postData.created_at : null}
-          likesCount={postData.likesCount ? postData.likesCount : null}
+          image={postData?.image ? postData?.image : null}
+          title={postData?.title ? postData?.title : null}
+          description={postData?.description ? postData?.description : null}
+          created_at={postData?.created_at ? postData?.created_at : null}
+          likesCount={postData?.likesCount ? postData?.likesCount : null}
           postCommentsCount={
-            postData.commentsCount ? postData.commentsCount : null
+            postData?.commentsCount ? postData?.commentsCount : null
           }
           currentUserProfile={currentUserProfile ? currentUserProfile : null}
         />
