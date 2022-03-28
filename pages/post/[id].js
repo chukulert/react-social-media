@@ -43,25 +43,25 @@ const PostPage = ( {postData }) => {
 
   return (
     <>
-    {/* <Head>
-    <title>{postData.user_displayName}&apos;s Post</title>
+    <Head>
+    <title>{postData.user_displayName ? postData.user_displayName : null}&apos;s Post</title>
     <meta name="description" content="Post" />
     <link rel="icon" href="/favicon.ico" />
-    </Head> */}
+    </Head>
       <main className={styles.container}>
         <PostCard
-          key={postData.id}
-          id={postData.id}
-          userID={postData.user_id}
-          displayName={postData.user_displayName}
-          profilePhoto={postData.user_profilePhoto}
-          image={postData.image}
-          title={postData.title}
-          description={postData.description}
-          created_at={postData.created_at}
-          likesCount={postData.likesCount}
-          postCommentsCount={postData.commentsCount}
-          currentUserProfile={currentUserProfile}
+          key={postData.id ? postData.id : null}
+          id={postData.id ? postData.id : null}
+          userID={postData.user_id ? postData.user_id : null}
+          displayName={postData.user_displayName ? postData.user_displayName : null}
+          profilePhoto={postData.user_profilePhoto ? postData.user_profilePhoto : null}
+          image={postData.image ? postData.image : null}
+          title={postData.title ? postData.title : null}
+          description={postData.description ? postData.description : null}
+          created_at={postData.created_at ? postData.created_at : null}
+          likesCount={postData.likesCount ? postData.likesCount : null}
+          postCommentsCount={postData.commentsCount ? postData.commentsCount : null}
+          currentUserProfile={currentUserProfile ? currentUserProfile : null}
         />
       </main>
     </>
