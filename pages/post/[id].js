@@ -43,11 +43,11 @@ const PostPage = ( {postData }) => {
 
   return (
     <>
-    <Head>
+    {/* <Head>
     <title>{postData.user_displayName}&apos;s Post</title>
     <meta name="description" content="Post" />
-    {/* <link rel="icon" href="/favicon.ico" /> */}
-    </Head>
+    <link rel="icon" href="/favicon.ico" />
+    </Head> */}
       <main className={styles.container}>
         <PostCard
           key={postData.id}
