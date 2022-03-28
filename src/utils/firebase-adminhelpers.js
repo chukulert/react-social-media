@@ -1,6 +1,9 @@
 import { FieldValue } from "firebase-admin/firestore";
 import { db } from "./init-firebaseAdmin";
 
+// import { FieldValue } from "firebase/firestore";
+// import { db } from "./init-firebase";
+
 export async function fetchUserProfile(uid) {
   try {
     const docRef = db.collection("users").doc(`${uid}`);

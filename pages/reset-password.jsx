@@ -1,4 +1,4 @@
-import ResetPasswordForm from "../src/components/ResetPasswordForm";
+import ResetPasswordForm from "../src/components/Form/ResetPasswordForm";
 import { useAuth } from "../src/context/AuthContext";
 import { useRouter } from "next/router";
 import Container from "../src/components/Layout/Container";

@@ -17,10 +17,6 @@ const ResetPasswordForm = ({ submitHandler, type, oobCode }) => {
         type: validation,
       })}
       onSubmit={(values, { setSubmitting }) => {
-        // setTimeout(() => {
-        //   alert(JSON.stringify(values, null, 2));
-        //   setSubmitting(false);
-        // }, 400);
         if (oobCode) {
           submitHandler(oobCode, values.type);
         } else {
@@ -32,7 +28,6 @@ const ResetPasswordForm = ({ submitHandler, type, oobCode }) => {
         <label htmlFor={type}>{type}</label>
         <Field name="type" type={type} />
         <ErrorMessage name="type" />
-
         <button type="submit">Submit</button>
       </Form>
     </Formik>
