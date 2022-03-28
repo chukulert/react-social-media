@@ -2,7 +2,7 @@ import {
   fetchPostComments,
   fetchMorePostComments,
   getCommentSnapshotByID,
-} from "../../../src/utils/firebase-Adminhelpers";
+} from "../../../src/utils/firebase-adminhelpers";
 
 const getCommentsByPost = async (req, res) => {
   const { params } = req.query;
