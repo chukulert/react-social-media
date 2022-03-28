@@ -40,7 +40,7 @@ export async function getStaticPaths() {
 
 const PostPage = ({ postData }) => {
   const { currentUserProfile } = useAuth();
-
+    console.log(postData)
   return (
     <>
       <Head>

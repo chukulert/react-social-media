@@ -105,7 +105,11 @@ export async function fetchPostDataById(id) {
     const postRef = db.collection("posts").doc(`${id}`);
     const post = await postRef.get();
     if (post) {
-      return post.data();
+      const data = {
+        ...post.data(),
+        id: post.id,
+      };
+      return data;
     }
   } catch (e) {
     console.error(e);
