@@ -1,7 +1,10 @@
+//swr
+import useSWRInfinite from "swr/infinite";
+import { fetcher } from "../src/utils";
 //nextjs
 import Head from "next/head";
 //react
-import { useCallback, useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 //cpmponents
 import Post from "../src/components/Post/Post";
 import HomeSideTab from "../src/components/HomeSideTab/HomeSideTab";
@@ -16,21 +19,50 @@ import {
 import styles from "../styles/pages.module.css";
 
 export default function Home(props) {
-  const [feed, setFeed] = useState([]);
-  const [lastFeedPost, setLastFeedPost] = useState("");
+  // const [feed, setFeed] = useState([]);
+  // const [lastFeedPost, setLastFeedPost] = useState("");
   const [element, setElement] = useState(null);
-  const [loading, setIsLoading] = useState(true);
+  // const [loading, setIsLoading] = useState(true);
   const [error, setError] = useState(true);
   const [noMorePosts, setNoMorePosts] = useState(false);
   const { userProfile, allUsersData } = props;
 
   const observer = useRef();
 
+  const getKey = (pageIndex, previousPageData) => {
+    // first page, we don't have `previousPageData`
+    if (pageIndex === 0) return `/api/getFeed/${userProfile.userID}`;
+
+    // add the cursor to the API endpoint
+    return `/api/getFeed/${userProfile.userID}/${previousPageData[4]?.id}`;
+  };
+
+  const {
+    data: feed,
+    error: feedError,
+    size,
+    setSize,
+    // mutate: mutateFeed,
+  } = useSWRInfinite(userProfile ? getKey : null, fetcher, {
+    // refreshInterval: 1000,
+    revalidateIfStale: true,
+  });
+
+  const feedList = feed ? [].concat(...feed) : [];
+  const isLoadingInitialData = !feed && !feedError;
+  const isLoadingMore =
+    isLoadingInitialData ||
+    (size > 0 && feed && typeof feed[size - 1] === "undefined");
+  const isEmpty = feed?.[0]?.length === 0;
+  const isReachingEnd = isEmpty || (feed && feed[feed.length - 1]?.length < 5);
+
+    const fetchMoreFeedHandler = () => {
+    setSize(size + 1);
+  };
+
+
   //get initial feeds and setup intersection observer
   useEffect(() => {
-    if (feed?.length === 0) {
-      getInitialFeed();
-    }
     let currentElement;
     let currentObserver;
     observer.current = new IntersectionObserver(handleObserver, {
@@ -47,57 +79,65 @@ export default function Home(props) {
         currentObserver.disconnect();
       }
     };
-  }, [feed, lastFeedPost]);
+  }, [feed]);
 
-  const handleObserver = useCallback(
+  const handleObserver = 
     (entries) => {
       if (entries[0].isIntersecting) {
+        if (isReachingEnd) return;
         fetchMoreFeedHandler();
       }
-    },
-    [feed, lastFeedPost]
-  );
-
-  const getInitialFeed = async () => {
-    try {
-      const response = await fetch(`/api/getFeed?id=${userProfile.userID}`);
-      const { initialFeedData, lastDoc } = await response.json();
-      setFeed(initialFeedData);
-      setLastFeedPost(lastDoc);
-      setIsLoading(false);
-    } catch (error) {
-      console.error(error);
     }
-  };
+    
+  ;
 
-  const fetchMoreFeedHandler = async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(`/api/getFeed`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userID: userProfile.userID,
-          lastPost: lastFeedPost,
-        }),
-      });
-      //api returns a response stream, read with .json() and returns a promise
-      const { postsData, lastDoc } = await response.json();
-      if (!postsData) {
-        setIsLoading(false);
-        setNoMorePosts(true);
-        return;
-      }
-      setFeed((previousState) => [...previousState, ...postsData]);
-      setLastFeedPost(lastDoc);
-      setIsLoading(false);
-    } catch (error) {
-      console.error(error);
-      setError(error);
-    }
-  };
+
+
+
+
+
+
+
+  // const getInitialFeed = async () => {
+  //   try {
+  //     const response = await fetch(`/api/getFeed?id=${userProfile.userID}`);
+  //     const { initialFeedData, lastDoc } = await response.json();
+  //     setFeed(initialFeedData);
+  //     setLastFeedPost(lastDoc);
+  //     setIsLoading(false);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
+  // const fetchMoreFeedHandler = async () => {
+  //   try {
+  //     setIsLoading(true);
+  //     const response = await fetch(`/api/getFeed`, {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         userID: userProfile.userID,
+  //         lastPost: lastFeedPost,
+  //       }),
+  //     });
+  //     //api returns a response stream, read with .json() and returns a promise
+  //     const { postsData, lastDoc } = await response.json();
+  //     if (!postsData) {
+  //       setIsLoading(false);
+  //       setNoMorePosts(true);
+  //       return;
+  //     }
+  //     setFeed((previousState) => [...previousState, ...postsData]);
+  //     setLastFeedPost(lastDoc);
+  //     setIsLoading(false);
+  //   } catch (error) {
+  //     console.error(error);
+  //     setError(error);
+  //   }
+  // };
 
   return (
     <>
@@ -111,11 +151,12 @@ export default function Home(props) {
           <HomeSideTab userProfile={userProfile} allUsersData={allUsersData} />
         )}
 
-        {feed && <Post posts={feed} currentUserProfile={userProfile} />}
+        {feedList && <Post posts={feedList} currentUserProfile={userProfile} setElement={setElement} />}
         <div ref={setElement}></div>
-        {loading && <div>Loading...</div>}
+        <button onClick={fetchMoreFeedHandler}>Fetch More</button>
+        {isLoadingMore && <div>Loading...</div>}
         {error && !noMorePosts && <div>{error}</div>}
-        {noMorePosts && !loading && (
+        {isReachingEnd && (
           <div className={styles.centerText}>
             No more posts available. Follow other users to view more posts on
             your feed.

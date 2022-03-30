@@ -9,8 +9,8 @@ const TextContent = ({ children }) => {
   };
   return (
     <p className={styles.text}>
-      {isReadMore ? text.slice(0, 150) : text}
-      {text.length > 150 && <span onClick={toggleReadMore} className={styles.readMore}>
+      {isReadMore ? text?.slice(0, 150) : text}
+      {text?.length > 150 && <span onClick={toggleReadMore} className={styles.readMore}>
         {isReadMore ? " ...read more" : " show less"}
       </span>}
     </p>

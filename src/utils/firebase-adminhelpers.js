@@ -86,7 +86,10 @@ export async function fetchUserPosts(uid) {
     const userPosts = [];
     const postsRef = db.collection("posts");
 
-    const querySnapshot = await postsRef.where("user_id", "==", uid).orderBy("created_at", "desc").get();
+    const querySnapshot = await postsRef
+      .where("user_id", "==", uid)
+      .orderBy("created_at", "desc")
+      .get();
     querySnapshot.forEach((doc) => {
       const data = {
         ...doc.data(),
@@ -345,7 +348,7 @@ export async function fetchInitialFeedData(userID) {
       .where("followers", "array-contains", userID)
       .orderBy("created_at", "desc")
       .orderBy("likesCount", "desc")
-      .limit(4);
+      .limit(5);
     const snapshots = await query.get();
     const initialFeedData = snapshots.docs.map((post) => {
       const data = {
@@ -354,11 +357,8 @@ export async function fetchInitialFeedData(userID) {
       };
       return data;
     });
-    const lastDoc = snapshots.docs[snapshots.docs.length - 1].data();
-    return {
-      initialFeedData,
-      lastDoc,
-    };
+    // const lastDoc = snapshots.docs[snapshots.docs.length - 1].data();
+    return initialFeedData;
   } catch (error) {
     console.error(error);
   }
@@ -372,7 +372,7 @@ export async function fetchMoreFeed(userID, lastPost) {
       .orderBy("created_at", "desc")
       .orderBy("likesCount", "desc")
       .startAfter(lastPost.created_at)
-      .limit(4);
+      .limit(5);
     const snapshots = await query.get();
 
     const postsData = snapshots.docs.map((post) => {
@@ -383,11 +383,8 @@ export async function fetchMoreFeed(userID, lastPost) {
       return data;
     });
 
-    const lastDoc = snapshots.docs[snapshots.docs.length - 1].data();
-    return {
-      postsData,
-      lastDoc,
-    };
+    // const lastDoc = snapshots.docs[snapshots.docs.length - 1].data();
+    return postsData;
   } catch (error) {
     console.error(error);
   }
