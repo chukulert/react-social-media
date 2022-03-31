@@ -3,6 +3,7 @@ import { fetchGroupsByUser } from "../../../src/utils/firebase-adminhelpers";
 const getMessageGroups = async (req, res) => {
   const { params } = req.query;
   const [userID, displayName, profilePhoto] = params;
+  console.log(userID, displayName, profilePhoto)
   try {
     if (userID) {
       const records = await fetchGroupsByUser({

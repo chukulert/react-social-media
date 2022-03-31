@@ -21,7 +21,7 @@ import { faCommentDots } from "@fortawesome/free-solid-svg-icons";
 //custom hooks
 import useWindowSize from "../src/hooks/useWindowSize";
 
-const MessagesPage = ({ userProfile, switchTheme }) => {
+const MessagesPage = ({ userProfile }) => {
   const [messageGroup, setMessageGroup] = useState(null);
   const [tempUser, setTempUser] = useState(false);
   const [hasUser, setHasUser] = useState(false);
@@ -77,6 +77,8 @@ const MessagesPage = ({ userProfile, switchTheme }) => {
       revalidateOnFocus: false,
     }
   );
+
+  console.log(userProfile)
 
   const {
     data: messages,

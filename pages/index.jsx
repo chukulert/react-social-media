@@ -19,12 +19,7 @@ import {
 import styles from "../styles/pages.module.css";
 
 export default function Home(props) {
-  // const [feed, setFeed] = useState([]);
-  // const [lastFeedPost, setLastFeedPost] = useState("");
   const [element, setElement] = useState(null);
-  // const [loading, setIsLoading] = useState(true);
-  const [error, setError] = useState(true);
-  const [noMorePosts, setNoMorePosts] = useState(false);
   const { userProfile, allUsersData } = props;
 
   const observer = useRef();
@@ -42,9 +37,7 @@ export default function Home(props) {
     error: feedError,
     size,
     setSize,
-    // mutate: mutateFeed,
   } = useSWRInfinite(userProfile ? getKey : null, fetcher, {
-    // refreshInterval: 1000,
     revalidateIfStale: true,
   });
 
@@ -90,13 +83,6 @@ export default function Home(props) {
     }
     
   ;
-
-
-
-
-
-
-
 
   // const getInitialFeed = async () => {
   //   try {
@@ -153,10 +139,10 @@ export default function Home(props) {
 
         {feedList && <Post posts={feedList} currentUserProfile={userProfile} setElement={setElement} />}
         <div ref={setElement}></div>
-        <button onClick={fetchMoreFeedHandler}>Fetch More</button>
         {isLoadingMore && <div>Loading...</div>}
-        {error && !noMorePosts && <div>{error}</div>}
+        {feedError && <div>{error}</div>}
         {isReachingEnd && (
+          
           <div className={styles.centerText}>
             No more posts available. Follow other users to view more posts on
             your feed.

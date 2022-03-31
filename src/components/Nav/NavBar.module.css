@@ -82,6 +82,18 @@
   opacity: 0.9;
 }
 
+.notifBadge {
+  position: absolute;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  background-color: var(--primary-dark-color) !important;
+  color: var(--text-color) !important;
+  top: .5rem;
+  right: .2rem;
+  text-align: center;
+}
+
 .noNotifMessage {
   text-align: center;
   padding: 1rem;

@@ -200,6 +200,7 @@ const NavBar = ({switchTheme}) => {
                 icon="fa-solid fa-bell"
                 className={`${styles.dropbtn} ${styles.navlink}`}
               />
+              <div className={styles.notifBadge}>{notificationsList.length ? notificationsList.length : 0}</div>
             </div>
 
             {expandedNotification && (
