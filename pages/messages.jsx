@@ -12,7 +12,10 @@ import { useAuth } from "../src/context/AuthContext";
 //firebase admin and veritifcation
 import { verifyToken } from "../src/utils/init-firebaseAdmin";
 import nookies from "nookies";
-import { fetchUserProfile, fetchAllUsersData } from "../src/utils/firebase-adminhelpers";
+import {
+  fetchUserProfile,
+  fetchAllUsersData,
+} from "../src/utils/firebase-adminhelpers";
 //styles and icons
 import styles from "../src/components/Message/MessageBoard.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -61,15 +64,12 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
     error: messageGroupsError,
     mutate: mutateMessageGroups,
   } = useSWR(
-    userProfile
-      ? `/api/getMessageGroups/${userProfile.userID}`
-      : null,
+    userProfile ? `/api/getMessageGroups/${userProfile.userID}` : null,
     fetcher
   );
 
-  const isLoadingInitialMessageGroupsData = !messageGroups && !messageGroupsError;
-
-
+  const isLoadingInitialMessageGroupsData =
+    !messageGroups && !messageGroupsError;
 
   const { data: following, error: followersError } = useSWR(
     userProfile ? `/api/getFollowingById?id=${userProfile.userID}` : null,
@@ -93,7 +93,7 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
 
   const messageList = messages ? [].concat(...messages) : [];
   const isLoadingInitialData = !messages && !messagesError;
-  const isLoadingMore =
+  const isLoadingMoreMessages =
     isLoadingInitialData ||
     (size > 0 && messages && typeof messages[size - 1] === "undefined");
   const isEmpty = messages?.[0]?.length === 0;
@@ -101,7 +101,14 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
     isEmpty || (messages && messages[messages.length - 1]?.length < 15);
 
   //   if (followersError) return <div>failed to load</div>;
-  //   if (!following) return <div>loading...</div>;    
+  //   if (!following) return <div>loading...</div>;
+
+  const scrollToBottom = () => {
+    const messageBottom = document.getElementById("messagesEndRef");
+    if (messageBottom) {
+      messageBottom.scrollIntoView();
+    }
+  };
 
   //check for group if exists? store in a state. fetch messages
   const handleFollowingClick = async (e) => {
@@ -109,7 +116,6 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
     setMessageGroup(null);
     setHasUser(true);
     const userID = e.currentTarget.id;
-    console.log(userID)
 
     //1. check if group exists between user and clicked object
     const group = messageGroups?.find((group) => {
@@ -132,12 +138,9 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
     setSize(size + 1);
   };
 
-  const handleMessageGroupClick = async (e) => {
+  const handleMessageGroupClick = (e) => {
     const messageGroupID = e.currentTarget.id;
-    console.log(messageGroupID)
-    const group = messageGroups.find(
-      (group) => messageGroupID === group.id
-    );
+    const group = messageGroups.find((group) => messageGroupID === group.id);
     if (group) {
       setMessageGroup(group);
       setTempUser(null);
@@ -145,7 +148,7 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
     } else {
       mutateMessageGroups();
     }
-
+    scrollToBottom();
     //change to messageboard display
     if (width < 768) toggleMessageBoardDisplay();
   };
@@ -206,9 +209,9 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
       }
 
       if (userProfile && messageGroup) {
-        const chatUser = messageGroup.members.filter(
-          (member) => member.id !== userProfile.userID
-        )[0];
+        const chatUserID = messageGroup.members.find(
+          (member) => member !== userProfile.userID
+        )
         const submitMessage = async () => {
           await fetch(`/api/submitMessage`, {
             method: "POST",
@@ -231,7 +234,7 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
             body: JSON.stringify({
               sent_user_id: userProfile.userID,
               sent_user_displayName: userProfile.displayName,
-              user_id: chatUser.userID,
+              user_id: chatUserID,
               link: `/messages`,
               type: "message",
               message: `${userProfile.displayName} sent you a message.`,
@@ -240,6 +243,7 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
         };
         await Promise.all([submitMessage(), createNotification()]);
       }
+      scrollToBottom();
       mutateMessages();
     } catch (error) {
       console.error(error);
@@ -285,6 +289,8 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
             toggleMessageBoardDisplay={toggleMessageBoardDisplay}
             tempUser={tempUser}
             allUsers={allUsersData}
+            isLoading={isLoadingMoreMessages}
+            scrollToBottom={scrollToBottom}
           />
         )}
         {showMessageBoard && !hasUser && (

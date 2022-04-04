@@ -6,9 +6,9 @@ import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCaretLeft, faCommentDots } from "@fortawesome/free-solid-svg-icons";
+import Loader from "../Loader/Loader";
 
 const MessageBoard = (props) => {
-  const messagesEndRef = useRef();
   const [chatUser, setChatUser] = useState(null);
 
   const {
@@ -24,18 +24,14 @@ const MessageBoard = (props) => {
     toggleMessageBoardDisplay,
     tempUser,
     allUsers,
+    isLoading,
+    scrollToBottom
   } = props;
 
   library.add(faCaretLeft, faCommentDots);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView();
-  };
-
   useEffect(() => {
-    scrollToBottom();
     if (messageGroup) {
-      console.log(messageGroup);
       const groupChatUserID = messageGroup.members.find(
         (user) => user !== currentUserProfile.userID
       );
@@ -46,7 +42,9 @@ const MessageBoard = (props) => {
     } else {
       setChatUser(tempUser);
     }
+    scrollToBottom();
   }, [messageGroup, tempUser]);
+
 
   const messageItems = (
     <div className={styles.messagesContent}>
@@ -120,13 +118,14 @@ const MessageBoard = (props) => {
             Load more
           </p>
         )}
+        {isLoading && !noMessageItems && <Loader />}
         {messageItems}
         {noMessageItems && !messageGroup && (
           <p className={styles.messageBoardIntroMessage}>
             Start a new conversation by entering a new message.
           </p>
         )}
-        <div ref={messagesEndRef} />
+        <div id='messagesEndRef'></div>
       </div>
       <MessageInput
         submitMessageHandler={submitMessageHandler}

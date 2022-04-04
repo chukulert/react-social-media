@@ -42,7 +42,7 @@ const MessageGroupItem = (props) => {
       )}
       {chatUser && <div className={styles.messageGroupContent}>
         <div className={styles.messageGroupNameGroup}>
-          <Link href={`/profile/${chatUser.id}`}>
+          <Link href={`/profile/${chatUser.userID}`}>
             <a className={styles.profileLink}>{chatUser.displayName}</a>
           </Link>
           <div className={styles.lastMessage}>{date}</div>
