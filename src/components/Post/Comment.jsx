@@ -69,8 +69,8 @@ const Comment = (props) => {
         <Image
           src={profilePhoto}
           alt="user profile photo"
-          width={40}
-          height={40}
+          width={64}
+          height={64}
           className={styles.avartar}
         />
       </div>

@@ -114,8 +114,8 @@ const PostCard = (props) => {
             <Image
               src={props.profilePhoto}
               alt={`${props.displayName}'s avatar`}
-              width={50}
-              height={50}
+              width={64}
+              height={64}
               className={styles.profilePhoto}
             />
           )}

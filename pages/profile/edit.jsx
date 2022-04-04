@@ -43,10 +43,10 @@ const EditProfile = ({ userProfile }) => {
             storageRef,
             profilePhoto
           );
-          const fileURL = await getDownloadURL(uploadTask.ref);
+          const fileURL = await getDownloadURL(uploadTask.ref)
+
           if (fileURL) {
             await setDoc(
-              // `${currentUserProfile.userID}`,
               doc(db, "users", `${userProfile.userID}`),
               { profilePhoto: fileURL },
               { merge: true }

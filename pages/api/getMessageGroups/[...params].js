@@ -21,6 +21,7 @@ const getMessageGroups = async (req, res) => {
       res.json(null);
     }
   } catch (err) {
+    console.error(error)
     res.status(500);
     res.json(null);
   }

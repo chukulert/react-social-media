@@ -423,8 +423,8 @@ export async function fetchGroupsByUser({ userID, displayName, profilePhoto }) {
       .collection("groups")
       .where("members", "array-contains", {
         id: userID,
-        displayName,
-        profilePhoto,
+        // displayName,
+        // profilePhoto,
       })
       .get();
 
