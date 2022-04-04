@@ -2,7 +2,6 @@ import PostCard from "./PostCard";
 import styles from "./Post.module.css";
 
 const Post = ({ posts, currentUserProfile, setElement }) => {
-    console.log(posts)
   const postItems = (
     <div>
       {posts.map((post, i) => (

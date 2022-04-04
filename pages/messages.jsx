@@ -28,7 +28,6 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
   const [showUserModal, setShowUserModal] = useState(false);
   const [showMessageBoard, setShowMessageBoard] = useState(true);
   const [showMessageGroup, setShowMessageGroup] = useState(true);
-  const {allUsers} = useAuth()
   const { width } = useWindowSize();
 
   library.add(faCommentDots);
@@ -67,6 +66,10 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
       : null,
     fetcher
   );
+
+  const isLoadingInitialMessageGroupsData = !messageGroups && !messageGroupsError;
+
+
 
   const { data: following, error: followersError } = useSWR(
     userProfile ? `/api/getFollowingById?id=${userProfile.userID}` : null,
@@ -247,10 +250,6 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
     showUserModal ? setShowUserModal(false) : setShowUserModal(true);
   };
 
-  console.log(showMessageGroup)
-  console.log(messageGroups)
-  console.log(messageGroup)
-
   return (
     <>
       <div className={width < 768 ? null : `${styles.messagePageContainer}`}>
@@ -269,6 +268,7 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
             handleShowModal={handleShowModal}
             width={width}
             allUsers={allUsersData}
+            isLoading={isLoadingInitialMessageGroupsData}
           />
         )}
         {showMessageBoard && hasUser && (

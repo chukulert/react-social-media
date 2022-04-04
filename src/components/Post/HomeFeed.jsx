@@ -3,6 +3,7 @@ import { fetcher } from "../../utils";
 import { useRef, useState, useEffect } from "react";
 import Post from "./Post";
 import styles from '../../../styles/pages.module.css';
+import Loader from "../Loader/Loader";
 
 const HomeFeed = ({userProfile}) => {
   const [element, setElement] = useState(null);
@@ -74,7 +75,7 @@ const HomeFeed = ({userProfile}) => {
         />
       )}
       <div ref={setElement}></div>
-      {isLoadingMore && <div>Loading from swr</div>}
+      {isLoadingMore && <div className={styles.loader}><Loader /></div>}
       {feedError && <div>{error}</div>}
       {isReachingEnd && (
         <div className={styles.centerText}>

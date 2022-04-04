@@ -44,7 +44,6 @@
 .signInFormFooter {
     display: flex;
     justify-content: space-around;
-    margin: 2rem 0;
     font-size: .9rem;
 }
 
@@ -55,6 +54,12 @@
 
 .container {
     min-height: 91vh;
+}
+
+.loader {
+    display: flex;
+    justify-content: center;
+    align-content: center;
 }
 
 @media (min-width: 768px) {

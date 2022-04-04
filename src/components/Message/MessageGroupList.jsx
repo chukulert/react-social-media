@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCaretLeft, faCommentDots } from "@fortawesome/free-solid-svg-icons";
 import styles from "./MessageBoard.module.css";
+import Loader from "../Loader/Loader";
 
 const MessageGroup = (props) => {
   const {
@@ -11,7 +12,8 @@ const MessageGroup = (props) => {
     handleMessageGroupClick,
     handleShowModal,
     width,
-    allUsers
+    allUsers,
+    isLoading
   } = props;
 
 
@@ -43,7 +45,7 @@ const MessageGroup = (props) => {
           />
         </div>
       )}
-
+        {isLoading && Loader}
       {messageGroupList}
     </div>
   );

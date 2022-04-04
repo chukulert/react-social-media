@@ -1,0 +1,13 @@
+.loader {
+    border: .4rem solid var(--background-color-hover); 
+    border-top: .4rem solid var(--primary-color); 
+    border-radius: 50%;
+    width: 4rem;
+    height: 4rem;
+    animation: spin 2s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }

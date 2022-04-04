@@ -116,7 +116,6 @@ const MessageBoard = (props) => {
           <p
             onClick={handleLoadMore}
             className={styles.loadMoreBtn}
-            ref={setElement}
           >
             Load more
           </p>

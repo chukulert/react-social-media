@@ -1,11 +1,8 @@
 //nextjs
 import Head from "next/head";
 import dynamic from "next/dynamic";
-//react
-import { useEffect } from "react";
 //cpmponents
 import HomeSideTab from "../src/components/HomeSideTab/HomeSideTab";
-import { useAuth } from "../src/context/AuthContext";
 //firebase
 import { verifyToken } from "../src/utils/init-firebaseAdmin";
 import nookies from "nookies";
@@ -22,11 +19,6 @@ const DynamicLoadHomeFeed = dynamic(
 
 export default function Home(props) {
   const { userProfile, allUsersData } = props;
-  const { setAllUsers } = useAuth();
-
-  useEffect(() => {
-    setAllUsers(allUsersData);
-  }, []);
 
   return (
     <>
@@ -52,8 +44,6 @@ export async function getServerSideProps(context) {
     const { uid } = token;
     if (uid) {
       const userProfile = await fetchUserProfile(uid);
-      // const followingData = await fetchFollowingData(userProfile.following);
-      // const followersData = await fetchFollowingData(userProfile.followers);
       const allUsersData = await fetchAllUsersData(uid);
       return {
         props: {
