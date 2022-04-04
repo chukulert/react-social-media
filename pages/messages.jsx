@@ -8,7 +8,6 @@ import { useState, useEffect } from "react";
 import MessageUserModal from "../src/components/Message/MessageGroupModal";
 import MessageBoard from "../src/components/Message/MessageBoard";
 import MessageGroup from "../src/components/Message/MessageGroupList";
-import NavBar from "../src/components/Nav/NavBar";
 //firebase admin and veritifcation
 import { verifyToken } from "../src/utils/init-firebaseAdmin";
 import nookies from "nookies";
@@ -77,8 +76,6 @@ const MessagesPage = ({ userProfile }) => {
       revalidateOnFocus: false,
     }
   );
-
-  console.log(userProfile)
 
   const {
     data: messages,
@@ -252,6 +249,10 @@ const MessagesPage = ({ userProfile }) => {
   const handleShowModal = () => {
     showUserModal ? setShowUserModal(false) : setShowUserModal(true);
   };
+
+  console.log(showMessageGroup)
+  console.log(messageGroups)
+  console.log(messageGroup)
 
   return (
     <>
