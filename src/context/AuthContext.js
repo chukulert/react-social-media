@@ -31,6 +31,7 @@ export default function AuthContextProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [error, setError] = useState(null);
   const [currentUserProfile, setCurrentUserProfile] = useState(null);
+  const [allUsers, setAllUsers] = useState(null);
   const router = useRouter();
 
   //with nookies
@@ -112,7 +113,7 @@ export default function AuthContextProvider({ children }) {
       followers: [],
       messagesCounter: 0,
       notifications: [],
-      userSummary: "",
+      userSummary: "",  
       private: false,
     });
   };
@@ -195,6 +196,8 @@ export default function AuthContextProvider({ children }) {
     logout,
     forgotPassword,
     resetPassword,
+    allUsers,
+    setAllUsers
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

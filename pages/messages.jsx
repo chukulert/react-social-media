@@ -8,10 +8,11 @@ import { useState, useEffect } from "react";
 import MessageUserModal from "../src/components/Message/MessageGroupModal";
 import MessageBoard from "../src/components/Message/MessageBoard";
 import MessageGroup from "../src/components/Message/MessageGroupList";
+import { useAuth } from "../src/context/AuthContext";
 //firebase admin and veritifcation
 import { verifyToken } from "../src/utils/init-firebaseAdmin";
 import nookies from "nookies";
-import { fetchUserProfile } from "../src/utils/firebase-adminhelpers";
+import { fetchUserProfile, fetchAllUsersData } from "../src/utils/firebase-adminhelpers";
 //styles and icons
 import styles from "../src/components/Message/MessageBoard.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,13 +21,14 @@ import { faCommentDots } from "@fortawesome/free-solid-svg-icons";
 //custom hooks
 import useWindowSize from "../src/hooks/useWindowSize";
 
-const MessagesPage = ({ userProfile }) => {
+const MessagesPage = ({ userProfile, allUsersData }) => {
   const [messageGroup, setMessageGroup] = useState(null);
   const [tempUser, setTempUser] = useState(false);
   const [hasUser, setHasUser] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
   const [showMessageBoard, setShowMessageBoard] = useState(true);
   const [showMessageGroup, setShowMessageGroup] = useState(true);
+  const {allUsers} = useAuth()
   const { width } = useWindowSize();
 
   library.add(faCommentDots);
@@ -61,9 +63,7 @@ const MessagesPage = ({ userProfile }) => {
     mutate: mutateMessageGroups,
   } = useSWR(
     userProfile
-      ? `/api/getMessageGroups/${userProfile.userID}/${
-          userProfile.displayName
-        }/${encodeURIComponent(userProfile.profilePhoto)}`
+      ? `/api/getMessageGroups/${userProfile.userID}`
       : null,
     fetcher
   );
@@ -106,12 +106,12 @@ const MessagesPage = ({ userProfile }) => {
     setMessageGroup(null);
     setHasUser(true);
     const userID = e.currentTarget.id;
+    console.log(userID)
 
     //1. check if group exists between user and clicked object
-    const group = messageGroups?.filter((group) => {
-      return group.members.some((obj) => obj.id === userID);
-    })[0];
-
+    const group = messageGroups?.find((group) => {
+      return group.members.some((obj) => obj === userID);
+    });
     //2. store in group if exist
     if (group) {
       setMessageGroup(group);
@@ -131,9 +131,10 @@ const MessagesPage = ({ userProfile }) => {
 
   const handleMessageGroupClick = async (e) => {
     const messageGroupID = e.currentTarget.id;
-    const group = messageGroups.filter(
+    console.log(messageGroupID)
+    const group = messageGroups.find(
       (group) => messageGroupID === group.id
-    )[0];
+    );
     if (group) {
       setMessageGroup(group);
       setTempUser(null);
@@ -159,11 +160,7 @@ const MessagesPage = ({ userProfile }) => {
           },
           body: JSON.stringify({
             chatUserID: tempUser.userID,
-            chatUserProfilePhoto: tempUser.profilePhoto,
-            chatUserDisplayName: tempUser.displayName,
             currentUserID: userProfile.userID,
-            currentUserProfilePhoto: userProfile.profilePhoto,
-            currentUserDisplayName: userProfile.displayName,
           }),
         });
         const groupData = await response.json();
@@ -271,6 +268,7 @@ const MessagesPage = ({ userProfile }) => {
             currentUserProfile={userProfile}
             handleShowModal={handleShowModal}
             width={width}
+            allUsers={allUsersData}
           />
         )}
         {showMessageBoard && hasUser && (
@@ -286,6 +284,7 @@ const MessagesPage = ({ userProfile }) => {
             width={width}
             toggleMessageBoardDisplay={toggleMessageBoardDisplay}
             tempUser={tempUser}
+            allUsers={allUsersData}
           />
         )}
         {showMessageBoard && !hasUser && (
@@ -324,9 +323,11 @@ export async function getServerSideProps(context) {
     const { uid } = token;
     if (uid) {
       const userProfile = await fetchUserProfile(uid);
+      const allUsersData = await fetchAllUsersData(uid);
       return {
         props: {
           userProfile: userProfile,
+          allUsersData: allUsersData ? allUsersData : [],
         },
       };
     } else {

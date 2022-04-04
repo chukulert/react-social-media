@@ -2,15 +2,10 @@ import { fetchGroupsByUser } from "../../../src/utils/firebase-adminhelpers";
 
 const getMessageGroups = async (req, res) => {
   const { params } = req.query;
-  const [userID, displayName, profilePhoto] = params;
-  console.log(userID, displayName, profilePhoto)
+  const [userID] = params;
   try {
     if (userID) {
-      const records = await fetchGroupsByUser({
-        userID,
-        displayName,
-        profilePhoto,
-      });
+      const records = await fetchGroupsByUser(userID);
       if (records.length !== 0) {
         res.json(records);
       } else {
@@ -21,7 +16,7 @@ const getMessageGroups = async (req, res) => {
       res.json(null);
     }
   } catch (err) {
-    console.error(error)
+    console.error(error);
     res.status(500);
     res.json(null);
   }

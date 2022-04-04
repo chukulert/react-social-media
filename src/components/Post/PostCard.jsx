@@ -59,7 +59,7 @@ const PostCard = (props) => {
     }
   }, [data]);
 
-  if (!data) return "Loading...";
+  // if (!data) return "Loading...";
   if (error) return "Error fetching data";
 
   const handleLikeButton = async () => {

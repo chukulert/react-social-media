@@ -2,16 +2,28 @@ import Image from "next/image";
 import { timeAgo } from "../../utils";
 import styles from "./MessageGroupItem.module.css";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+
 
 const MessageGroupItem = (props) => {
-  const { messageGroup, currentUserProfile, handleMessageGroupClick, id } =
-    props;
+  const {
+    messageGroup,
+    currentUserProfile,
+    handleMessageGroupClick,
+    id,
+    allUsers,
+  } = props;
+  const [chatUser, setChatUser] = useState(null);
+
+  useEffect(() => {
+    const chatUserID = messageGroup.members.find(
+      (user) => user !== currentUserProfile.userID
+    );
+    const chatUser = allUsers.find((user) => user.userID === chatUserID);
+    setChatUser(chatUser);
+  }, []);
 
   const date = timeAgo(messageGroup.last_message?.created_at);
-
-  const chatUser = messageGroup.members.filter(
-    (member) => member.id !== currentUserProfile.userID
-  )[0];
 
   return (
     <div
@@ -19,7 +31,7 @@ const MessageGroupItem = (props) => {
       id={id}
       className={styles.messageGroupItemContainer}
     >
-      {chatUser.profilePhoto !== "null" && (
+      {chatUser && chatUser.profilePhoto !== "null" && (
         <Image
           src={chatUser.profilePhoto}
           alt={"User profile photo"}
@@ -28,16 +40,18 @@ const MessageGroupItem = (props) => {
           className="avatar"
         />
       )}
-      <div className={styles.messageGroupContent}>
+      {chatUser && <div className={styles.messageGroupContent}>
         <div className={styles.messageGroupNameGroup}>
-        <Link href={`/profile/${chatUser.id}`} ><a className={styles.profileLink}>{chatUser.displayName}</a></Link>
+          <Link href={`/profile/${chatUser.id}`}>
+            <a className={styles.profileLink}>{chatUser.displayName}</a>
+          </Link>
           <div className={styles.lastMessage}>{date}</div>
         </div>
         {/* <p>{messageGroup.groupName}</p> */}
         <div className={styles.lastMessage}>
           {messageGroup.last_message?.textContent}
         </div>
-      </div>
+      </div>}
     </div>
   );
 };

@@ -1,8 +1,11 @@
 //nextjs
 import Head from "next/head";
 import dynamic from "next/dynamic";
+//react
+import { useEffect } from "react";
 //cpmponents
 import HomeSideTab from "../src/components/HomeSideTab/HomeSideTab";
+import { useAuth } from "../src/context/AuthContext";
 //firebase
 import { verifyToken } from "../src/utils/init-firebaseAdmin";
 import nookies from "nookies";
@@ -13,12 +16,17 @@ import {
 //styles and icons
 import styles from "../styles/pages.module.css";
 const DynamicLoadHomeFeed = dynamic(
-  () => import('../src/components/Post/HomeFeed'),
-  { loading: () => <p>Loading...</p> }
-)
+  () => import("../src/components/Post/HomeFeed"),
+  { loading: () => <p>Loading from the home page...</p> }
+);
 
 export default function Home(props) {
   const { userProfile, allUsersData } = props;
+  const { setAllUsers } = useAuth();
+
+  useEffect(() => {
+    setAllUsers(allUsersData);
+  }, []);
 
   return (
     <>
@@ -31,7 +39,7 @@ export default function Home(props) {
         {userProfile && (
           <HomeSideTab userProfile={userProfile} allUsersData={allUsersData} />
         )}
-        <DynamicLoadHomeFeed userProfile={userProfile}/>    
+        <DynamicLoadHomeFeed userProfile={userProfile} />
       </main>
     </>
   );

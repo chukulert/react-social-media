@@ -11,7 +11,9 @@ const MessageGroup = (props) => {
     handleMessageGroupClick,
     handleShowModal,
     width,
+    allUsers
   } = props;
+
 
   library.add(faCaretLeft, faCommentDots);
 
@@ -24,6 +26,7 @@ const MessageGroup = (props) => {
           id={group.id}
           currentUserProfile={currentUserProfile}
           handleMessageGroupClick={handleMessageGroupClick}
+          allUsers={allUsers}
         />
       ))}
     </ul>

@@ -74,6 +74,7 @@ const HomeFeed = ({userProfile}) => {
         />
       )}
       <div ref={setElement}></div>
+      {isLoadingMore && <div>Loading from swr</div>}
       {feedError && <div>{error}</div>}
       {isReachingEnd && (
         <div className={styles.centerText}>

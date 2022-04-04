@@ -2,30 +2,12 @@ import { createNewMessageGroup } from "../../src/utils/firebase-adminhelpers";
 
 const createMessageGroup = async (req, res) => {
   if (req.method === "POST") {
-    const {
-      chatUserID,
-      chatUserProfilePhoto,
-      chatUserDisplayName,
-      currentUserID,
-      currentUserProfilePhoto,
-      currentUserDisplayName,
-    } = req.body;
+    const { chatUserID, currentUserID } = req.body;
 
-    // console.log(chatUserID, currentUserID, currentUserDisplayName, currentUserProfilePhoto);
+    console.log(chatUserID, currentUserID)
     try {
       if (currentUserID && chatUserID) {
-        const membersArray = [
-          {
-            id: currentUserID,
-            displayName: currentUserDisplayName,
-            profilePhoto: currentUserProfilePhoto,
-          },
-          {
-            id: chatUserID,
-            displayName: chatUserDisplayName,
-            profilePhoto: chatUserProfilePhoto,
-          },
-        ];
+        const membersArray = [currentUserID, chatUserID];
         const records = await createNewMessageGroup({
           membersArray,
           currentUserID,

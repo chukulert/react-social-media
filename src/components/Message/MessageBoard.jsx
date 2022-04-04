@@ -8,9 +8,8 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCaretLeft, faCommentDots } from "@fortawesome/free-solid-svg-icons";
 
 const MessageBoard = (props) => {
-  const [element, setElement] = useState(null);
-  const observer = useRef();
   const messagesEndRef = useRef();
+  const [chatUser, setChatUser] = useState(null);
 
   const {
     messages,
@@ -24,6 +23,7 @@ const MessageBoard = (props) => {
     width,
     toggleMessageBoardDisplay,
     tempUser,
+    allUsers,
   } = props;
 
   library.add(faCaretLeft, faCommentDots);
@@ -34,41 +34,19 @@ const MessageBoard = (props) => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messageGroup]);
-
-  useEffect(() => {
-    let currentElement;
-    let currentObserver;
-    observer.current = new IntersectionObserver(handleObserver, {
-      threshold: 1,
-    });
-    currentElement = element;
-    currentObserver = observer.current;
-
-    if (currentElement) {
-      currentObserver.observe(currentElement);
-      console.log("observe");
+    if (messageGroup) {
+      console.log(messageGroup);
+      const groupChatUserID = messageGroup.members.find(
+        (user) => user !== currentUserProfile.userID
+      );
+      const groupChatUser = allUsers.find(
+        (user) => user.userID === groupChatUserID
+      );
+      setChatUser(groupChatUser);
+    } else {
+      setChatUser(tempUser);
     }
-    return () => {
-      if (currentElement) {
-        currentObserver.disconnect();
-      }
-    };
-  }, [messages]);
-
-  const handleObserver = useCallback((entries) => {
-    if (entries[0].isIntersecting) {
-      console.log("yes");
-      // handleLoadMore()
-    }
-  }, []);
-
-
-  const chatUser = tempUser
-    ? tempUser
-    : messageGroup?.members.filter(
-        (member) => member.id !== currentUserProfile.userID
-      )[0];
+  }, [messageGroup, tempUser]);
 
   const messageItems = (
     <div className={styles.messagesContent}>
@@ -124,7 +102,13 @@ const MessageBoard = (props) => {
           />
         </div>
       </div>
-      <div className={messageGroups ? `${styles.messagesContainer}` : `${styles.messagesContainer} ${styles.singleContainer}` }>
+      <div
+        className={
+          messageGroups
+            ? `${styles.messagesContainer}`
+            : `${styles.messagesContainer} ${styles.singleContainer}`
+        }
+      >
         {isReachingEnd && (
           <p className={styles.loadMoreBtn}>All messages are loaded.</p>
         )}
@@ -145,7 +129,10 @@ const MessageBoard = (props) => {
         )}
         <div ref={messagesEndRef} />
       </div>
-      <MessageInput submitMessageHandler={submitMessageHandler}  messageGroups={messageGroups} />
+      <MessageInput
+        submitMessageHandler={submitMessageHandler}
+        messageGroups={messageGroups}
+      />
     </div>
   );
 };

@@ -417,15 +417,11 @@ export async function createNewNotification({
 }
 
 //fetch data for an array of groups by user ID
-export async function fetchGroupsByUser({ userID, displayName, profilePhoto }) {
+export async function fetchGroupsByUser(userID) {
   try {
     const snapshots = await db
       .collection("groups")
-      .where("members", "array-contains", {
-        id: userID,
-        // displayName,
-        // profilePhoto,
-      })
+      .where("members", "array-contains", userID)
       .get();
 
     const groupData = snapshots.docs.map((group) => {
