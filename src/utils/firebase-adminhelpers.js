@@ -592,7 +592,6 @@ export async function postNewMessage({ sent_by, messageText, messageGroupID }) {
 }
 
 export async function createNewMessageGroup({ membersArray, currentUserID }) {
-  // console.log(membersArray,currentUserID)
   try {
     const groupData = {
       created_at: Date.now(),

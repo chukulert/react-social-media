@@ -36,8 +36,8 @@
 .submitBtn {
     padding: .5rem 2rem;
     font-size: 1.2rem;
-    background-color: var(--primary-dark-color);
-    color: var(--text-color);
+    background-color: var(--primary-color);
+    color: var(--background-color-dark);
     box-shadow: none;
     border: none;
     border-radius: 8px;
@@ -46,6 +46,25 @@
 }
 
 .submitBtn:hover {
+     color: var(--primary-color);
+     background-color: var(--background-color-dark);
+     border: 1px solid var(--primary-color);
+}
+
+.profileBtn {
+    background-color: var(--background-color-dark);
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: .5rem 2rem;
+    font-size: 1.2rem;
+    text-decoration: none;
+    cursor: pointer;
+    margin: .5rem auto;
+    border-radius: 8px;
+}
+
+.profileBtn:hover {
+    color: var(--background-color-dark);
     background-color: var(--primary-color);
 }
 

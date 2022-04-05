@@ -56,11 +56,7 @@ const NavBar = ({switchTheme}) => {
     currentUserProfile
       ? `/api/getNotifications?id=${currentUserProfile.userID}`
       : null,
-    fetcher,
-    {
-      revalidateIfStale: true,
-      revalidateOnFocus: true,
-    }
+    fetcher
   );
 
   const sortedNotifications = notifications

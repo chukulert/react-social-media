@@ -14,17 +14,8 @@ export const FIREBASE_CONFIG = {
 };
 
 const app = initializeApp(FIREBASE_CONFIG)
-// export const initializeFireBaseClient = ()=> {
-//   initializeApp(FIREBASE_CONFIG)
-// }
+
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app)
 
-// export default function initializeFireBaseClient () {
-//   initializeApp(FIREBASE_CONFIG);
-//   return getAuth(app)
-// }
-
-// export const firestoreFieldValue = firebase.firestore.FieldValue;
-// export const timestamp = firebase.firestore.FieldValue.serverTimestamp();

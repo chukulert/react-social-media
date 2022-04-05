@@ -26,7 +26,7 @@ const AuthContext = createContext({
   forgotPassword: () => Promise,
   resetPassword: () => Promise,
 });
-// console.log(profileImage)
+
 export const useAuth = () => useContext(AuthContext);
 
 export default function AuthContextProvider({ children }) {
@@ -106,13 +106,25 @@ export default function AuthContextProvider({ children }) {
       joinDate: newUser.user.metadata.creationTime,
       likedPosts: [],
       postsCounter: 0,
-      following: ["Hzr3adm22COu85Qhd8wC6LRwrCF3"],
+      following: [],
       followers: [],
       messagesCounter: 0,
       notifications: [],
       userSummary: "",
       private: false,
     });
+    
+      await fetch(`/api/followUser`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          currentUserID: newUser.user.uid,
+          postUserID: 'Hzr3adm22COu85Qhd8wC6LRwrCF3',
+          type: "follow",
+        }),
+      });
 
     // if (!newUser.user.photoURL) {
     //   console.log('no profile photo!!!!!')

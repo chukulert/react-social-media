@@ -2,6 +2,7 @@
 import { useState } from "react";
 //nextjs
 import Image from "next/image";
+import Link from "next/link";
 //fireabse
 import { storage, db } from "../../src/utils/init-firebase";
 import { setDoc, doc } from "firebase/firestore";
@@ -292,8 +293,13 @@ const EditProfile = ({ userProfile }) => {
                 />
                 <div className={styles.footer}>
                   <button type="submit" className={styles.submitBtn}>
-                    Save
+                    Save Changes
                   </button>
+                  <Link href={`/profile/${userProfile.userID}`}>
+                  <a className={styles.profileBtn}>
+                    Profile Page
+                  </a>
+                  </Link>
                 </div>
               </Form>
             )}
