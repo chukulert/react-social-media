@@ -18,7 +18,7 @@ const NotificationItem = (props) => {
     sent_user_id,
     mutateNotifications,
   } = props;
-  const [readNotif, setReadNotif] = useState(false);
+//   const [readNotif, setReadNotif] = useState(false);
   library.add(faCheck);
   const router = useRouter();
   const date = timeAgo(created_at);
@@ -44,7 +44,7 @@ const NotificationItem = (props) => {
 
   const handleNotificationClick = async () => {
     // await updateNotifReadStatus(id);
-    setReadNotif(true);
+    // setReadNotif(true);
     router.push(link);
   };
 

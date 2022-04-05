@@ -58,8 +58,8 @@ const NavBar = ({switchTheme}) => {
       : null,
     fetcher,
     {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
+      revalidateIfStale: true,
+      revalidateOnFocus: true,
     }
   );
 
@@ -137,7 +137,7 @@ const NavBar = ({switchTheme}) => {
           <Link href={`/profile/${currentUserProfile.userID}`}>
             <a className={styles.profileLink}>
               <Image
-                src={currentUserProfile.profilePhoto}
+                src={currentUserProfile.profilePhoto || '/profile-photo.png'}
                 width={50}
                 height={50}
                 className="avatar"

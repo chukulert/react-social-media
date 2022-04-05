@@ -1,15 +1,4 @@
 import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail,
-  onAuthStateChanged,
-  onIdTokenChanged,
-  signInWithPopup,
-  GoogleAuthProvider,
-  signOut,
-  confirmPasswordReset,
-} from "firebase/auth";
-import {
   collection,
   addDoc,
   getDocs,
@@ -19,14 +8,9 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import nookies from "nookies";
-import authenticatedPage from "../../pages/authenticated";
-import { auth } from "./init-firebase";
-// import { db } from "./init-firebase";
 import { db } from "./init-firebaseAdmin";
 
 export async function setUserProfile(uid) {
-    console.log(db)
   try {
     // if (auth.currentUser) {
     const docRef = doc(db, "users", `${uid}`);

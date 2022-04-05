@@ -33,7 +33,7 @@ const MessageGroupItem = (props) => {
     >
       {chatUser && chatUser.profilePhoto !== "null" && (
         <Image
-          src={chatUser.profilePhoto}
+          src={chatUser.profilePhoto || '/profile-photo.png'}
           alt={"User profile photo"}
           width={50}
           height={50}
@@ -45,7 +45,7 @@ const MessageGroupItem = (props) => {
           <Link href={`/profile/${chatUser.userID}`}>
             <a className={styles.profileLink}>{chatUser.displayName}</a>
           </Link>
-          <div className={styles.lastMessage}>{date}</div>
+          <div className={styles.date}>{date}</div>
         </div>
         {/* <p>{messageGroup.groupName}</p> */}
         <div className={styles.lastMessage}>

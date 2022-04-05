@@ -116,10 +116,10 @@ const CommentBox = (props) => {
       <div className={styles.commentBoxHeader}>
         <div>
           <Image
-            src={currentUserProfile.profilePhoto}
+            src={currentUserProfile.profilePhoto || '/profile-photo.png'}
             alt={`${currentUserProfile.displayName} photo`}
-            width={64}
-            height={64}
+            width={40}
+            height={40}
             className={styles.avatar}
           />
         </div>

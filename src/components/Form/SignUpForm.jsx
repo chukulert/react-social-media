@@ -3,7 +3,7 @@ import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
 import styles from "./Form.module.css";
 
-const SignupForm = ({ submitHandler }) => {
+const SignupForm = ({ submitHandler, error, setError }) => {
   const TextInput = ({ label, ...props }) => {
     const [field, meta] = useField(props);
 
@@ -14,6 +14,7 @@ const SignupForm = ({ submitHandler }) => {
         {meta.touched && meta.error ? (
           <div className={styles.formError}>{meta.error}</div>
         ) : null}
+        {error && <div className={styles.formError}>{error}</div>}
       </>
     );
   };

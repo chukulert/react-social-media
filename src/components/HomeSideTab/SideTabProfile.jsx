@@ -10,7 +10,7 @@ const SideTabProfile = ({ userProfile, followingCount }) => {
           <Link href={`/profile/${userProfile.userID}`}>
             <a className={styles.profileLink}>
              <Image
-                src={userProfile.profilePhoto}
+                src={userProfile.profilePhoto || '/profile-photo.png'}
                 width={50}
                 height={50}
                 className="avatar"

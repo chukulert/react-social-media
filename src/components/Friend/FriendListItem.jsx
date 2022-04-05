@@ -40,7 +40,7 @@ const FriendListItem = (props) => {
     >
       <div className={styles.profileContainer}>
         <Image
-          src={profilePhoto}
+          src={profilePhoto || "/profile-photo.png"}
           width={50}
           height={50}
           alt="profile photo"

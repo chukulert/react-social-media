@@ -36,6 +36,7 @@ const MessageGroup = (props) => {
 
   return (
     <div>
+    <div className={styles.messageGroupContainer}>
       {width < 768 && (
         <div className={styles.alignLeft}>
           <FontAwesomeIcon
@@ -45,8 +46,9 @@ const MessageGroup = (props) => {
           />
         </div>
       )}
-        {isLoading && Loader}
+        {isLoading && <div className={styles.loader}><Loader /></div>}
       {messageGroupList}
+      </div>
     </div>
   );
 };

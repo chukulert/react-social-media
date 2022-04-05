@@ -76,7 +76,7 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
     fetcher,
     {
       revalidateIfStale: true,
-      revalidateOnFocus: false,
+      revalidateOnFocus: true,
     }
   );
 
@@ -89,6 +89,7 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
   } = useSWRInfinite(messageGroup ? getKey : null, fetcher, {
     refreshInterval: 1000,
     revalidateIfStale: true,
+    revalidateOnFocus: true
   });
 
   const messageList = messages ? [].concat(...messages) : [];

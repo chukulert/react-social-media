@@ -112,10 +112,10 @@ const PostCard = (props) => {
         <div>
           {props.profilePhoto && (
             <Image
-              src={props.profilePhoto}
+              src={props.profilePhoto || '/profile-photo.png'}
               alt={`${props.displayName}'s avatar`}
-              width={64}
-              height={64}
+              width={50}
+              height={50}
               className={styles.profilePhoto}
             />
           )}
@@ -178,7 +178,7 @@ const PostCard = (props) => {
             </label>
           </div>
           <CopyToClipboard
-          text={`localhost:3000/post/${id}`}
+          text={`https://react-social-media-app-jet.vercel.app/post/${id}`}
           >
             <div className={styles.iconContainer} onClick={handleCopyClick}>
             <FontAwesomeIcon

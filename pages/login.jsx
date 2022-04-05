@@ -2,12 +2,11 @@ import Link from "next/link";
 import SignupForm from "../src/components/Form/SignUpForm";
 import styles from "../styles/pages.module.css";
 import Container from "../src/components/Layout/Container";
-import NavBar from "../src/components/Nav/NavBar";
 import { useAuth } from "../src/context/AuthContext";
 import { useRouter } from "next/router";
 
 const LoginPage = () => {
-  const { login, signInWithGoogle, currentUserProfile } = useAuth();
+  const { login, signInWithGoogle, currentUserProfile, error, setError } = useAuth();
 
   const router = useRouter()
 
@@ -21,7 +20,7 @@ const LoginPage = () => {
     <Container>
       <div className={styles.pageContainer}>
         <h1>Login</h1>
-        <SignupForm submitHandler={login} />
+        <SignupForm submitHandler={login} error={error} setError={setError}/>
         <div className={styles.signInFormFooter}>
           <button className={styles.googleSignInBtn} onClick={signInWithGoogle}>
             Sign In with Google

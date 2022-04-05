@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { auth, db } from "../utils/init-firebase";
+import { auth, db, storage } from "../utils/init-firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -13,6 +13,8 @@ import {
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import nookies from "nookies";
+// import profileImage from '../../public/profile-photo.png'
+// import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 //this is for other files to 'auto-detect' the functions available in context
 const AuthContext = createContext({
@@ -24,7 +26,7 @@ const AuthContext = createContext({
   forgotPassword: () => Promise,
   resetPassword: () => Promise,
 });
-
+// console.log(profileImage)
 export const useAuth = () => useContext(AuthContext);
 
 export default function AuthContextProvider({ children }) {
@@ -38,9 +40,9 @@ export default function AuthContextProvider({ children }) {
     const unsubscribe = async () => {
       onIdTokenChanged(auth, async (user) => {
         if (!user) {
-          console.log({ user });
-          console.log({ auth });
-          console.log({ token });
+          // console.log({ user });
+          // console.log({ auth });
+          // console.log({ token });
           setCurrentUser(null);
           setCurrentUserProfile(null);
           nookies.set(undefined, "token", "", {});
@@ -48,7 +50,7 @@ export default function AuthContextProvider({ children }) {
         }
         const token = await user.getIdToken();
         setCurrentUser(user);
-        setUserProfile(user)
+        setUserProfile(user);
         nookies.set(undefined, "token", token, {});
       });
     };
@@ -98,23 +100,97 @@ export default function AuthContextProvider({ children }) {
     await setDoc(doc(db, "users", newUser.user.uid), {
       userID: newUser.user.uid,
       email: newUser.user.email,
-      displayName: newUser.user.displayName || "",
-      profilePhoto: newUser.user.photoURL
-        ? newUser.user.photoURL
-        : `https://pixabay.com/images/id-1577909/`,
-      bannerPhoto: newUser.user.photoURL
-        ? newUser.user.photoURL
-        : `https://pixabay.com/images/id-1275780/`,
+      displayName: newUser.user.displayName || newUser.user.email.split("@")[0],
+      profilePhoto: newUser.user.photoURL ? newUser.user.photoURL : "",
+      bannerPhoto: newUser.user.photoURL ? newUser.user.photoURL : "",
       joinDate: newUser.user.metadata.creationTime,
       likedPosts: [],
       postsCounter: 0,
-      following: [Hzr3adm22COu85Qhd8wC6LRwrCF3],
+      following: ["Hzr3adm22COu85Qhd8wC6LRwrCF3"],
       followers: [],
       messagesCounter: 0,
       notifications: [],
-      userSummary: "",  
+      userSummary: "",
       private: false,
     });
+
+    // if (!newUser.user.photoURL) {
+    //   console.log('no profile photo!!!!!')
+    //   const setProfilePhoto = async () => {
+    //       const storageRef = ref(storage, `/${newUser.user.uid}/profile`);
+    //       const uploadTask = await uploadBytesResumable(
+    //         storageRef,
+    //         profileImage
+    //       );
+    //       const fileURL = await getDownloadURL(uploadTask.ref);
+    //       if (fileURL) {
+    //         await setDoc(
+    //           doc(db, "users", `${newUser.user.uid}`),
+    //           { profilePhoto: fileURL },
+    //           { merge: true }
+    //         );
+    //       }
+    //   };
+    //   const setBannerPhoto = async () => {
+    //     const storageRef = ref(storage, `/${newUser.user.uid}/banner`);
+    //     const uploadTask = await uploadBytesResumable(storageRef, profileImage);
+    //     const fileURL = await getDownloadURL(uploadTask.ref);
+    //     if (fileURL) {
+    //       await setDoc(
+    //         doc(db, "users", `${newUser.user.uid}`),
+    //         { bannerPhoto: fileURL },
+    //         { merge: true }
+    //       );
+    //     }
+    //   };
+    //   await Promise.all([setProfilePhoto(), setBannerPhoto()]);
+    // }
+  };
+
+
+  const createNewUserMessage = async (newUser) => {
+    const response = await fetch(`/api/createMessageGroup`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        chatUserID: newUser.user.uid,
+        currentUserID: "Hzr3adm22COu85Qhd8wC6LRwrCF3",
+      }),
+    });
+    const groupData = await response.json();
+
+    const submitMessage = async () => {
+      await fetch(`/api/submitMessage`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sent_by: "Hzr3adm22COu85Qhd8wC6LRwrCF3",
+          messageText: "Hi, welcome to ConnectMe!",
+          messageGroupID: groupData.id,
+        }),
+      });
+    };
+    const createNotification = async () => {
+      await fetch(`/api/createNotification`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sent_user_id: "Hzr3adm22COu85Qhd8wC6LRwrCF3",
+          sent_user_displayName: "Daniel Tan",
+          user_id: newUser.user.uid,
+          link: `/messages`,
+          type: "message",
+          message: "Daniel Tan sent you a message.",
+        }),
+      });
+    };
+    await Promise.all([submitMessage(), createNotification()]);
   };
 
   const register = async (email, password) => {
@@ -124,7 +200,10 @@ export default function AuthContextProvider({ children }) {
         email,
         password
       );
-      await setNewUserDoc(newUser);
+      await Promise.all([
+        setNewUserDoc(newUser),
+        createNewUserMessage(newUser),
+      ]);
       setError(null);
       router.push("/");
     } catch (error) {
@@ -172,11 +251,13 @@ export default function AuthContextProvider({ children }) {
     try {
       const provider = new GoogleAuthProvider();
       const response = await signInWithPopup(auth, provider);
-      console.log(response);
       const docRef = doc(db, "users", `${response.user.uid}`);
       const userProfile = await getDoc(docRef);
       if (!userProfile.exists()) {
-        await setNewUserDoc(response);
+        await Promise.all([
+          setNewUserDoc(response),
+          createNewUserMessage(response),
+        ]);
       }
       router.push("/");
     } catch (error) {
@@ -195,6 +276,8 @@ export default function AuthContextProvider({ children }) {
     logout,
     forgotPassword,
     resetPassword,
+    error,
+    setError,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

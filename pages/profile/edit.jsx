@@ -142,7 +142,7 @@ const EditProfile = ({ userProfile }) => {
             )}
             {!newProfilePhoto && (
               <Image
-                src={userProfile.profilePhoto}
+                src={userProfile.profilePhoto || '/profile-photo.png'}
                 alt="Uploaded Image"
                 width="100%"
                 height="100%"
@@ -187,7 +187,7 @@ const EditProfile = ({ userProfile }) => {
             )}
             {!newBannerPhoto && (
               <Image
-                src={userProfile.bannerPhoto}
+                src={userProfile.bannerPhoto || '/profile-photo.png'}
                 alt="Uploaded Image"
                 width="100%"
                 height="100%"

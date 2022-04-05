@@ -32,7 +32,7 @@ const ProfileSideTab = (props) => {
         <div className={styles.profileTabContainer}>
           <div className={styles.bannerPhotoContainer}>
             <Image
-              src={currentUser.bannerPhoto}
+              src={currentUser.bannerPhoto || '/profile-photo.png'}
               alt={currentUser.displayName}
             //   width="100%"
             //   height="100%"
@@ -43,7 +43,7 @@ const ProfileSideTab = (props) => {
           <div className={styles.profileContainer}>
             <div className={styles.profilePhotoContainer}>
               <Image
-                src={currentUser.profilePhoto}
+                src={currentUser.profilePhoto || '/profile-photo.png'}
                 alt={currentUser.displayName}
                 width="100%"
                 height="100%"

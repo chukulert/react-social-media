@@ -73,12 +73,14 @@ const MessageBoard = (props) => {
             onClick={toggleMessageBoardDisplay}
           />
         </div>
+        {/* dummydiv */}
+        <div className={ 910 > width > 768 ? 'hide' : null}></div>
         {/* Chat User icon */}
         {chatUser && (
           <div className={styles.profileDisplay}>
             <div className={styles.flexCenter}>
               <Image
-                src={chatUser.profilePhoto}
+                src={chatUser.profilePhoto || '/profile-photo.png'}
                 alt="profile photo"
                 width={50}
                 height={50}
@@ -118,7 +120,7 @@ const MessageBoard = (props) => {
             Load more
           </p>
         )}
-        {isLoading && !noMessageItems && <Loader />}
+        {isLoading && !noMessageItems && <div className={styles.loader}><Loader /></div>}
         {messageItems}
         {noMessageItems && !messageGroup && (
           <p className={styles.messageBoardIntroMessage}>
