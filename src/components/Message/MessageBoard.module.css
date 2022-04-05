@@ -143,8 +143,4 @@
     .messagesContainer.singleContainer {
         width: 100vw;
     }
-    /* .emptyMessageBoard {
-        max-width: calc(100vw - 380px);
-        position: absolute;
-    } */
 }

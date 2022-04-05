@@ -23,12 +23,12 @@ const FollowingModal = (props) => {
     <ul>
       {usersList?.map((user) => (
         <FriendListItem
-          key={user.userID}
-          id={user.userID}
-          displayName={user.displayName}
-          profilePhoto={user.profilePhoto}
+          key={user?.userID}
+          id={user?.userID}
+          displayName={user?.displayName}
+          profilePhoto={user?.profilePhoto}
           followUserHandler={followUserHandler}
-          followStatus={checkUserFollowingStatus(user.userID)}
+          followStatus={checkUserFollowingStatus(user?.userID)}
         />
       ))}
     </ul>
@@ -83,7 +83,8 @@ const FollowingModal = (props) => {
               Suggestions
             </button>
           </div>
-          {usersDisplayList}
+          {usersDisplayList.length !== 0 && usersDisplayList}
+          {usersDisplayList.length === 0 && <div>No users to display.</div>}
         </div>
       </div>
     </>

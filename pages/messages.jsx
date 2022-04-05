@@ -2,6 +2,7 @@
 import useSWR from "swr";
 import useSWRInfinite from "swr/infinite";
 import { fetcher } from "../src/utils";
+import Head from "next/head";
 //react
 import { useState, useEffect } from "react";
 //components
@@ -89,7 +90,7 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
   } = useSWRInfinite(messageGroup ? getKey : null, fetcher, {
     refreshInterval: 1000,
     revalidateIfStale: true,
-    revalidateOnFocus: true
+    revalidateOnFocus: true,
   });
 
   const messageList = messages ? [].concat(...messages) : [];
@@ -212,7 +213,7 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
       if (userProfile && messageGroup) {
         const chatUserID = messageGroup.members.find(
           (member) => member !== userProfile.userID
-        )
+        );
         const submitMessage = async () => {
           await fetch(`/api/submitMessage`, {
             method: "POST",
@@ -257,6 +258,11 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
 
   return (
     <>
+      <Head>
+        <title>Connect Me</title>
+        <meta name="Connect Me" content="Social Media App connecting users" />
+        <link rel="icon" href="/favicon.png" />
+      </Head>
       <div className={width < 768 ? null : `${styles.messagePageContainer}`}>
         {showUserModal && (
           <MessageUserModal

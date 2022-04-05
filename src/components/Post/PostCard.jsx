@@ -145,6 +145,8 @@ const PostCard = (props) => {
             layout="responsive"
             objectFit="cover"
             className={styles.image}
+            // placeholder='blur'
+            // blurDataURL="/profile-photo.png"
           />
         )}
       </div>

@@ -27,7 +27,7 @@ const ProfilePage = (props) => {
   }, []);
 
   const followUserHandler = async () => {
-    if (currentUserProfile) {
+    if (userProfile) {
       try {
         const followUser = async () => {
           await fetch(`/api/followUser`, {
