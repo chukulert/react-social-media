@@ -146,7 +146,7 @@ const PostCard = (props) => {
             <p className={styles.timeAgo}>{date}</p>
           </div>
         </div>
-        {userID === currentUserProfile.userID && (
+        {userID === currentUserProfile?.userID && (
           <div
             className={styles.deletePostDropDownBtn}
             tabIndex={0}
