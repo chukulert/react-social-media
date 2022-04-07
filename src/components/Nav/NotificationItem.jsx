@@ -17,13 +17,18 @@ const NotificationItem = (props) => {
     user_id,
     sent_user_id,
     mutateNotifications,
+    closeMenu,
+    setNotificationItems,
+    notificationItems
   } = props;
-//   const [readNotif, setReadNotif] = useState(false);
+
   library.add(faCheck);
   const router = useRouter();
   const date = timeAgo(created_at);
 
   const updateNotifReadStatus = async (id) => {
+    const newSortedNotifications = notificationItems.filter((notification)=> notification.id !== id)
+    setNotificationItems(newSortedNotifications)
     await fetch(`/api/readNotification`, {
       method: "POST",
       headers: {
@@ -42,9 +47,8 @@ const NotificationItem = (props) => {
     await updateNotifReadStatus(id);
   };
 
-  const handleNotificationClick = async () => {
-    // await updateNotifReadStatus(id);
-    // setReadNotif(true);
+  const handleNotificationClick = () => {
+    closeMenu()
     router.push(link);
   };
 

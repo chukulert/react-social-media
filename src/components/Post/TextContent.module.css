@@ -5,6 +5,8 @@
     
   .readMore{
     cursor: pointer;
+    text-align:right;
+    color: grey;
   }
 
   .readMore:hover {

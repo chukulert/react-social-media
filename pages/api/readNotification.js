@@ -17,7 +17,6 @@ const submitMessage = async (req, res) => {
         }
       } else {
         const records = await readNotification({ sent_user_id, user_id, link });
-        console.log({ sent_user_id, user_id, link })
         if (records.length !== 0) {
           res.status(200);
         } else {

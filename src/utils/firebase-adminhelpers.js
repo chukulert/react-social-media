@@ -1,9 +1,6 @@
 import { FieldValue } from "firebase-admin/firestore";
 import { db } from "./init-firebaseAdmin";
 
-// import { FieldValue } from "firebase/firestore";
-// import { db } from "./init-firebase";
-
 export async function fetchUserProfile(uid) {
   try {
     const docRef = db.collection("users").doc(`${uid}`);
@@ -30,6 +27,24 @@ export async function fetchFollowingData(following) {
       })
     );
     return allFollowingData;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function fetchFollowersData(followers) {
+  try {
+    const allFollowersData = [];
+    await Promise.all(
+      followers.map(async (follower) => {
+        const docRef = db.collection("users").doc(follower);
+        const doc = await docRef.get();
+        if (doc) {
+          allFollowersData.push(doc.data());
+        }
+      })
+    );
+    return allFollowersData;
   } catch (error) {
     console.error(error);
   }
@@ -66,7 +81,7 @@ export async function fetchAllUsersData(uid) {
 export async function fetchAllPosts() {
   try {
     const allPosts = [];
-    const allFetchedPosts = await db.collection("posts").get();
+    const allFetchedPosts = await db.collection("posts").where('deleted', '==', false).get();
     allFetchedPosts.forEach((post) => {
       const data = {
         ...post.data(),
@@ -88,6 +103,7 @@ export async function fetchUserPosts(uid) {
 
     const querySnapshot = await postsRef
       .where("user_id", "==", uid)
+      .where('deleted', '==', false)
       .orderBy("created_at", "desc")
       .get();
     querySnapshot.forEach((doc) => {
@@ -153,6 +169,17 @@ export async function updateLikePost(uid, postId, type) {
     }
   } catch (e) {
     console.error(e);
+  }
+}
+
+export async function updateDeletePost(id) {
+  try {
+    const postRef = db.collection("posts").doc(id);
+    return await postRef.update({
+      deleted: true
+    });
+  } catch (e) {
+    console.error(e)
   }
 }
 
@@ -346,8 +373,8 @@ export async function fetchInitialFeedData(userID) {
     const query = db
       .collection(`posts`)
       .where("followers", "array-contains", userID)
+      .where('deleted', '==', false)
       .orderBy("created_at", "desc")
-      .orderBy("likesCount", "desc")
       .limit(5);
     const snapshots = await query.get();
     const initialFeedData = snapshots.docs.map((post) => {
@@ -369,8 +396,8 @@ export async function fetchMoreFeed(userID, lastPost) {
     const query = db
       .collection(`posts`)
       .where("followers", "array-contains", userID)
+      .where('deleted', '==', false)
       .orderBy("created_at", "desc")
-      .orderBy("likesCount", "desc")
       .startAfter(lastPost.created_at)
       .limit(5);
     const snapshots = await query.get();
@@ -652,7 +679,7 @@ export async function readNotification({ sent_user_id, user_id, link }) {
       };
       userNotifications.push(data);
     });
-    await Promise.all(
+    return await Promise.all(
       userNotifications.map(async (notification) => {
         const notifRef = db.collection("notifications").doc(notification.id);
         return await notifRef.update({ read: true });

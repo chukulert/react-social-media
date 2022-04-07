@@ -137,8 +137,20 @@
     overflow: hidden;
 }
 
-.flexEnd {
+.flexBetween {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+}
+
+.notifHeader {
+  color: var(--text-color);
+  margin-top: .5rem;
+  font-size: 1rem;
+  padding: .75rem 1rem;
+  border: none;
+  width: 8rem;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: bold;
 }
 

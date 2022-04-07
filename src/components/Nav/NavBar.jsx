@@ -2,7 +2,7 @@
 import useSWR from "swr";
 import { fetcher } from "../../utils";
 //react
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 //nextjs
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -33,6 +33,7 @@ import { sortNotifications } from "../../utils";
 const NavBar = ({switchTheme}) => {
   const [expandedMenu, setExpandedMenu] = useState(false);
   const [expandedNotification, setExpandedNotification] = useState(false);
+  const [notificationItems, setNotificationItems] = useState([])
   const { logout, currentUserProfile } = useAuth();
   const { width } = useWindowSize();
   const dropDownRef = useRef();
@@ -59,13 +60,41 @@ const NavBar = ({switchTheme}) => {
     fetcher
   );
 
-  const sortedNotifications = notifications
-    ? sortNotifications(notifications)
-    : [];
+  useEffect(() => {
+    if (notifications) {
+      const sortedNotfications = sortNotifications(notifications)
+      setNotificationItems(sortedNotfications)
+    }
+  }, [notifications])
+
+    const expandMenu = () => {
+      setExpandedMenu(true);
+      dropDownRef.current.classList.toggle("active");
+    };
+  
+    const closeMenu = () => {
+      setExpandedMenu(false);
+      dropDownRef.current.classList.toggle("active");
+    };
+  
+    const expandNotification = () => {
+      setExpandedNotification(true);
+      notifDropDownRef.current.classList.toggle("active");
+    };
+  
+    const closeNotification = () => {
+      setExpandedNotification(false);
+      notifDropDownRef.current.classList.toggle("active");
+    };
+  
+    const loadProfilePage = () => {
+      closeMenu();
+      router.push(`/profile/${currentUserProfile.userID}`);
+    };
 
   const notificationsList = (
     <div>
-      {sortedNotifications?.map((notification) => (
+      {notificationItems?.map((notification) => (
         <NotificationItem
           key={notification.id}
           id={notification.id}
@@ -78,36 +107,16 @@ const NavBar = ({switchTheme}) => {
           type={notification.type}
           mutateNotifications={mutateNotifications}
           user_id={notification.user_id}
+          closeMenu={closeMenu}
+          setNotificationItems={setNotificationItems}
+          notificationItems={notificationItems}
         />
       ))}
-    </div>
+    </div>  
   );
 
-  const expandMenu = () => {
-    setExpandedMenu(true);
-    dropDownRef.current.classList.toggle("active");
-  };
-
-  const closeMenu = () => {
-    setExpandedMenu(false);
-    dropDownRef.current.classList.toggle("active");
-  };
-
-  const expandNotification = () => {
-    setExpandedNotification(true);
-    notifDropDownRef.current.classList.toggle("active");
-  };
-
-  const closeNotification = () => {
-    setExpandedNotification(false);
-    notifDropDownRef.current.classList.toggle("active");
-  };
-
-  const loadProfilePage = () => {
-    router.push(`/profile/${currentUserProfile.userID}`);
-  };
-
   const handleReadAllNotifications = async () => {
+    setNotificationItems([])
     await fetch(`/api/readNotification`, {
       method: "POST",
       headers: {
@@ -196,14 +205,15 @@ const NavBar = ({switchTheme}) => {
                 icon="fa-solid fa-bell"
                 className={`${styles.dropbtn} ${styles.navlink}`}
               />
-              <div className={styles.notifBadge}>{sortedNotifications?.length ? sortedNotifications.length : 0}</div>
+              <div className={styles.notifBadge}>{notificationItems?.length ? notificationItems.length : 0}</div>
             </div>
 
             {expandedNotification && (
               <div id="dropDown" className={styles.notificationDropDown}>
                 {notifications.length !== 0 && (
                   <div>
-                    <div className={styles.flexEnd}>
+                    <div className={styles.flexBetween}>
+                      <div className={styles.notifHeader}>Notifications</div>
                       <div
                         onClick={handleReadAllNotifications}
                         className={styles.button}

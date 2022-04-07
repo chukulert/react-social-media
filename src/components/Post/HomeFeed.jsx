@@ -76,7 +76,7 @@ const HomeFeed = ({userProfile}) => {
       )}
       <div ref={setElement}></div>
       {isLoadingMore && <div className={styles.loader}><Loader /></div>}
-      {!isLoadingMore && !isReachingEnd && <div onClick={fetchMoreFeedHandler} className={styles.centerText}>Load more feed</div>}
+      {!isLoadingMore && !isReachingEnd && <div className={styles.flexCenter}><div onClick={fetchMoreFeedHandler} className={styles.loadMoreFeedBtn}>Load more feed</div></div>}
       {feedError && <div>{error}</div>}
       {isReachingEnd && (
         <div className={styles.centerText}>

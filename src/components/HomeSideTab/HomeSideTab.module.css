@@ -55,6 +55,7 @@
 
 .followIcon{
     margin-right: .5rem;
+    color: var(--primary-color);
 }
 
 
@@ -116,9 +117,7 @@
     max-width: 22rem;
 }
 
-.userSummary {
-    color: grey;
-}
+
 
 @media (min-width: 768px) {
     .sideTabContainer {

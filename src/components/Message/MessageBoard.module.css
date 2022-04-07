@@ -126,13 +126,6 @@
     overflow: auto; 
 }
 
-.alignLeft {
-    text-align: right;
-    margin: .5rem;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: .5rem;
-}
-
 @media (min-width: 768px) {
     .messagesContainer {
         width: calc(100vw - 380px);

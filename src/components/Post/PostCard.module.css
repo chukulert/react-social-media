@@ -1,7 +1,5 @@
 .cardContainer {
     background-color: var(--background-color-light);
-    /* border-bottom: 1px solid var(--border-color); */
-    /* border-top: 1px solid var(--border-color); */
     max-width: 768px;
     margin: 1rem auto;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
@@ -11,6 +9,39 @@
     display: flex;
     justify-content: space-between;
     padding: 1rem;
+}
+
+.deletePostDropDownBtn {
+    border-radius: 50%;
+    width: 1.8rem;
+    height: 1.8rem;
+    cursor: pointer;
+    text-align: center;
+    position: relative;
+    display: inline-block;
+}
+
+.deletePostDropDownBtn:hover {
+    background-color: var(--background-color-dark);
+}
+
+.deletePostDropDowwnArea {
+    position: absolute;
+    overflow:auto;
+    padding: .5rem;
+    width: 8rem;
+    text-align: center;
+    /* border-radius: 1rem; */
+    right: 0%;
+    top: 100%;
+    left: auto;
+    background-color: var(--background-color-dark);
+    opacity: 0.9;
+    font-size: .9rem;
+}
+
+.deletePostDropDowwnArea:hover {
+    color: var(--primary-color);
 }
 
 .titleBarContent{
@@ -96,12 +127,18 @@
     cursor: pointer;
 }
 
+.dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+
+
 
 @media (min-width: 768px) {
     .cardContainer {
         width: 80%;
         min-width: 768px;
-        /* border: 1px solid var(--border-color); */
         border-radius: 8px;
     }
   }

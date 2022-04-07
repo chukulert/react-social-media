@@ -63,6 +63,20 @@
     align-content: center;
 }
 
+.flexCenter {
+    display: flex;
+    justify-content: center;
+}
+
+.loadMoreFeedBtn {
+    text-align: center;
+    margin: 2rem 0;
+    cursor: pointer;
+    border-radius: 1rem;
+    padding: .5rem 1rem;
+    border: 1px solid var(--primary-color);
+}
+
 @media (min-width: 768px) {
     .pageContainer {
         width: 60%;

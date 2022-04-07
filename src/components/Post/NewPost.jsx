@@ -38,6 +38,7 @@ const NewPost = (props) => {
             user_displayName: userProfile.displayName,
             user_profilePhoto: userProfile.profilePhoto,
             followers: [...userProfile.followers],
+            deleted: false
           });
     
           //if file exists, add to storage and update post

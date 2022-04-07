@@ -17,14 +17,19 @@ const ProfilePage = (props) => {
 
   //checking if current user is on his own profile page. If not, is profilepage user a followed user
   useEffect(() => {
-    if (!profilePageUser) setIsCurrentUserPage(true);
+    !profilePageUser ? setIsCurrentUserPage(true) : setIsCurrentUserPage(false);
+
     if (
       profilePageUser &&
       userProfile.following.includes(profilePageUser.userID)
-    )
+    ) {
       setIsFollowing(true);
+    } else {
+      setIsFollowing(false);
+    }
+
     return () => {};
-  }, []);
+  }, [profilePageUser]);
 
   const followUserHandler = async () => {
     if (userProfile) {

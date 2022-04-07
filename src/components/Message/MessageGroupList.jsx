@@ -38,12 +38,15 @@ const MessageGroup = (props) => {
     <div>
     <div className={styles.messageGroupContainer}>
       {width < 768 && (
-        <div className={styles.alignLeft}>
+        <div className={styles.messageBoardHeader}>
+            <h3 className={styles.flexCenter}>Messages</h3>
+            <div className={styles.flexCenter}>
           <FontAwesomeIcon
             icon="fa-solid fa-comment-dots"
             onClick={handleShowModal}
             className={styles.newMessage}
           />
+          </div>
         </div>
       )}
         {isLoading && <div className={styles.loader}><Loader /></div>}

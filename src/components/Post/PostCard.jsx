@@ -21,18 +21,26 @@ import {
 //helpers
 import { timeAgo } from "../../utils/index";
 //react copy to clipboard
-import {CopyToClipboard} from 'react-copy-to-clipboard';
+import { CopyToClipboard } from "react-copy-to-clipboard";
 //toast
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const PostCard = (props) => {
-  const { currentUserProfile, likesCount, postCommentsCount, id } = props;
+  const {
+    currentUserProfile,
+    likesCount,
+    postCommentsCount,
+    id,
+    userID,
+    deletePost,
+  } = props;
   const postID = id;
   const [displayComments, setDisplayComments] = useState(false);
   const [likedPost, setLikedPost] = useState(false);
   const [likes, setLikes] = useState(likesCount);
   const [commentsCount, setCommentsCount] = useState(postCommentsCount);
+  const [expandedNotification, setExpandedNotification] = useState(false);
 
   library.add(faThumbsUp, faComment, faShare);
 
@@ -104,7 +112,19 @@ const PostCard = (props) => {
       draggable: true,
       progress: undefined,
     });
-  }
+  };
+
+  const expandNotification = () => {
+    setExpandedNotification(true);
+  };
+
+  const closeNotification = () => {
+    setExpandedNotification(false);
+  };
+
+  const handleDeletePost = async () => {
+    deletePost(id);
+  };
 
   return (
     <div className={styles.cardContainer}>
@@ -112,7 +132,7 @@ const PostCard = (props) => {
         <div>
           {props.profilePhoto && (
             <Image
-              src={props.profilePhoto || '/profile-photo.png'}
+              src={props.profilePhoto || "/profile-photo.png"}
               alt={`${props.displayName}'s avatar`}
               width={50}
               height={50}
@@ -126,6 +146,25 @@ const PostCard = (props) => {
             <p className={styles.timeAgo}>{date}</p>
           </div>
         </div>
+        {userID === currentUserProfile.userID && (
+          <div
+            className={styles.deletePostDropDownBtn}
+            tabIndex={0}
+            onFocus={expandNotification}
+            onBlur={closeNotification}
+          >
+            ...
+            {expandedNotification && (
+              <div
+                id="dropDown"
+                className={styles.deletePostDropDowwnArea}
+                onClick={handleDeletePost}
+              >
+                Delete Post
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className={styles.description}>
@@ -145,6 +184,7 @@ const PostCard = (props) => {
             layout="responsive"
             objectFit="cover"
             className={styles.image}
+            priority
             // placeholder='blur'
             // blurDataURL="/profile-photo.png"
           />
@@ -180,19 +220,19 @@ const PostCard = (props) => {
             </label>
           </div>
           <CopyToClipboard
-          text={`https://react-social-media-app-jet.vercel.app/post/${id}`}
+            text={`https://react-social-media-app-jet.vercel.app/post/${id}`}
           >
             <div className={styles.iconContainer} onClick={handleCopyClick}>
-            <FontAwesomeIcon
-              icon="fa-solid fa-share"
-              className={styles.commentHeaderIcons}
-              id="shareBtn"
-            />
-            <label className={styles.label} htmlFor="shareBtn">
-              Share
-            </label>
-          </div>
-        </CopyToClipboard>
+              <FontAwesomeIcon
+                icon="fa-solid fa-share"
+                className={styles.commentHeaderIcons}
+                id="shareBtn"
+              />
+              <label className={styles.label} htmlFor="shareBtn">
+                Share
+              </label>
+            </div>
+          </CopyToClipboard>
         </div>
         {displayComments && (
           <CommentBox postID={props.id} userID={props.userID} />

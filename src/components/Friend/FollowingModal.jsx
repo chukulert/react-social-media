@@ -1,5 +1,6 @@
 import styles from "./FollowingModal.module.css";
 import FriendListItem from "./FriendListItem";
+import Loader from "../Loader/Loader";
 
 const FollowingModal = (props) => {
   const {
@@ -9,6 +10,8 @@ const FollowingModal = (props) => {
     userFollowing,
     handleListUpdate,
     currentTab,
+    loadingModal,
+    modalType
   } = props;
 
   const checkUserFollowingStatus = (id) => {
@@ -29,6 +32,7 @@ const FollowingModal = (props) => {
           profilePhoto={user?.profilePhoto}
           followUserHandler={followUserHandler}
           followStatus={checkUserFollowingStatus(user?.userID)}
+          setShowFollowingModal={setShowFollowingModal}
         />
       ))}
     </ul>
@@ -48,7 +52,8 @@ const FollowingModal = (props) => {
           >
             X
           </button>
-          <div className={styles.header}>
+          {loadingModal && <Loader />}
+          {modalType !== 'followers' && <div className={styles.header}>
             <button
               onClick={handleTabClick}
               id="following"
@@ -82,7 +87,7 @@ const FollowingModal = (props) => {
             >
               Suggestions
             </button>
-          </div>
+          </div>}
           {usersDisplayList.length !== 0 && usersDisplayList}
           {usersDisplayList.length === 0 && <div>No users to display.</div>}
         </div>

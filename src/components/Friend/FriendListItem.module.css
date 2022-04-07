@@ -17,11 +17,13 @@
     display: flex;
     align-items: center;
     padding: 0 .5rem;
+    max-width: 9rem;
+    overflow: hidden;
 }
 
 
 .displayName {
-    font-size: 1.2rem;
+    font-size: .9rem;
 }
 
 .displayName:hover {
@@ -31,14 +33,13 @@
 .followBtn {
     background-color: var(--background-color-light);
     color: var(--text-color);
-    font-size: 1rem;
+    font-size: .9rem;
     display: flex;
     padding: .75rem;
     border: none;
     cursor: pointer;
     border-radius: 8px;
     align-items: center;
-
 }
 
 .followBtn:hover{
@@ -51,4 +52,18 @@
 
 .pointer {
     cursor: pointer;
+}
+
+
+@media (min-width: 768px) {
+    .displayNameContainer {
+        max-width: 15rem;
+    }
+    .displayName {
+        font-size: 1.2rem;
+    }
+
+    .followBtn {
+        font-size: 1rem;
+    }
 }
