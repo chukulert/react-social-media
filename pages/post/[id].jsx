@@ -19,6 +19,7 @@ export async function getStaticProps(staticProps) {
     props: {
       postData: postData ? postData : {},
     },
+    revalidate: 10,
   };
 }
 
@@ -34,19 +35,18 @@ export async function getStaticPaths() {
   });
   return {
     paths,
-    fallback: true,
+    fallback: 'blocking',
   };
 }
 
 const PostPage = ({ postData }) => {
   const { currentUserProfile } = useAuth();
-    console.log(postData)
   return (
     <>
       <Head>
         <title>
-          {postData?.user_displayName ? postData?.user_displayName : null}&apos;s
-          Post
+          {postData?.user_displayName ? postData?.user_displayName : null}
+          &apos;s Post
         </title>
         <meta name="description" content="Post" />
         <link rel="icon" href="/favicon.ico" />
@@ -76,39 +76,5 @@ const PostPage = ({ postData }) => {
     </>
   );
 };
-
-// export async function getServerSideProps(context) {
-//   try {
-//     const postId = context.params.id;
-//     const cookies = nookies.get(context);
-//     console.log(cookies)
-//     // console.log(context)
-//     const token = await verifyToken(cookies.token);
-//     const { uid } = token;
-
-//     if (uid) {
-//       const userProfile = await fetchUserProfile(uid);
-//       const postData = await fetchPostDataById(postId);
-//       return {
-//         props: {
-//           userProfile,
-//           postData,
-//         },
-//       };
-//     } else {
-//       const postData = await fetchPostDataById(postId);
-//       return {
-//         props: {
-//           postData,
-//         },
-//       };
-//     }
-//   } catch (err) {
-//     console.log(err);
-//     context.res.writeHead(302, { Location: "/login" });
-//     context.res.end();
-//     return { props: {} };
-//   }
-// }
 
 export default PostPage;
