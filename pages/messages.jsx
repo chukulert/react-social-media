@@ -28,7 +28,6 @@ import useWindowSize from "../src/hooks/useWindowSize";
 const MessagesPage = ({ userProfile, allUsersData }) => {
   const [messageGroup, setMessageGroup] = useState(null);
   const [tempUser, setTempUser] = useState(false);
-  const [tempMessage, setTempMessage] = useState([])
   const [hasUser, setHasUser] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
   const [showMessageBoard, setShowMessageBoard] = useState(true);
@@ -51,18 +50,10 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
     if (width) {
       width < 768 ? setShowMessageBoard(false) : setShowMessageBoard(true);
     }
-    return (() => {
-        setShowMessageBoard(true)
-    })
+    return () => {
+      setShowMessageBoard(true);
+    };
   }, [width]);
-
-  const getKey = (pageIndex, previousPageData) => {
-    // first page, we don't have `previousPageData`
-    if (pageIndex === 0) return `/api/getMessagesByGroupId/${messageGroup.id}`;
-
-    // add the cursor to the API endpoint
-    return `/api/getMessagesByGroupId/${messageGroup.id}/${previousPageData[14]?.id}`;
-  };
 
   const {
     data: messageGroups,
@@ -84,27 +75,6 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
       revalidateOnFocus: true,
     }
   );
-
-  const {
-    data: messages,
-    error: messagesError,
-    size,
-    setSize,
-    mutate: mutateMessages,
-  } = useSWRInfinite(messageGroup ? getKey : null, fetcher, {
-    refreshInterval: 1000,
-    revalidateIfStale: true,
-    revalidateOnFocus: true,
-  });
-
-  const messageList = messages ? [].concat(...messages) : [];
-  const isLoadingInitialData = !messages && !messagesError;
-  const isLoadingMoreMessages =
-    isLoadingInitialData ||
-    (size > 0 && messages && typeof messages[size - 1] === "undefined");
-  const isEmpty = messages?.[0]?.length === 0;
-  const isReachingEnd =
-    isEmpty || (messages && messages[messages.length - 1]?.length < 15);
 
   //   if (followersError) return <div>failed to load</div>;
   //   if (!following) return <div>loading...</div>;
@@ -140,10 +110,6 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
     if (width < 768) toggleMessageBoardDisplay();
   };
 
-  const handleLoadMoreMessages = () => {
-    setSize(size + 1);
-  };
-
   const handleMessageGroupClick = (e) => {
     const messageGroupID = e.currentTarget.id;
     const group = messageGroups.find((group) => messageGroupID === group.id);
@@ -157,112 +123,6 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
     scrollToBottom();
     //change to messageboard display
     if (width < 768) toggleMessageBoardDisplay();
-  };
-
-  const submitMessageHandler = async (messageText) => {
-    //problems refactoring for both situations
-    //1. If there is no message group, create a new message group and send a new message and notification
-    //2. If there is a message group, send a new message and notification
-    const newMessage = {
-        messageText,
-        sent_by: userProfile.userID,
-      };
-    setTempMessage(prevState => [newMessage, ...prevState]);
-    scrollToBottom();
-    try {
-        if (userProfile && messageGroup) {
-            const chatUserID = messageGroup.members.find(
-              (member) => member !== userProfile.userID
-            );
-            const submitMessage = async () => {
-              await fetch(`/api/submitMessage`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  sent_by: userProfile.userID,
-                  messageText,
-                  messageGroupID: messageGroup.id,
-                }),
-              });
-            };
-            const createNotification = async () => {
-              await fetch(`/api/createNotification`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  sent_user_id: userProfile.userID,
-                  sent_user_displayName: userProfile.displayName,
-                  user_id: chatUserID,
-                  link: `/messages`,
-                  type: "message",
-                  message: `${userProfile.displayName} sent you a message.`,
-                }),
-              });
-            };
-            await Promise.all([submitMessage(), createNotification()]);
-            mutateMessages();
-        setTempMessage([])
-        scrollToBottom();
-          }
-      if (userProfile && !messageGroup) {
-        const response = await fetch(`/api/createMessageGroup`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            chatUserID: tempUser.userID,
-            currentUserID: userProfile.userID,
-          }),
-        });
-        const groupData = await response.json();
-        setMessageGroup(groupData);
-        setTempUser(null);
-        mutateMessageGroups();
-
-        //does not send a message if this block of code is not here
-        const submitMessage = async () => {
-          await fetch(`/api/submitMessage`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              sent_by: userProfile.userID,
-              messageText,
-              messageGroupID: groupData.id,
-            }),
-          });
-        };
-        const createNotification = async () => {
-          await fetch(`/api/createNotification`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              sent_user_id: userProfile.userID,
-              sent_user_displayName: userProfile.displayName,
-              user_id: tempUser.userID,
-              link: `/messages`,
-              type: "message",
-              message: `${userProfile.displayName} sent you a message.`,
-            }),
-          });
-        };
-        await Promise.all([submitMessage(), createNotification()]);
-        mutateMessages();
-        setTempMessage([])
-        scrollToBottom();
-      }
-      
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   const handleShowModal = () => {
@@ -297,10 +157,6 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
         )}
         {showMessageBoard && hasUser && (
           <MessageBoard
-            messages={messageList}
-            handleLoadMore={handleLoadMoreMessages}
-            submitMessageHandler={submitMessageHandler}
-            isReachingEnd={isReachingEnd}
             messageGroup={messageGroup}
             messageGroups={messageGroups}
             currentUserProfile={userProfile}
@@ -309,9 +165,10 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
             toggleMessageBoardDisplay={toggleMessageBoardDisplay}
             tempUser={tempUser}
             allUsers={allUsersData}
-            isLoading={isLoadingMoreMessages}
             scrollToBottom={scrollToBottom}
-            tempMessage={tempMessage}
+            setMessageGroup={setMessageGroup}
+            setTempUser={setTempUser}
+            mutateMessageGroups={mutateMessageGroups}
           />
         )}
         {showMessageBoard && !hasUser && (
