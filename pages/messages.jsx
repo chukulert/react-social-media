@@ -170,6 +170,41 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
     setTempMessage(prevState => [newMessage, ...prevState]);
     scrollToBottom();
     try {
+        if (userProfile && messageGroup) {
+            const chatUserID = messageGroup.members.find(
+              (member) => member !== userProfile.userID
+            );
+            const submitMessage = async () => {
+              await fetch(`/api/submitMessage`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  sent_by: userProfile.userID,
+                  messageText,
+                  messageGroupID: messageGroup.id,
+                }),
+              });
+            };
+            const createNotification = async () => {
+              await fetch(`/api/createNotification`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  sent_user_id: userProfile.userID,
+                  sent_user_displayName: userProfile.displayName,
+                  user_id: chatUserID,
+                  link: `/messages`,
+                  type: "message",
+                  message: `${userProfile.displayName} sent you a message.`,
+                }),
+              });
+            };
+            await Promise.all([submitMessage(), createNotification()]);
+          }
       if (userProfile && !messageGroup) {
         const response = await fetch(`/api/createMessageGroup`, {
           method: "POST",
@@ -210,42 +245,6 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
               sent_user_id: userProfile.userID,
               sent_user_displayName: userProfile.displayName,
               user_id: tempUser.userID,
-              link: `/messages`,
-              type: "message",
-              message: `${userProfile.displayName} sent you a message.`,
-            }),
-          });
-        };
-        await Promise.all([submitMessage(), createNotification()]);
-      }
-
-      if (userProfile && messageGroup) {
-        const chatUserID = messageGroup.members.find(
-          (member) => member !== userProfile.userID
-        );
-        const submitMessage = async () => {
-          await fetch(`/api/submitMessage`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              sent_by: userProfile.userID,
-              messageText,
-              messageGroupID: messageGroup.id,
-            }),
-          });
-        };
-        const createNotification = async () => {
-          await fetch(`/api/createNotification`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              sent_user_id: userProfile.userID,
-              sent_user_displayName: userProfile.displayName,
-              user_id: chatUserID,
               link: `/messages`,
               type: "message",
               message: `${userProfile.displayName} sent you a message.`,
