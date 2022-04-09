@@ -72,13 +72,14 @@ const HomeFeed = ({userProfile}) => {
           posts={feedList}
           currentUserProfile={userProfile}
           setElement={setElement}
+          isLoadingMore={isLoadingMore}
         />
       )}
       <div ref={setElement}></div>
       {isLoadingMore && <div className={styles.loader}><Loader /></div>}
       {!isLoadingMore && !isReachingEnd && <div className={styles.flexCenter}><div onClick={fetchMoreFeedHandler} className={styles.loadMoreFeedBtn}>Load more feed</div></div>}
       {feedError && <div>{error}</div>}
-      {isReachingEnd && (
+      {isReachingEnd && !isLoadingMore && (
         <div className={styles.centerText}>
           No more posts available. Follow other users to view more posts on your
           feed.

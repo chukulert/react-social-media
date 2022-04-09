@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import MessageInput from "./MessageInput";
 import MessageItem from "./MessageItem";
 import styles from "./MessageBoard.module.css";
@@ -10,6 +10,7 @@ import Loader from "../Loader/Loader";
 
 const MessageBoard = (props) => {
   const [chatUser, setChatUser] = useState(null);
+  const [loadedMessages, setLoadedMessages] = useState([]);
 
   const {
     messages,
@@ -25,12 +26,14 @@ const MessageBoard = (props) => {
     tempUser,
     allUsers,
     isLoading,
-    scrollToBottom
+    scrollToBottom,
+    tempMessage
   } = props;
 
   library.add(faCaretLeft, faCommentDots);
 
   useEffect(() => {
+    scrollToBottom();
     if (messageGroup) {
       const groupChatUserID = messageGroup.members.find(
         (user) => user !== currentUserProfile.userID
@@ -42,13 +45,17 @@ const MessageBoard = (props) => {
     } else {
       setChatUser(tempUser);
     }
-    scrollToBottom();
   }, [messageGroup, tempUser]);
 
+  useEffect(() => {
+    tempMessage.length !== 0 ? setLoadedMessages([...tempMessage, ...messages, ]) : setLoadedMessages(messages)
+
+    return () => setLoadedMessages([]);
+  }, [messages, tempMessage]);
 
   const messageItems = (
     <div className={styles.messagesContent}>
-      {[...messages]?.reverse().map((message) => (
+      {[...loadedMessages]?.reverse().map((message) => (
         <MessageItem
           key={message.id}
           id={message.id}
@@ -74,13 +81,13 @@ const MessageBoard = (props) => {
           />
         </div>
         {/* dummydiv */}
-        <div className={ 910 > width > 768 ? 'hide' : null}></div>
+        <div className={910 > width > 768 ? "hide" : null}></div>
         {/* Chat User icon */}
         {chatUser && (
           <div className={styles.profileDisplay}>
             <div className={styles.flexCenter}>
               <Image
-                src={chatUser.profilePhoto || '/profile-photo.png'}
+                src={chatUser.profilePhoto || "/profile-photo.png"}
                 alt="profile photo"
                 width={50}
                 height={50}
@@ -113,21 +120,22 @@ const MessageBoard = (props) => {
           <p className={styles.loadMoreBtn}>All messages are loaded.</p>
         )}
         {!isReachingEnd && !noMessageItems && messageGroup && (
-          <p
-            onClick={handleLoadMore}
-            className={styles.loadMoreBtn}
-          >
+          <p onClick={handleLoadMore} className={styles.loadMoreBtn}>
             Load more
           </p>
         )}
-        {isLoading && !noMessageItems && <div className={styles.loader}><Loader /></div>}
+        {isLoading && !noMessageItems && (
+          <div className={styles.loader}>
+            <Loader />
+          </div>
+        )}
         {messageItems}
         {noMessageItems && !messageGroup && (
           <p className={styles.messageBoardIntroMessage}>
             Start a new conversation by entering a new message.
           </p>
         )}
-        <div id='messagesEndRef'></div>
+        <div id="messagesEndRef"></div>
       </div>
       <MessageInput
         submitMessageHandler={submitMessageHandler}

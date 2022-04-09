@@ -113,7 +113,7 @@ export default function AuthContextProvider({ children }) {
       userSummary: "",
       private: false,
     });
-    
+
       await fetch(`/api/followUser`, {
         method: "PUT",
         headers: {
@@ -290,6 +290,7 @@ export default function AuthContextProvider({ children }) {
     resetPassword,
     error,
     setError,
+    setCurrentUserProfile
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

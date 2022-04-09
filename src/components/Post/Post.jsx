@@ -2,7 +2,7 @@ import PostCard from "./PostCard";
 import styles from "./Post.module.css";
 import { useState, useEffect } from "react";
 
-const Post = ({ posts, currentUserProfile, setElement }) => {
+const Post = ({ posts, currentUserProfile, setElement, isLoadingMore }) => {
   const [postItems, setPostItems] = useState([]);
 
   useEffect(() => {
@@ -55,7 +55,7 @@ const Post = ({ posts, currentUserProfile, setElement }) => {
       {posts[0] !== null && (
         <div className={styles.container}>{currentPostItems}</div>
       )}
-      {postItems.length === 0 &&  <div className={styles.container}><h3>No posts available.</h3></div>}
+      {postItems.length === 0 && !isLoadingMore && <div className={styles.container}><h3>No posts available.</h3></div>}
     </>
   );
 };

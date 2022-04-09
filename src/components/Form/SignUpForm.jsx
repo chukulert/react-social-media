@@ -35,7 +35,7 @@ const SignupForm = ({ submitHandler, error, setError }) => {
     >
       <Form className={styles.formContainer}>
         <TextInput name="email" type="email" placeholder="Email address" />
-        <TextInput name="password" type="text" placeholder="Password" />
+        <TextInput name="password" type="password" placeholder="Password" />
 
         <div className={styles.footer}>
           <button type="submit" className={styles.submitBtn}>

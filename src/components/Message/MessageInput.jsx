@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
-const MessageInput = ({ submitMessageHandler, messageGroups }) => {
+const MessageInput = ({ submitMessageHandler, submitLoadingMessage, messageGroups }) => {
   const inputBox = useRef();
 
   library.add(faArrowRightFromBracket);

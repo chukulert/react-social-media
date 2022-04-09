@@ -12,6 +12,7 @@ import { fetchUserProfile } from "../../src/utils/firebase-adminhelpers";
 import nookies from "nookies";
 //components
 import Container from "../../src/components/Layout/Container";
+import { useAuth } from "../../src/context/AuthContext";
 //styles and icons
 import styles from "../../styles/editpage.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -24,9 +25,12 @@ import "react-toastify/dist/ReactToastify.css";
 import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
 
+
 const EditProfile = ({ userProfile }) => {
   const [newProfilePhoto, setNewProfilePhoto] = useState(null);
   const [newBannerPhoto, setNewBannerPhoto] = useState(null);
+
+  const {setCurrentUserProfile} = useAuth()
 
   library.add(faImage);
 
@@ -88,6 +92,11 @@ const EditProfile = ({ userProfile }) => {
         setBannerPhoto(),
         setProfileDetails(),
       ]);
+      const response = await fetch(
+        `/api/fetchUserProfile?id=${userProfile.userID}`
+      );
+      const fetchedUser = await response.json();
+      setCurrentUserProfile(fetchedUser)
       toast.success("Profile saved!", {
         position: "top-right",
         autoClose: 5000,

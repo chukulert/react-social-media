@@ -52,7 +52,7 @@ const FollowingModal = (props) => {
           >
             X
           </button>
-          {loadingModal && <Loader />}
+          {loadingModal && <div className='loader'><Loader /></div>}
           {modalType !== 'followers' && <div className={styles.header}>
             <button
               onClick={handleTabClick}
@@ -88,8 +88,8 @@ const FollowingModal = (props) => {
               Suggestions
             </button>
           </div>}
-          {usersDisplayList.length !== 0 && usersDisplayList}
-          {usersDisplayList.length === 0 && <div>No users to display.</div>}
+          {usersDisplayList.length !== 0 && !loadingModal && usersDisplayList}
+          {usersDisplayList.length === 0 && !loadingModal && <div>No users to display.</div>}
         </div>
       </div>
     </>

@@ -1,5 +1,6 @@
 import styles from "./MessageItem.module.css";
 // import TextContent from "../Post/TextContent";
+import Loader from "../Loader/Loader";
 
 const MessageItem = (props) => {
   const { id, messageText, currentUserProfile, sent_at, sent_by } = props;
@@ -13,7 +14,7 @@ const MessageItem = (props) => {
   return (
     <div id={id} className={messageStyle}>
       {messageText}
-      {/* <p>{message.sent_at}</p> */}
+      {!sent_at && <Loader messageLoader={true} />}
     </div>
   );
 };

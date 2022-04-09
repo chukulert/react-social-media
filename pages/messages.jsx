@@ -28,6 +28,7 @@ import useWindowSize from "../src/hooks/useWindowSize";
 const MessagesPage = ({ userProfile, allUsersData }) => {
   const [messageGroup, setMessageGroup] = useState(null);
   const [tempUser, setTempUser] = useState(false);
+  const [tempMessage, setTempMessage] = useState([])
   const [hasUser, setHasUser] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
   const [showMessageBoard, setShowMessageBoard] = useState(true);
@@ -50,6 +51,9 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
     if (width) {
       width < 768 ? setShowMessageBoard(false) : setShowMessageBoard(true);
     }
+    return (() => {
+        setShowMessageBoard(true)
+    })
   }, [width]);
 
   const getKey = (pageIndex, previousPageData) => {
@@ -159,6 +163,12 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
     //problems refactoring for both situations
     //1. If there is no message group, create a new message group and send a new message and notification
     //2. If there is a message group, send a new message and notification
+    const newMessage = {
+        messageText,
+        sent_by: userProfile.userID,
+      };
+    setTempMessage(prevState => [newMessage, ...prevState]);
+    scrollToBottom();
     try {
       if (userProfile && !messageGroup) {
         const response = await fetch(`/api/createMessageGroup`, {
@@ -207,7 +217,6 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
           });
         };
         await Promise.all([submitMessage(), createNotification()]);
-        mutateMessages();
       }
 
       if (userProfile && messageGroup) {
@@ -245,8 +254,9 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
         };
         await Promise.all([submitMessage(), createNotification()]);
       }
-      scrollToBottom();
       mutateMessages();
+      setTempMessage([])
+      scrollToBottom();
     } catch (error) {
       console.error(error);
     }
@@ -298,6 +308,7 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
             allUsers={allUsersData}
             isLoading={isLoadingMoreMessages}
             scrollToBottom={scrollToBottom}
+            tempMessage={tempMessage}
           />
         )}
         {showMessageBoard && !hasUser && (
