@@ -204,6 +204,9 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
               });
             };
             await Promise.all([submitMessage(), createNotification()]);
+            mutateMessages();
+        setTempMessage([])
+        scrollToBottom();
           }
       if (userProfile && !messageGroup) {
         const response = await fetch(`/api/createMessageGroup`, {
@@ -252,10 +255,11 @@ const MessagesPage = ({ userProfile, allUsersData }) => {
           });
         };
         await Promise.all([submitMessage(), createNotification()]);
+        mutateMessages();
+        setTempMessage([])
+        scrollToBottom();
       }
-      mutateMessages();
-      setTempMessage([])
-      scrollToBottom();
+      
     } catch (error) {
       console.error(error);
     }
