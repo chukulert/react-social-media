@@ -22,7 +22,7 @@ const createNotification = async (req, res) => {
           message,
         });
         if (records.length !== 0) {
-          res.json(records).end();
+          res.json(records)
         } else {
           res.json({ message: `id could not be found` });
         }
