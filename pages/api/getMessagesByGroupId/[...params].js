@@ -23,20 +23,22 @@ const getMessagesByGroupId = async (req, res) => {
         if (records.length !== 0) {
           res.json(records);
         } else {
-          console.log("something wrong here");
+          res.json([]);
         }
       }
       const records = await fetchMessagesByGroupID(messageGroupId);
       if (records.length !== 0) {
         res.json(records);
       } else {
-        res.json(null);
+        res.json([]);
       }
     } else {
       res.status(400);
-      res.json(null);
+      console.log('status 400')
+      res.json([]);
     }
   } catch (err) {
+    console.log('status 500')
     res.status(500);
     res.json([]);
   }

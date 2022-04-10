@@ -1,5 +1,4 @@
 import styles from "./MessageItem.module.css";
-// import TextContent from "../Post/TextContent";
 import Loader from "../Loader/Loader";
 
 const MessageItem = (props) => {
@@ -13,8 +12,7 @@ const MessageItem = (props) => {
 
   return (
     <div id={id} className={messageStyle}>
-      {messageText}
-      {!sent_at && <Loader messageLoader={true} />}
+      <div className={styles.flex}>{messageText}<span>{!sent_at && <Loader messageLoader={true} />}</span></div>
     </div>
   );
 };

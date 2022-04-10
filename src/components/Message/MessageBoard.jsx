@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import MessageInput from "./MessageInput";
 import MessageItem from "./MessageItem";
 import styles from "./MessageBoard.module.css";
@@ -7,13 +7,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCaretLeft, faCommentDots } from "@fortawesome/free-solid-svg-icons";
 import Loader from "../Loader/Loader";
-import useSWR from "swr";
 import useSWRInfinite from "swr/infinite";
 import { fetcher } from "../../utils";
 
 const MessageBoard = (props) => {
   const [chatUser, setChatUser] = useState(null);
-//   const [tempMessage, setTempMessage] = useState([]);
+  const [tempMessage, setTempMessage] = useState([])
 
   const {
     messageGroup,
@@ -29,8 +28,6 @@ const MessageBoard = (props) => {
     setTempUser,
     mutateMessageGroups
   } = props;
-
-//   console.log({messageGroup, currentUserProfile,tempUser })
 
   library.add(faCaretLeft, faCommentDots);
 
@@ -48,12 +45,13 @@ const MessageBoard = (props) => {
     size,
     setSize,
     mutate: mutateMessages,
-  } = useSWRInfinite(messageGroup ? getKey : null, fetcher, {
+//   } = useSWRInfinite(messageGroup ? getKey : null, fetcher, {
+  } = useSWRInfinite(getKey, fetcher, {
     refreshInterval: 1000,
     revalidateIfStale: true,
     revalidateOnFocus: true,
   });
-  console.log(messages)
+
   const messageList = messages ? [].concat(...messages) : [];
   const isLoadingInitialData = !messages && !messagesError;
   const isLoadingMoreMessages =
@@ -71,7 +69,7 @@ const MessageBoard = (props) => {
     //problems refactoring for both situations
     //1. If there is no message group, create a new message group and send a new message and notification
     //2. If there is a message group, send a new message and notification
-
+    if(!messageText || !messageText.replaceAll(' ', '')) return;
     try {
       if (messageGroup) {
         const newMessage = {
@@ -114,14 +112,13 @@ const MessageBoard = (props) => {
         };
         await Promise.all([submitMessage(), createNotification()]);
         mutateMessages([newMessage, ...messages]);
-        scrollToBottom();
       } else {
         const newMessage = {
           messageText,
           sent_by: currentUserProfile.userID,
         };
-        mutateMessages([newMessage]);
-        // setTempMessage((prevState) => [newMessage, ...prevState]);
+        setTempMessage(prevState => [...prevState, newMessage])
+
         const response = await fetch(`/api/createMessageGroup`, {
           method: "POST",
           headers: {
@@ -168,9 +165,8 @@ const MessageBoard = (props) => {
           });
         };
         await Promise.all([submitMessage(), createNotification()]);
-        // mutateMessages([newMessage]);
-        // setTempMessage([]);
-        scrollToBottom();
+        mutateMessages([newMessage]);
+        setTempMessage([])
       }
       scrollToBottom();
     } catch (error) {
@@ -205,14 +201,14 @@ const MessageBoard = (props) => {
           sent_at={message.sent_at}
         />
       ))}
-      {/* {tempMessage?.map((message, i) => (
+      {tempMessage?.map((message, i) => (
         <MessageItem
           key={i}
           messageText={message.messageText}
           currentUserProfile={currentUserProfile}
           sent_by={message.sent_by}
         />
-      ))} */}
+      ))}
     </div>
   );
 

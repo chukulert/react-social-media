@@ -4,6 +4,7 @@ import useSWR from "swr";
 //nextjs
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 //react
 import { useState, useEffect } from "react";
 //components
@@ -26,6 +27,10 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+const DynamicPostImageModal = dynamic(() =>
+  import("./PostImageModal")
+);
+
 const PostCard = (props) => {
   const {
     currentUserProfile,
@@ -41,6 +46,7 @@ const PostCard = (props) => {
   const [likes, setLikes] = useState(likesCount);
   const [commentsCount, setCommentsCount] = useState(postCommentsCount);
   const [expandedNotification, setExpandedNotification] = useState(false);
+  const [openImageModal, setOpenImageModal] = useState(false)
 
   library.add(faThumbsUp, faComment, faShare);
 
@@ -124,6 +130,10 @@ const PostCard = (props) => {
     deletePost(id);
   };
 
+  const handleImageModal = () => {
+    openImageModal ? setOpenImageModal(false) : setOpenImageModal(true)
+  }
+
   return (
     <div className={styles.cardContainer}>
       <div className={styles.titleBar}>
@@ -182,6 +192,7 @@ const PostCard = (props) => {
             layout="responsive"
             objectFit="cover"
             className={styles.image}
+            onClick={handleImageModal}
             priority
             // placeholder='blur'
             // blurDataURL="/profile-photo.png"
@@ -233,9 +244,10 @@ const PostCard = (props) => {
           </CopyToClipboard>
         </div>
         {displayComments && (
-          <CommentBox postID={props.id} setCommentsCount={setCommentsCount}/>
+          <CommentBox postID={props.id} setCommentsCount={setCommentsCount} />
         )}
       </div>
+      {openImageModal && <DynamicPostImageModal handleImageModal={handleImageModal} imageLink={props.image}/>}
       <ToastContainer />
     </div>
   );

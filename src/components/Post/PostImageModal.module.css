@@ -1,0 +1,63 @@
+.modalBackdrop{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 20;
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+.modal{
+    position: fixed;
+    background-color: var(--background-color-light);
+    color: var(--text-color);
+    top: 0;
+    left: 15%;
+    width: 70vw;
+    max-height: 100vh;
+    padding: 1rem;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    z-index: 30;
+    animation: slide-down 300ms ease-out forwards;
+    overflow: scroll;
+}
+
+.closeModalBtn {
+  position: absolute;
+  color: var(--text-color);
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem;
+  border: none;
+  background-color: var(--background-color-light);
+  font-weight: bold;
+  font-size: 1.2rem;
+  cursor: pointer;
+  border-radius: 50%;
+  z-index: 31;
+}
+
+.closeModalBtn:hover {
+  color: var(--primary-color);
+}
+
+.modalContent {
+    position: relative;
+    overflow: auto;
+    height: 100%;
+}
+
+
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-3rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
