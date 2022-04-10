@@ -13,7 +13,7 @@ import { fetcher } from "../../utils";
 
 const MessageBoard = (props) => {
   const [chatUser, setChatUser] = useState(null);
-  const [tempMessage, setTempMessage] = useState([]);
+//   const [tempMessage, setTempMessage] = useState([]);
 
   const {
     messageGroup,
@@ -53,7 +53,7 @@ const MessageBoard = (props) => {
     revalidateIfStale: true,
     revalidateOnFocus: true,
   });
-
+  console.log(messages)
   const messageList = messages ? [].concat(...messages) : [];
   const isLoadingInitialData = !messages && !messagesError;
   const isLoadingMoreMessages =
@@ -74,6 +74,12 @@ const MessageBoard = (props) => {
 
     try {
       if (messageGroup) {
+        const newMessage = {
+            messageText,
+            sent_by: currentUserProfile.userID,
+          };
+        // //   const updatedMessages = [ ...messages, newMessage ]
+        // //   const options = { optimisticData: updatedMessages, rollbackOnError: true }
         const chatUserID = messageGroup.members.find(
           (member) => member !== currentUserProfile.userID
         );
@@ -107,13 +113,15 @@ const MessageBoard = (props) => {
           });
         };
         await Promise.all([submitMessage(), createNotification()]);
-        mutateMessages();
+        mutateMessages([newMessage, ...messages]);
+        scrollToBottom();
       } else {
         const newMessage = {
           messageText,
           sent_by: currentUserProfile.userID,
         };
-        setTempMessage((prevState) => [newMessage, ...prevState]);
+        mutateMessages([newMessage]);
+        // setTempMessage((prevState) => [newMessage, ...prevState]);
         const response = await fetch(`/api/createMessageGroup`, {
           method: "POST",
           headers: {
@@ -160,8 +168,9 @@ const MessageBoard = (props) => {
           });
         };
         await Promise.all([submitMessage(), createNotification()]);
-        mutateMessages();
-        setTempMessage([]);
+        // mutateMessages([newMessage]);
+        // setTempMessage([]);
+        scrollToBottom();
       }
       scrollToBottom();
     } catch (error) {
@@ -196,18 +205,18 @@ const MessageBoard = (props) => {
           sent_at={message.sent_at}
         />
       ))}
-      {tempMessage?.map((message, i) => (
+      {/* {tempMessage?.map((message, i) => (
         <MessageItem
           key={i}
           messageText={message.messageText}
           currentUserProfile={currentUserProfile}
           sent_by={message.sent_by}
         />
-      ))}
+      ))} */}
     </div>
   );
 
-  const noMessageItems = !messageItems.props.children[0].length;
+  const noMessageItems = !messageItems.props.children[0]?.length;
 
   return (
     <div className={styles.messageBoardContainer}>

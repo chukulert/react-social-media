@@ -1,6 +1,5 @@
 import styles from "./FollowingModal.module.css";
 import FriendListItem from "./FriendListItem";
-import Loader from "../Loader/Loader";
 
 const FollowingModal = (props) => {
   const {
@@ -10,8 +9,8 @@ const FollowingModal = (props) => {
     userFollowing,
     handleListUpdate,
     currentTab,
-    loadingModal,
-    modalType
+    userProfile,
+    modalType,
   } = props;
 
   const checkUserFollowingStatus = (id) => {
@@ -32,6 +31,7 @@ const FollowingModal = (props) => {
           profilePhoto={user?.profilePhoto}
           followUserHandler={followUserHandler}
           followStatus={checkUserFollowingStatus(user?.userID)}
+          userProfile={userProfile}
           setShowFollowingModal={setShowFollowingModal}
         />
       ))}
@@ -52,44 +52,45 @@ const FollowingModal = (props) => {
           >
             X
           </button>
-          {loadingModal && <div className='loader'><Loader /></div>}
-          {modalType !== 'followers' && <div className={styles.header}>
-            <button
-              onClick={handleTabClick}
-              id="following"
-              className={
-                currentTab === "following"
-                  ? ` ${styles.button} ${styles.active}`
-                  : `${styles.button}`
-              }
-            >
-              Following
-            </button>
-            <button
-              onClick={handleTabClick}
-              id="followers"
-              className={
-                currentTab === "followers"
-                  ? ` ${styles.button} ${styles.active}`
-                  : `${styles.button}`
-              }
-            >
-              Followers
-            </button>
-            <button
-              onClick={handleTabClick}
-              id="suggestions"
-              className={
-                currentTab === "suggestions"
-                  ? `${styles.button} ${styles.active} `
-                  : `${styles.button}`
-              }
-            >
-              Suggestions
-            </button>
-          </div>}
-          {usersDisplayList.length !== 0 && !loadingModal && usersDisplayList}
-          {usersDisplayList.length === 0 && !loadingModal && <div>No users to display.</div>}
+          {modalType !== "followers" && (
+            <div className={styles.header}>
+              <button
+                onClick={handleTabClick}
+                id="following"
+                className={
+                  currentTab === "following"
+                    ? ` ${styles.button} ${styles.active}`
+                    : `${styles.button}`
+                }
+              >
+                Following
+              </button>
+              <button
+                onClick={handleTabClick}
+                id="followers"
+                className={
+                  currentTab === "followers"
+                    ? ` ${styles.button} ${styles.active}`
+                    : `${styles.button}`
+                }
+              >
+                Followers
+              </button>
+              <button
+                onClick={handleTabClick}
+                id="suggestions"
+                className={
+                  currentTab === "suggestions"
+                    ? `${styles.button} ${styles.active} `
+                    : `${styles.button}`
+                }
+              >
+                Suggestions
+              </button>
+            </div>
+          )}
+          {usersDisplayList.length !== 0 && usersDisplayList}
+          {usersDisplayList.length === 0 && <div>No users to display.</div>}
         </div>
       </div>
     </>

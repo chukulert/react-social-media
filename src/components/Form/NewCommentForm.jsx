@@ -11,11 +11,11 @@ const NewCommentForm = ({ submitHandler }) => {
       validationSchema={Yup.object({
         content: Yup.string().required("Required"),
       })}
-      onSubmit={(values) => {
+      onSubmit={(values, {resetForm}) => {
         submitHandler({
           content: values.content,
         });
-        // resetForm({values: ''})
+        resetForm({values: ''})
       }}
     
     >

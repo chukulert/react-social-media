@@ -15,7 +15,8 @@ const FriendListItem = (props) => {
     followUserHandler,
     handleUserClick,
     modalType,
-    setShowFollowingModal
+    setShowFollowingModal,
+    userProfile
   } = props;
   const [isFollower, setIsFollower] = useState(null);
   library.add(faUserPlus);
@@ -54,7 +55,7 @@ const FriendListItem = (props) => {
           </Link>
         </div>
       </div>
-      {modalType !== "message" && (
+      {modalType !== "message" && userProfile?.userID !== id && (
         <button className={styles.followBtn} onClick={handleFollowClick}>
           <FontAwesomeIcon
             className={styles.followIcon}

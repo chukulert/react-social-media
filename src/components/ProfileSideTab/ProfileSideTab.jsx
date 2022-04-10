@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import TextContent from "../Post/TextContent";
 import NewPost from "../Post/NewPost";
 import FollowingModal from "../Friend/FollowingModal";
+import useSWR from "swr";
+import { fetcher } from "../../utils";
 
 const ProfileSideTab = (props) => {
   const {
@@ -22,8 +24,6 @@ const ProfileSideTab = (props) => {
   const [followersCount, setFollowersCount] = useState(
     currentUser?.followers.length
   );
-  const [userFollowers, setUserFollowers] = useState([]);
-  const [loadingModal, setLoadingModal] = useState(false)
 
   library.add(faUserPlus, faPen);
 
@@ -38,19 +38,13 @@ const ProfileSideTab = (props) => {
     return () => {};
   }, [profilePageUser]);
 
-  const handleFollowersModalClick = async () => {
-    if (!showFollowersModal) {
-        setShowFollowersModal(true);
-        setLoadingModal(true)
-      const response = await fetch(
-        `/api/getFollowersById?id=${currentUser.userID}`
-      );
-      const followersData = await response.json();
-      setUserFollowers(followersData);
-      setLoadingModal(false)
-    } else {
-      setShowFollowersModal(false);
-    }
+  const { data: userFollowers, error: userFollowsError } = useSWR(
+    currentUser ? `/api/getFollowersById?id=${currentUser.userID}` : null,
+    fetcher,
+  );
+
+  const handleFollowersModalClick = () => {
+    showFollowersModal ?  setShowFollowersModal(false) : setShowFollowersModal(true);
   };
 
   return (
@@ -122,9 +116,9 @@ const ProfileSideTab = (props) => {
               setShowFollowingModal={handleFollowersModalClick}
               followUserHandler={followUserHandler}
               usersList={userFollowers}
-              loadingModal={loadingModal}
               userFollowing={userProfile.following}
               modalType='followers'
+              userProfile={userProfile}
             />
           )}
         </div>
