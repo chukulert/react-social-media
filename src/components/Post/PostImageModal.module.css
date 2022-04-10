@@ -13,10 +13,9 @@
     background-color: var(--background-color-light);
     color: var(--text-color);
     top: 0;
-    left: 15%;
-    width: 70vw;
+    left:0;
+    width: 100vw;
     max-height: 100vh;
-    padding: 1rem;
     border-radius: 14px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
     z-index: 30;
@@ -43,14 +42,6 @@
   color: var(--primary-color);
 }
 
-.modalContent {
-    position: relative;
-    overflow: auto;
-    height: 100%;
-}
-
-
-
 @keyframes slide-down {
   from {
     opacity: 0;
@@ -60,4 +51,29 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@media (min-width: 768px) {
+    .pageContainer {
+        width: 60%;
+    }
+
+    .modal{
+        left: 5%;
+        width: 90vw;
+    }
+}
+
+@media (min-width: 1080px) {
+    .modal{
+        left: 10%;
+        width: 80vw;
+    }
+}
+
+@media (min-width: 1400px) {
+    .modal{
+        left: 25%;
+        width: 50vw;
+    }
 }

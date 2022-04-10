@@ -12,19 +12,17 @@ const PostImageModal = (props) => {
         <button onClick={handleImageModal} className={styles.closeModalBtn}>
           X
         </button>
-        <div className={styles.modalContent}>
-          {imageLink && (
-            <Image
-              src={imageLink}
-              alt="post image"
-              width="100%"
-              height="100%"
-              layout="responsive"
-              objectFit='contain'
-              priority
-            />
-          )}
-        </div>
+        {imageLink && (
+          <Image
+            src={imageLink}
+            alt="post image"
+            width="100%"
+            height="100%"
+            layout="responsive"
+            objectFit="contain"
+            priority
+          />
+        )}
       </div>
     </>
   );
