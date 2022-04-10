@@ -3,7 +3,7 @@
     border-radius: 8px;
     padding: .5rem;
     margin: .3rem 0;
-    max-width: 40%;
+    max-width: 80%;
 }
 
 .currentUserText {
@@ -18,3 +18,8 @@
     margin-left: 0;   
 }
 
+@media (min-width: 768px) {
+    .messageBubble {
+        max-width: 60%;
+    }
+}

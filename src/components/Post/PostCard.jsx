@@ -56,9 +56,7 @@ const PostCard = (props) => {
     displayComments ? setDisplayComments(false) : setDisplayComments(true);
   };
 
-  const { data, error } = useSWR(`/api/getPostById?id=${postID}`, fetcher, {
-    revalidateOnFocus: false,
-  });
+  const { data, error } = useSWR(`/api/getPostById?id=${postID}`, fetcher);
   useEffect(() => {
     if (data && data.length > 0) {
       setPost(data[0]);
@@ -235,7 +233,7 @@ const PostCard = (props) => {
           </CopyToClipboard>
         </div>
         {displayComments && (
-          <CommentBox postID={props.id} userID={props.userID} />
+          <CommentBox postID={props.id} setCommentsCount={setCommentsCount}/>
         )}
       </div>
       <ToastContainer />

@@ -9,7 +9,7 @@ import Image from "next/image";
 
 const CommentBox = (props) => {
   const { currentUserProfile } = useAuth();
-  const { postID, userID } = props;
+  const { postID, setCommentsCount } = props;
 
   const getKey = (pageIndex, previousPageData) => {
     //initlal load
@@ -104,6 +104,7 @@ const CommentBox = (props) => {
           }
         };
         await Promise.all([submitComment(), createNotification()]);
+        setCommentsCount((prevCount) => prevCount + 1)
         mutateComments();
       } catch (error) {
         console.error(error);

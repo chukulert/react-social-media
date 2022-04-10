@@ -73,22 +73,23 @@ const NavBar = ({switchTheme}) => {
     };
   
     const closeMenu = () => {
+
       setExpandedMenu(false);
       dropDownRef.current.classList.toggle("active");
     };
   
     const expandNotification = () => {
       setExpandedNotification(true);
-      notifDropDownRef.current.classList.toggle("active");
+      notifDropDownRef.current.classList.add("active");
     };
   
     const closeNotification = () => {
       setExpandedNotification(false);
-      notifDropDownRef.current.classList.toggle("active");
+      notifDropDownRef.current.classList.remove("active");
     };
   
     const loadProfilePage = () => {
-      closeMenu();
+      document.getElementById('profileDropDown').blur()
       router.push(`/profile/${currentUserProfile.userID}`);
     };
 
@@ -107,7 +108,6 @@ const NavBar = ({switchTheme}) => {
           type={notification.type}
           mutateNotifications={mutateNotifications}
           user_id={notification.user_id}
-          closeMenu={closeMenu}
           setNotificationItems={setNotificationItems}
           notificationItems={notificationItems}
         />
@@ -199,6 +199,7 @@ const NavBar = ({switchTheme}) => {
             tabIndex={0}
             onFocus={expandNotification}
             onBlur={closeNotification}
+            id="notificationDropDown"
           >
             <div ref={notifDropDownRef}>
               <FontAwesomeIcon
@@ -236,6 +237,7 @@ const NavBar = ({switchTheme}) => {
         {/* profile dropdown */}
         {currentUserProfile && (
           <div
+          id="profileDropDown"
             className={styles.dropdown}
             tabIndex={0}
             onFocus={expandMenu}

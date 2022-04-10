@@ -1,11 +1,14 @@
+
+
 .messageInputContainer {
     display: flex;
-    width: 100%;
+    width: 90%;
     margin-top: 1rem;
     position: absolute;
-    bottom: 1rem;
-    right: 0;
+    bottom: .5rem;
+    right: 5vw;
 }
+
 .messageInput {
     background-color: var(--background-color-light);
     flex-grow: 2;
@@ -33,7 +36,8 @@
 
 @media (min-width: 768px) {
     .messageInputContainer {
-        width: calc(100vw - 380px);
+        width: calc(100vw - 400px);
+        right: 10px;
     }
     .messageInputContainer.singleContainer {
         width: 100vw;

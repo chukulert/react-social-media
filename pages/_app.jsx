@@ -29,10 +29,16 @@ function MyApp({ Component, pageProps }) {
   }, []);
 
   useEffect(() => {
-    const defaultDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    if (defaultDark) setTheme("dark");
+    if (theme) {
+      theme === "light"
+        ? document.body.classList.add("light-theme")
+        : document.body.classList.remove("light-theme");
+    } else {
+      const defaultDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      if (defaultDark) setTheme("dark");
+    }
   }, []);
 
   const switchTheme = () => {
@@ -55,7 +61,13 @@ function MyApp({ Component, pageProps }) {
 
       <AuthContextProvider>
         <NavBar switchTheme={switchTheme} />
-        {loading ? <div className='loader'><Loader /></div> : <Component {...pageProps} />}
+        {loading ? (
+          <div className="loader">
+            <Loader />
+          </div>
+        ) : (
+          <Component {...pageProps} />
+        )}
       </AuthContextProvider>
     </>
   );

@@ -17,7 +17,6 @@ const NotificationItem = (props) => {
     user_id,
     sent_user_id,
     mutateNotifications,
-    closeMenu,
     setNotificationItems,
     notificationItems
   } = props;
@@ -48,7 +47,7 @@ const NotificationItem = (props) => {
   };
 
   const handleNotificationClick = () => {
-    closeMenu()
+    document.getElementById('notificationDropDown').blur()
     router.push(link);
   };
 
