@@ -37,8 +37,11 @@ const MessageUserModal = (props) => {
           >
             X
           </button>
+          <div className={styles.modalContent}>
+            <h3>Users you are following</h3>
           {usersList.length === 0 && <div className={styles.noUsers}><p>No users displayed. Follow other users to message them.</p></div>}
           {usersDisplayList}
+          </div>
         </div>
       </div>
     </>

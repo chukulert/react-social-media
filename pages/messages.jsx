@@ -1,15 +1,13 @@
 //swr
 import useSWR from "swr";
-import useSWRInfinite from "swr/infinite";
 import { fetcher } from "../src/utils";
 import Head from "next/head";
 //react
 import { useState, useEffect } from "react";
 //components
-import MessageUserModal from "../src/components/Message/MessageGroupModal";
+import MessageUserModal from "../src/components/Message/MessageUserModal";
 import MessageBoard from "../src/components/Message/MessageBoard";
 import MessageGroup from "../src/components/Message/MessageGroupList";
-import { useAuth } from "../src/context/AuthContext";
 //firebase admin and veritifcation
 import { verifyToken } from "../src/utils/init-firebaseAdmin";
 import nookies from "nookies";

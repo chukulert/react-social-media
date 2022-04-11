@@ -52,6 +52,7 @@ const FollowingModal = (props) => {
           >
             X
           </button>
+          <div className={styles.modalContent}>
           {modalType !== "followers" && (
             <div className={styles.header}>
               <button
@@ -91,6 +92,7 @@ const FollowingModal = (props) => {
           )}
           {usersDisplayList.length !== 0 && usersDisplayList}
           {usersDisplayList.length === 0 && <div>No users to display.</div>}
+        </div>
         </div>
       </div>
     </>

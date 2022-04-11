@@ -29,7 +29,13 @@
 
 .modalContent {
   overflow-y: auto;
-  max-height: 60vh; 
+  max-height: 80vh; 
+  overflow-x: hidden;
+}
+
+.modalContent h3 {
+  padding: .5rem 1rem;
+  font-size: 1.2rem;
 }
 
 .closeModalBtn {
