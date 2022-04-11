@@ -81,7 +81,10 @@ export async function fetchAllUsersData(uid) {
 export async function fetchAllPosts() {
   try {
     const allPosts = [];
-    const allFetchedPosts = await db.collection("posts").where('deleted', '==', false).get();
+    const allFetchedPosts = await db
+      .collection("posts")
+      .where("deleted", "==", false)
+      .get();
     allFetchedPosts.forEach((post) => {
       const data = {
         ...post.data(),
@@ -103,7 +106,7 @@ export async function fetchUserPosts(uid) {
 
     const querySnapshot = await postsRef
       .where("user_id", "==", uid)
-      .where('deleted', '==', false)
+      .where("deleted", "==", false)
       .orderBy("created_at", "desc")
       .get();
     querySnapshot.forEach((doc) => {
@@ -176,10 +179,10 @@ export async function updateDeletePost(id) {
   try {
     const postRef = db.collection("posts").doc(id);
     return await postRef.update({
-      deleted: true
+      deleted: true,
     });
   } catch (e) {
-    console.error(e)
+    console.error(e);
   }
 }
 
@@ -368,12 +371,29 @@ export async function updatePostFollowing(currentUserID, postID, type) {
   }
 }
 
+export async function updatePostUserDisplay({
+  postID,
+  displayName,
+  profilePhoto,
+}) {
+  try {
+    const postRef = db.collection("posts").doc(postID);
+
+    await postRef.update({
+      user_displayName: displayName,
+      user_profilePhoto: profilePhoto,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export async function fetchInitialFeedData(userID) {
   try {
     const query = db
       .collection(`posts`)
       .where("followers", "array-contains", userID)
-      .where('deleted', '==', false)
+      .where("deleted", "==", false)
       .orderBy("created_at", "desc")
       .limit(5);
     const snapshots = await query.get();
@@ -396,7 +416,7 @@ export async function fetchMoreFeed(userID, lastPost) {
     const query = db
       .collection(`posts`)
       .where("followers", "array-contains", userID)
-      .where('deleted', '==', false)
+      .where("deleted", "==", false)
       .orderBy("created_at", "desc")
       .startAfter(lastPost.created_at)
       .limit(5);

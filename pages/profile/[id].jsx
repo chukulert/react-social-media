@@ -65,7 +65,6 @@ const ProfilePage = (props) => {
             });
           }
         };
-
         await Promise.all([followUser(), createNotification()]);
         isFollowing ? setIsFollowing(false) : setIsFollowing(true);
       } catch (error) {

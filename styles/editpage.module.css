@@ -34,8 +34,7 @@
 }
 
 .submitBtn {
-    padding: .5rem 2rem;
-    font-size: 1.2rem;
+    padding: .5rem 1rem;
     background-color: var(--primary-color);
     color: var(--background-color-dark);
     box-shadow: none;
@@ -43,20 +42,19 @@
     border-radius: 8px;
     margin: .5rem auto;
     cursor: pointer;
+    border: 1px solid var(--primary-color);
 }
 
 .submitBtn:hover {
      color: var(--primary-color);
      background-color: var(--background-color-dark);
-     border: 1px solid var(--primary-color);
 }
 
 .profileBtn {
     background-color: var(--background-color-dark);
     border: 1px solid var(--primary-color);
     color: var(--primary-color);
-    padding: .5rem 2rem;
-    font-size: 1.2rem;
+    padding: .5rem 1rem;
     text-decoration: none;
     cursor: pointer;
     margin: .5rem auto;
@@ -119,6 +117,7 @@ transition: .5s ease;
 .footer {
     display: flex;
     align-items: flex-end;
+    font-size: .9rem;
 }
 
 .pageContainer{
@@ -148,4 +147,12 @@ transition: .5s ease;
     .pageContainer {
         width: 60%;
     }
+
+  .footer {
+      font-size: 1.2rem;
+  }
+
+  .submitBtn {
+      font-size: 1.2rem;
+  }
 }

@@ -25,7 +25,8 @@
     cursor: pointer;
     background-color: var(--primary-color);
     color: white;
-    font-weight: bold;
+    /* font-weight: bold; */
+    
 }
 
 .registerBtn:hover {
@@ -40,6 +41,22 @@
 .forgotPasswordBtn:hover {
     text-decoration: underline;
 }
+
+.testAccountBtn {
+    background-color: var(--background-color);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    padding: .5rem;
+    cursor: pointer;
+}
+
+.testAccountBtn:hover {
+    background-color: var(--primary-color);
+    color: var(--background-color);
+}
+
+
 
 .signInFormFooter {
     display: flex;

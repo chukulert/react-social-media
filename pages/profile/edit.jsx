@@ -25,12 +25,11 @@ import "react-toastify/dist/ReactToastify.css";
 import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
 
-
 const EditProfile = ({ userProfile }) => {
   const [newProfilePhoto, setNewProfilePhoto] = useState(null);
   const [newBannerPhoto, setNewBannerPhoto] = useState(null);
 
-  const {setCurrentUserProfile} = useAuth()
+  const { setCurrentUserProfile } = useAuth();
 
   library.add(faImage);
 
@@ -48,7 +47,7 @@ const EditProfile = ({ userProfile }) => {
             storageRef,
             profilePhoto
           );
-          const fileURL = await getDownloadURL(uploadTask.ref)
+          const fileURL = await getDownloadURL(uploadTask.ref);
 
           if (fileURL) {
             await setDoc(
@@ -96,7 +95,18 @@ const EditProfile = ({ userProfile }) => {
         `/api/fetchUserProfile?id=${userProfile.userID}`
       );
       const fetchedUser = await response.json();
-      setCurrentUserProfile(fetchedUser)
+      await fetch(`/api/updateUserPosts`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          currentUserID: fetchedUser.userID,
+          displayName: fetchedUser.displayName,
+          profilePhoto: fetchedUser.profilePhoto
+        }),
+      });
+      setCurrentUserProfile(fetchedUser);
       toast.success("Profile saved!", {
         position: "top-right",
         autoClose: 5000,
@@ -152,7 +162,7 @@ const EditProfile = ({ userProfile }) => {
             )}
             {!newProfilePhoto && (
               <Image
-                src={userProfile.profilePhoto || '/profile-photo.png'}
+                src={userProfile.profilePhoto || "/profile-photo.png"}
                 alt="Uploaded Image"
                 width="100%"
                 height="100%"
@@ -197,7 +207,7 @@ const EditProfile = ({ userProfile }) => {
             )}
             {!newBannerPhoto && (
               <Image
-                src={userProfile.bannerPhoto || '/profile-photo.png'}
+                src={userProfile.bannerPhoto || "/profile-photo.png"}
                 alt="Uploaded Image"
                 width="100%"
                 height="100%"
@@ -305,9 +315,7 @@ const EditProfile = ({ userProfile }) => {
                     Save Changes
                   </button>
                   <Link href={`/profile/${userProfile.userID}`}>
-                  <a className={styles.profileBtn}>
-                    Profile Page
-                  </a>
+                    <a className={styles.profileBtn}>Profile Page</a>
                   </Link>
                 </div>
               </Form>

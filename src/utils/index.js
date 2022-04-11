@@ -39,7 +39,7 @@ export const isEmpty = (obj) => {
 export const fetcher = (url) => fetch(url).then((res) => res.json());
 
 export const sortNotifications = (notifications) => {
-    if (notifications.length === 0) return;
+  if (notifications.length === 0) return;
   let messageArr = [];
   let commentArr = [];
   let followArr = [];
@@ -48,7 +48,7 @@ export const sortNotifications = (notifications) => {
     if (notification.type === "message") {
       let obj = messageArr.find(
         (item) => item.sent_user_id === notification.sent_user_id
-      );    
+      );
       if (!obj) messageArr.push(notification);
     }
 
@@ -63,11 +63,17 @@ export const sortNotifications = (notifications) => {
 
     if (notification.type === "follow") {
       let obj = followArr.find(
-        (item) => 
-            item.sent_user_id === notification.sent_user_id
+        (item) => item.sent_user_id === notification.sent_user_id
       );
       if (!obj) followArr.push(notification);
     }
   });
   return [...messageArr, ...commentArr, ...followArr];
+};
+
+export const shortenText = (text) => {
+  if (text.length > 30) {
+    return text.slice(0, 30).concat("...");
+  }
+  return text;
 };

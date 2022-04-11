@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { timeAgo } from "../../utils";
+import { timeAgo, shortenText } from "../../utils";
 import styles from "./MessageGroupItem.module.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -25,6 +25,8 @@ const MessageGroupItem = (props) => {
 
   const date = timeAgo(messageGroup.last_message?.created_at);
 
+  const shortenedTextContent = shortenText(messageGroup.last_message?.textContent)
+
   return (
     <div
       onClick={handleMessageGroupClick}
@@ -49,7 +51,7 @@ const MessageGroupItem = (props) => {
         </div>
         {/* <p>{messageGroup.groupName}</p> */}
         <div className={styles.lastMessage}>
-          {messageGroup.last_message?.textContent}
+          {shortenedTextContent}
         </div>
       </div>}
     </div>

@@ -271,7 +271,7 @@ export default function AuthContextProvider({ children }) {
           createNewUserMessage(response),
         ]);
       }
-      router.push("/");
+      // router.push("/");
     } catch (error) {
       console.error("Something went wrong", error);
       setError(error.message);
